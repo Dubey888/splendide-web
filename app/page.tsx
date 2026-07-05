@@ -31,9 +31,8 @@ export default async function Home() {
         <h1 className="text-2xl font-serif tracking-widest uppercase">Splendide</h1>
       </nav>
 
-      {/* HERO BANNER (Simulando la imagen de referencia) */}
+      {/* HERO BANNER */}
       <header className="relative w-full h-[400px] bg-gray-200 flex items-center justify-center overflow-hidden">
-        {/* Aquí podrías poner una imagen real de fondo */}
         <div className="absolute inset-0 bg-gradient-to-r from-gray-300 to-gray-200" />
         <div className="relative text-center">
           <p className="text-sm uppercase tracking-[0.3em] mb-2 text-gray-700">Nueva Colección</p>
@@ -44,35 +43,41 @@ export default async function Home() {
       {/* CATÁLOGO */}
       <main className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-12">
-          {productos.map((item) => (
-            <div key={item.Codigo} className="group cursor-pointer">
-              {/* Imagen con efecto hover */}
-              <div className="aspect-[3/4] bg-gray-50 rounded-sm overflow-hidden mb-4 relative">
-                {item.URL_Imagen ? (
-                  <img 
-                    src={item.URL_Imagen} 
-                    alt={item.Producto} 
-                    className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" 
-                  />
-                ) : (
-                  <div className="flex items-center justify-center h-full text-gray-300">Splendide</div>
-                )}
+          {productos.map((item) => {
+            // 🔥 MODIFICACIÓN: Separar las URLs por comas y extraer de forma segura el primer elemento
+            const imagenes = item.URL_Imagen ? item.URL_Imagen.split(",") : [];
+            const imagenPrincipal = imagenes[0] || null;
+
+            return (
+              <div key={item.Codigo} className="group cursor-pointer">
+                {/* Imagen con efecto hover */}
+                <div className="aspect-[3/4] bg-gray-50 rounded-sm overflow-hidden mb-4 relative">
+                  {imagenPrincipal ? (
+                    <img 
+                      src={imagenPrincipal} 
+                      alt={item.Producto} 
+                      className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" 
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center h-full text-gray-300">Splendide</div>
+                  )}
+                </div>
+                
+                {/* Info producto */}
+                <h3 className="font-medium text-gray-800 text-sm">{item.Producto}</h3>
+                <p className="text-gray-900 font-semibold mt-1">
+                  ${Number(item.Precio_Venta).toLocaleString('es-CO')}
+                </p>
+                <span className="text-[10px] text-gray-400 uppercase tracking-widest">Stock: {item.Stock}</span>
               </div>
-              
-              {/* Info producto */}
-              <h3 className="font-medium text-gray-800 text-sm">{item.Producto}</h3>
-              <p className="text-gray-900 font-semibold mt-1">
-                ${Number(item.Precio_Venta).toLocaleString('es-CO')}
-              </p>
-              <span className="text-[10px] text-gray-400 uppercase tracking-widest">Stock: {item.Stock}</span>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </main>
 
       {/* FOOTER */}
       <footer className="border-t border-gray-100 py-12 text-center text-sm text-gray-500">
-        <p>© 2026 Splendide Co. Todos los derechos reservados.</p>
+        <p>©️ 2026 Splendide Co. Todos los derechos reservados.</p>
       </footer>
     </div>
   );
