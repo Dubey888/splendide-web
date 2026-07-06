@@ -7,6 +7,7 @@ import Navbar from "@/components/Navbar";
 import WhatsAppButton from "@/components/WhatsAppButton";
 
 // Importamos el Cerebro (Provider) del carrito
+import CartDrawer from "@/components/CartDrawer";
 import { CartProvider } from "@/context/CartContext";
 
 // Configuración de la fuente Sans-serif (para textos, precios y botones)
