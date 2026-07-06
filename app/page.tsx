@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 // Importamos el botón cliente que creamos previamente para el home
-import BotonAnadir from "../componentes/BotonAnadir";
+import BotonAnadir from "@/components/BotonAñadir";
 
 // Estructura de tus productos
 interface Producto {
