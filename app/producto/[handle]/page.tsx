@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
+// 1. IMPORTAMOS EL CEREBRO DEL CARRITO
+import { useCart } from "../../../context/CartContext"; 
 
 const generarHandle = (item: any) => {
   if (item.Handle && item.Handle.trim() !== "") {
@@ -14,6 +16,9 @@ export default function DetalleProducto() {
   const params = useParams();
   const router = useRouter();
   const handleUrl = params.handle as string;
+
+  // 2. EXTRAEMOS LA FUNCIÓN PARA AÑADIR AL CARRITO
+  const { addToCart } = useCart();
 
   const [productoPadre, setProductoPadre] = useState<any>(null);
   const [varianteActiva, setVarianteActiva] = useState<any>(null);
@@ -46,7 +51,6 @@ export default function DetalleProducto() {
     }
   };
 
-  // Funciones para los botones de flechas en PC
   const scrollSiguiente = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollBy({ left: scrollRef.current.offsetWidth, behavior: 'smooth' });
@@ -59,22 +63,37 @@ export default function DetalleProducto() {
     }
   };
 
+  // 3. CREAMOS LA FUNCIÓN QUE SE EJECUTA AL DAR CLIC
+  const manejarAnadir = () => {
+    if (!varianteActiva) return;
+
+    // Si tiene variante de color, se lo agregamos al nombre para que se vea en el carrito
+    const nombreConVariante = varianteActiva.Variante_Color 
+      ? `${productoPadre.Producto} - ${varianteActiva.Variante_Color}` 
+      : productoPadre.Producto;
+
+    addToCart({
+      id: varianteActiva.Codigo,
+      nombre: nombreConVariante,
+      precio: Number(varianteActiva.Precio_Venta),
+      imagen: listaImagenes[0] || "",
+      cantidad: 1, // Añadimos de a 1 por clic
+    });
+  };
+
   if (cargando) return <div className="min-h-screen flex items-center justify-center">Cargando...</div>;
   if (!varianteActiva) return <div className="min-h-screen flex items-center justify-center">Producto no encontrado</div>;
 
   const listaImagenes = varianteActiva.URL_Imagen ? varianteActiva.URL_Imagen.split(",") : [];
 
   return (
-    // 1. Quité el 'bg-white' y cambié a 'max-w-7xl' para computadoras
     <div className="min-h-screen text-splendide-dark font-sans p-6 md:p-12 max-w-7xl mx-auto">
-      <button onClick={() => router.back()} className="text-xs uppercase tracking-widest text-gray-500 mb-8 hover:text-black">
+      <button onClick={() => router.back()} className="text-xs uppercase tracking-widest text-gray-500 mb-8 hover:text-black transition-colors cursor-pointer">
          ← Volver al catálogo
       </button>
 
-      {/* 2. Ajuste de grilla: 7 columnas para imagen, 5 para texto en PC */}
       <div className="grid lg:grid-cols-12 gap-12 items-start">
-        
-        {/* CONTENEDOR DEL CARRUSEL ('group' nos ayuda a mostrar flechas al pasar el mouse) */}
+        {/* CARRUSEL DE IMÁGENES */}
         <div className="lg:col-span-7 relative group">
           <div 
             ref={scrollRef}
@@ -92,38 +111,24 @@ export default function DetalleProducto() {
             ))}
           </div>
 
-          {/* 3. Flechas de navegación para PC */}
           {listaImagenes.length > 1 && (
             <>
-              {/* Botón Anterior */}
-              <button 
-                onClick={scrollAnterior}
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-black p-3 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity hidden md:block"
-              >
+              <button onClick={scrollAnterior} className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-black p-3 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity hidden md:block cursor-pointer">
                 ❮
               </button>
-              
-              {/* Botón Siguiente */}
-              <button 
-                onClick={scrollSiguiente}
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-black p-3 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity hidden md:block"
-              >
+              <button onClick={scrollSiguiente} className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-black p-3 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity hidden md:block cursor-pointer">
                 ❯
               </button>
-
-              {/* Indicadores (Dots) */}
               <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-2">
                 {listaImagenes.map((_: any, index: number) => (
-                  <div 
-                    key={index} 
-                    className={`h-2 w-2 rounded-full transition-colors ${currentIndex === index ? 'bg-black' : 'bg-gray-300'}`} 
-                  />
+                  <div key={index} className={`h-2 w-2 rounded-full transition-colors ${currentIndex === index ? 'bg-black' : 'bg-gray-300'}`} />
                 ))}
               </div>
             </>
           )}
         </div>
 
+        {/* INFO DEL PRODUCTO */}
         <div className="lg:col-span-5 sticky top-12">
           <h1 className="text-3xl lg:text-4xl font-serif mb-4 text-splendide-dark">{productoPadre.Producto}</h1>
           <p className="text-2xl text-gray-800 mb-8 font-light">${Number(varianteActiva.Precio_Venta).toLocaleString('es-CO')}</p>
@@ -135,7 +140,7 @@ export default function DetalleProducto() {
                 <button 
                   key={v.Codigo} 
                   onClick={() => setVarianteActiva(v)}
-                  className={`px-4 py-2 text-sm border transition-colors ${varianteActiva.Codigo === v.Codigo ? 'bg-black text-white border-black' : 'bg-white border-gray-200 hover:border-black text-gray-700'}`}
+                  className={`px-4 py-2 text-sm border transition-colors cursor-pointer ${varianteActiva.Codigo === v.Codigo ? 'bg-black text-white border-black' : 'bg-white border-gray-200 hover:border-black text-gray-700'}`}
                 >
                   {v.Variante_Color || v.Codigo}
                 </button>
@@ -143,7 +148,11 @@ export default function DetalleProducto() {
             </div>
           </div>
 
-          <button className="w-full bg-splendide-dark text-white py-4 text-sm uppercase tracking-widest hover:bg-black transition-colors shadow-lg">
+          {/* 4. BOTÓN DE AÑADIR CON EL EVENTO onClick */}
+          <button 
+            onClick={manejarAnadir}
+            className="w-full bg-splendide-dark text-white py-4 text-sm uppercase tracking-widest hover:bg-black transition-colors shadow-lg cursor-pointer"
+          >
             Añadir al Carrito
           </button>
         </div>
