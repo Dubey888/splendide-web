@@ -151,8 +151,8 @@ export default function DetalleProducto() {
           {/* 4. BOTÓN DE AÑADIR CON EL EVENTO onClick */}
           <button 
             onClick={manejarAnadir}
-            /* AQUÍ SE AGREGÓ rounded-full */
-            className="w-full bg-splendide-dark text-white py-4 text-sm uppercase tracking-widest hover:bg-black transition-colors shadow-lg cursor-pointer rounded-full"
+            /* SE CAMBIÓ rounded-full POR rounded */
+            className="w-full bg-splendide-dark text-white py-4 text-sm uppercase tracking-widest hover:bg-black transition-colors shadow-lg cursor-pointer rounded"
           >
             Añadir al Carrito
           </button>

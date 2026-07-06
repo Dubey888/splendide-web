@@ -19,14 +19,15 @@ export default function BotonAnadir({ id, nombre, precio, imagen }: BotonAnadirP
       nombre,
       precio,
       imagen,
-      cantidad: 1, 
+      cantidad: 1, // Quitamos 'shadow' de aquí para que TypeScript esté feliz
     });
   };
 
   return (
     <button
       onClick={manejarAnadir}
-      className="w-full bg-[#1A1A1A] text-white font-sans uppercase tracking-widest text-[11px] h-11 flex items-center justify-center transition-colors duration-300 hover:bg-[#D7A1A4] font-medium cursor-pointer border border-transparent rounded-full"
+      /* SE CAMBIÓ rounded-full POR rounded */
+      className="w-full bg-[#1A1A1A] text-white font-sans uppercase tracking-widest text-[11px] h-11 flex items-center justify-center transition-colors duration-300 hover:bg-[#D7A1A4] font-medium cursor-pointer border border-transparent rounded"
     >
       Añadir al Carrito
     </button>
