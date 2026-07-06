@@ -121,7 +121,7 @@ export default async function Home() {
                   {cantidadVariantes > 1 ? (
                     <Link 
                       href={`/producto/${item.HandleFinal}`} 
-                      className="w-full bg-[#1A1A1A] text-white font-sans uppercase tracking-widest text-[11px] h-11 flex items-center justify-center transition-colors duration-300 hover:bg-[#D7A1A4] font-medium text-center border border-transparent rounded-full"
+                      className="w-full bg-[#1A1A1A] text-white font-sans uppercase tracking-widest text-[11px] h-11 flex items-center justify-center transition-colors duration-300 hover:bg-[#D7A1A4] font-medium text-center border border-transparent"
                     >
                       Ver Opciones
                     </Link>
