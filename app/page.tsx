@@ -54,14 +54,16 @@ export default async function Home() {
   );
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 font-sans">
+    // 🔥 CORRECCIÓN: Quitamos bg-white para liberar el fondo rosado suave global
+    <div className="min-h-screen text-splendide-dark font-sans">
+      
       {/* NAVEGACIÓN */}
-      <nav className="border-b border-gray-100 py-6 text-center">
-        <h1 className="text-2xl font-serif tracking-widest uppercase">Splendide</h1>
+      <nav className="border-b border-splendide-lightPink/40 py-6 text-center bg-transparent">
+        <h1 className="text-3xl font-serif tracking-widest uppercase text-splendide-dark">Splendide</h1>
       </nav>
 
       {/* HERO BANNER */}
-      <header className="relative w-full h-[400px] md:h-[500px] lg:h-[600px] flex items-center justify-center overflow-hidden">
+      <header className="relative w-full h-[400px] md:h-[500px] lg:h-[550px] flex items-center justify-center overflow-hidden">
         <Image 
           src="/portada.jpeg" 
           alt="Nueva Colección Splendide"
@@ -69,14 +71,14 @@ export default async function Home() {
           priority
           className="object-cover object-center"
         />
-        <div className="absolute inset-0 bg-black/20" />
+        <div className="absolute inset-0 bg-black/15" />
         <div className="relative text-center px-4 text-white">
-          <p className="text-xs md:text-sm uppercase tracking-[0.3em] mb-2 drop-shadow-md">Nueva Colección</p>
+          <p className="text-xs md:text-sm uppercase tracking-[0.3em] mb-3 drop-shadow-md">Nueva Colección</p>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif drop-shadow-lg">Girl, es tu momento de brillar</h2>
         </div>
       </header>
 
-      {/* CATÁLOGO */}
+      {/* CATÁLOGO (Ajustado con max-w-7xl óptimo para PC y monitores anchos) */}
       <main className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-12">
           {productosAgrupados.map((item: any) => {
@@ -86,29 +88,29 @@ export default async function Home() {
 
             return (
               <Link href={`/producto/${item.HandleFinal}`} key={item.HandleFinal} className="group cursor-pointer block">
-                {/* Imagen con efecto hover */}
-                <div className="aspect-[3/4] bg-gray-50 rounded-sm overflow-hidden mb-4 relative">
+                {/* Imagen con efecto hover suave */}
+                <div className="aspect-[3/4] bg-white rounded-md overflow-hidden mb-4 relative shadow-sm border border-splendide-lightPink/20">
                   {imagenPrincipal && (
                     <img 
                       src={imagenPrincipal} 
                       alt={item.Producto} 
-                      className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" 
+                      className="object-cover w-full h-full group-hover:scale-102 transition-transform duration-500" 
                     />
                   )}
                 </div>
                 
-                {/* Info producto */}
-                <h3 className="font-medium text-gray-800 text-sm">{item.Producto}</h3>
-                <p className="text-gray-900 font-semibold mt-1">
+                {/* Info producto aplicando la paleta de colores oficial */}
+                <h3 className="font-medium text-splendide-dark text-sm transition-colors group-hover:text-splendide-pink">{item.Producto}</h3>
+                <p className="text-splendide-dark font-medium mt-1">
                   ${Number(item.Precio_Venta).toLocaleString('es-CO')}
                 </p>
                 
                 {cantidadVariantes > 1 ? (
-                  <span className="text-[10px] text-gray-400 uppercase tracking-widest block mt-1">
+                  <span className="text-[10px] text-splendide-gray uppercase tracking-widest block mt-1">
                     {cantidadVariantes} Opciones disponibles
                   </span>
                 ) : (
-                  <span className="text-[10px] text-gray-400 uppercase tracking-widest block mt-1">
+                  <span className="text-[10px] text-splendide-gray uppercase tracking-widest block mt-1">
                     Stock: {item.Stock}
                   </span>
                 )}
@@ -119,7 +121,7 @@ export default async function Home() {
       </main>
 
       {/* FOOTER */}
-      <footer className="border-t border-gray-100 py-12 text-center text-sm text-gray-500">
+      <footer className="border-t border-splendide-lightPink/40 py-12 text-center text-sm text-splendide-gray">
         <p>©️ 2026 Splendide Co. Todos los derechos reservados.</p>
       </footer>
     </div>

@@ -19,7 +19,6 @@ export default function DetalleProducto() {
   const [varianteActiva, setVarianteActiva] = useState<any>(null);
   const [cargando, setCargando] = useState(true);
   
-  // 🔥 Estados para el Carrusel
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -40,11 +39,23 @@ export default function DetalleProducto() {
       });
   }, [handleUrl]);
 
-  // 🔥 Lógica para detectar en qué imagen estamos
   const handleScroll = () => {
     if (scrollRef.current) {
       const index = Math.round(scrollRef.current.scrollLeft / scrollRef.current.offsetWidth);
       setCurrentIndex(index);
+    }
+  };
+
+  // Funciones para los botones de flechas en PC
+  const scrollSiguiente = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: scrollRef.current.offsetWidth, behavior: 'smooth' });
+    }
+  };
+
+  const scrollAnterior = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: -scrollRef.current.offsetWidth, behavior: 'smooth' });
     }
   };
 
@@ -54,56 +65,77 @@ export default function DetalleProducto() {
   const listaImagenes = varianteActiva.URL_Imagen ? varianteActiva.URL_Imagen.split(",") : [];
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 font-sans p-6 md:p-12 max-w-5xl mx-auto">
+    // 1. Quité el 'bg-white' y cambié a 'max-w-7xl' para computadoras
+    <div className="min-h-screen text-splendide-dark font-sans p-6 md:p-12 max-w-7xl mx-auto">
       <button onClick={() => router.back()} className="text-xs uppercase tracking-widest text-gray-500 mb-8 hover:text-black">
          ← Volver al catálogo
       </button>
 
-      <div className="grid md:grid-cols-2 gap-12">
+      {/* 2. Ajuste de grilla: 7 columnas para imagen, 5 para texto en PC */}
+      <div className="grid lg:grid-cols-12 gap-12 items-start">
         
-        {/* 🔥 CONTENEDOR DEL CARRUSEL */}
-        <div className="relative">
+        {/* CONTENEDOR DEL CARRUSEL ('group' nos ayuda a mostrar flechas al pasar el mouse) */}
+        <div className="lg:col-span-7 relative group">
           <div 
             ref={scrollRef}
             onScroll={handleScroll}
-            className="flex overflow-x-auto snap-x snap-mandatory w-full aspect-[3/4] bg-gray-50 rounded-sm scrollbar-hide"
+            className="flex overflow-x-auto snap-x snap-mandatory w-full bg-white rounded-md scrollbar-hide shadow-sm"
             style={{ scrollBehavior: 'smooth' }}
           >
             {listaImagenes.map((url: string, index: number) => (
               <img 
                 key={index}
                 src={url} 
-                className="w-full h-full flex-none object-cover snap-center" 
+                className="w-full h-auto max-h-[700px] flex-none object-contain snap-center py-4" 
                 alt={varianteActiva.Producto} 
               />
             ))}
           </div>
 
-          {/* Indicadores (Dots) corregidos para TypeScript */}
+          {/* 3. Flechas de navegación para PC */}
           {listaImagenes.length > 1 && (
-            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
-              {listaImagenes.map((_: any, index: number) => (
-                <div 
-                  key={index} 
-                  className={`h-2 w-2 rounded-full transition-colors ${currentIndex === index ? 'bg-black' : 'bg-gray-400'}`} 
-                />
-              ))}
-            </div>
+            <>
+              {/* Botón Anterior */}
+              <button 
+                onClick={scrollAnterior}
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-black p-3 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity hidden md:block"
+              >
+                ❮
+              </button>
+              
+              {/* Botón Siguiente */}
+              <button 
+                onClick={scrollSiguiente}
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-black p-3 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity hidden md:block"
+              >
+                ❯
+              </button>
+
+              {/* Indicadores (Dots) */}
+              <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-2">
+                {listaImagenes.map((_: any, index: number) => (
+                  <div 
+                    key={index} 
+                    className={`h-2 w-2 rounded-full transition-colors ${currentIndex === index ? 'bg-black' : 'bg-gray-300'}`} 
+                  />
+                ))}
+              </div>
+            </>
           )}
         </div>
 
-        <div>
-          <h1 className="text-3xl font-serif mb-4">{productoPadre.Producto}</h1>
-          <p className="text-2xl text-gray-800 mb-8">${Number(varianteActiva.Precio_Venta).toLocaleString('es-CO')}</p>
+        <div className="lg:col-span-5 sticky top-12">
+          <h1 className="text-3xl lg:text-4xl font-serif mb-4 text-splendide-dark">{productoPadre.Producto}</h1>
+          <p className="text-2xl text-gray-800 mb-8 font-light">${Number(varianteActiva.Precio_Venta).toLocaleString('es-CO')}</p>
 
           <div className="mb-8">
-            <p className="text-xs uppercase tracking-widest mb-3">Color / Variante:</p>
+            <p className="text-xs uppercase tracking-widest mb-3 text-gray-500">Color / Variante:</p>
             <div className="flex flex-wrap gap-2">
               {productoPadre.Variantes.map((v: any) => (
                 <button 
                   key={v.Codigo} 
                   onClick={() => setVarianteActiva(v)}
-                  className={`px-4 py-2 text-sm border ${varianteActiva.Codigo === v.Codigo ? 'bg-black text-white' : 'bg-white border-gray-200 hover:border-black'}`}
+                  className={`px-4 py-2 text-sm border transition-colors ${varianteActiva.Codigo === v.Codigo ? 'bg-black text-white border-black' : 'bg-white border-gray-200 hover:border-black text-gray-700'}`}
                 >
                   {v.Variante_Color || v.Codigo}
                 </button>
@@ -111,13 +143,12 @@ export default function DetalleProducto() {
             </div>
           </div>
 
-          <button className="w-full bg-black text-white py-4 text-sm uppercase tracking-widest hover:bg-gray-800">
+          <button className="w-full bg-splendide-dark text-white py-4 text-sm uppercase tracking-widest hover:bg-black transition-colors shadow-lg">
             Añadir al Carrito
           </button>
         </div>
       </div>
       
-      {/* Estilo para ocultar la barra de scroll en navegadores que lo requieran */}
       <style jsx global>{`
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
