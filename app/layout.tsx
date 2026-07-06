@@ -3,8 +3,8 @@ import { Montserrat, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 // Importamos nuestros nuevos componentes globales (Rutas corregidas a "componentes")
-import Navbar from "../componentes/Navbar";
-import WhatsAppButton from "../componentes/WhatsAppButton";
+import Navbar from "../components/Navbar";
+import WhatsAppButton from "../components/WhatsAppButton";
 
 // Importamos el Cerebro (Provider) del carrito
 import { CartProvider } from "../context/CartContext";
