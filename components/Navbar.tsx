@@ -1,8 +1,13 @@
 "use client";
 
 import Link from "next/link";
+// Importamos el hook del Cerebro para acceder a los datos del carrito
+import { useCart } from "../context/CartContext";
 
 export default function Navbar() {
+  // Extraemos la cantidad de productos y la función para abrir la bolsa
+  const { cartCount, toggleCart } = useCart();
+
   return (
     <nav className="sticky top-0 z-50 w-full bg-[#FAF4F4] border-b border-[#D7A1A4]/30">
       <div className="max-w-[1600px] mx-auto px-6 md:px-12 lg:px-20 h-20 flex items-center justify-between">
@@ -38,15 +43,21 @@ export default function Navbar() {
             </svg>
           </button>
 
-          <button className="text-[#1A1A1A] hover:text-[#D7A1A4] transition-colors relative">
-            {/* Ícono de Bolsa (Carrito) */}
+          {/* Botón de Bolsa (Carrito) - Ahora con evento onClick */}
+          <button 
+            onClick={toggleCart} 
+            className="text-[#1A1A1A] hover:text-[#D7A1A4] transition-colors relative cursor-pointer"
+          >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
             </svg>
-            {/* Burbuja contadora del carrito */}
-            <span className="absolute -top-1 -right-1 bg-[#1A1A1A] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-sans">
-              0
-            </span>
+            
+            {/* Burbuja contadora del carrito: solo se muestra si hay productos */}
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-[#1A1A1A] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-sans">
+                {cartCount}
+              </span>
+            )}
           </button>
         </div>
 

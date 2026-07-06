@@ -2,9 +2,12 @@ import type { Metadata } from "next";
 import { Montserrat, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
-// Importamos nuestros nuevos componentes globales
-import Navbar from "../components/Navbar";
-import WhatsAppButton from "../components/WhatsAppButton";
+// Importamos nuestros nuevos componentes globales (Rutas corregidas a "componentes")
+import Navbar from "../componentes/Navbar";
+import WhatsAppButton from "../componentes/WhatsAppButton";
+
+// Importamos el Cerebro (Provider) del carrito
+import { CartProvider } from "../context/CartContext";
 
 // Configuración de la fuente Sans-serif (para textos, precios y botones)
 const sansFont = Montserrat({
@@ -35,14 +38,17 @@ export default function RootLayout({
       {/* Aplicamos la estructura flexible junto con el color de fondo y fuente base */}
       <body className="min-h-full flex flex-col bg-splendide-bg text-splendide-dark font-sans">
         
-        {/* Barra de navegación global */}
-        <Navbar />
+        {/* Envolvemos toda la app con el Provider del carrito */}
+        <CartProvider>
+          {/* Barra de navegación global */}
+          <Navbar />
 
-        {/* Contenido dinámico de las páginas */}
-        {children}
+          {/* Contenido dinámico de las páginas */}
+          {children}
 
-        {/* Botón flotante de WhatsApp global */}
-        <WhatsAppButton />
+          {/* Botón flotante de WhatsApp global */}
+          <WhatsAppButton />
+        </CartProvider>
         
       </body>
     </html>
