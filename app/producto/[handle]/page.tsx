@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
-// 🔥 Lógica idéntica a la página principal para generar el handle
+// Lógica idéntica a la página principal para generar el handle
 const generarHandle = (item: any) => {
   if (item.Handle && item.Handle.trim() !== "") {
     return item.Handle;
@@ -24,7 +24,7 @@ export default function DetalleProducto() {
     fetch("https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_catalogo_web")
       .then(res => res.json())
       .then(json => {
-        // 🔥 Buscamos todas las variantes que, al procesar su handle, coincidan con la URL
+        // Buscamos todas las variantes que, al procesar su handle, coincidan con la URL
         const variantes = json.data.filter((p: any) => {
             const handleCalculado = generarHandle(p);
             return handleCalculado === handleUrl;
@@ -66,7 +66,7 @@ export default function DetalleProducto() {
 
           {/* Selector de Variantes */}
           <div className="mb-8">
-            <p className="text-xs uppercase tracking-widest mb-3">Variante (SKU):</p>
+            <p className="text-xs uppercase tracking-widest mb-3">Color / Variante:</p>
             <div className="flex flex-wrap gap-2">
               {productoPadre.Variantes.map((v: any) => (
                 <button 
@@ -74,7 +74,8 @@ export default function DetalleProducto() {
                   onClick={() => setVarianteActiva(v)}
                   className={`px-4 py-2 text-sm border ${varianteActiva.Codigo === v.Codigo ? 'bg-black text-white' : 'bg-white border-gray-200 hover:border-black'}`}
                 >
-                  {v.Codigo}
+                  {/* 🔥 Aquí mostramos Variante_Color, o el Código si está vacío */}
+                  {v.Variante_Color || v.Codigo}
                 </button>
               ))}
             </div>
