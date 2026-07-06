@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 // Estructura de tus productos
 interface Producto {
@@ -8,6 +9,7 @@ interface Producto {
   Precio_Venta: number;
   Stock: number;
   URL_Imagen: string;
+  Handle: string; // 🔥 Asegurado el campo Handle
 }
 
 async function getProductos(): Promise<Producto[]> {
@@ -24,9 +26,21 @@ async function getProductos(): Promise<Producto[]> {
 export default async function Home() {
   const productos = await getProductos();
 
-  // 🔥 NUEVA LÓGICA: Filtramos el array para quedarnos SOLO con los que tienen imagen
+  // 1. Filtrar los que tienen imagen
   const productosConImagen = productos.filter(
     (item) => item.URL_Imagen && item.URL_Imagen.trim() !== ""
+  );
+
+  // 2. LÓGICA DE AGRUPACIÓN POR HANDLE
+  const productosAgrupados = Object.values(
+    productosConImagen.reduce((acc: any, item) => {
+      if (!item.Handle) return acc; // Por si acaso hay algo sin Handle
+      if (!acc[item.Handle]) {
+        acc[item.Handle] = { ...item, Variantes: [] };
+      }
+      acc[item.Handle].Variantes.push(item);
+      return acc;
+    }, {})
   );
 
   return (
@@ -38,45 +52,32 @@ export default async function Home() {
 
       {/* HERO BANNER */}
       <header className="relative w-full h-[400px] md:h-[500px] lg:h-[600px] flex items-center justify-center overflow-hidden">
-        
-        {/* IMAGEN DE PORTADA */}
         <Image 
-          src="/portada.jpeg" /* Asegúrate de que el nombre y extensión coincidan con el archivo en tu carpeta public */
+          src="/portada.jpeg" 
           alt="Nueva Colección Splendide"
           fill
           priority
           className="object-cover object-center"
         />
-
-        {/* CAPA OSCURA (Opcional): Para que el texto blanco resalte sobre la imagen */}
         <div className="absolute inset-0 bg-black/20" />
-
-        {/* TEXTO DE LA PORTADA */}
         <div className="relative text-center px-4 text-white">
-          <p className="text-xs md:text-sm uppercase tracking-[0.3em] mb-2 drop-shadow-md">
-            Nueva Colección
-          </p>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif drop-shadow-lg">
-            Girl, es tu momento de brillar
-          </h2>
+          <p className="text-xs md:text-sm uppercase tracking-[0.3em] mb-2 drop-shadow-md">Nueva Colección</p>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif drop-shadow-lg">Girl, es tu momento de brillar</h2>
         </div>
       </header>
 
       {/* CATÁLOGO */}
       <main className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-12">
-          
-          {/* Usamos el array filtrado en lugar del original */}
-          {productosConImagen.map((item) => {
-            // Separar las URLs por comas y extraer de forma segura el primer elemento
+          {productosAgrupados.map((item: any) => {
             const imagenes = item.URL_Imagen ? item.URL_Imagen.split(",") : [];
             const imagenPrincipal = imagenes[0] || null;
+            const cantidadVariantes = item.Variantes.length;
 
             return (
-              <div key={item.Codigo} className="group cursor-pointer">
+              <Link href={`/producto/${item.Handle}`} key={item.Handle} className="group cursor-pointer block">
                 {/* Imagen con efecto hover */}
                 <div className="aspect-[3/4] bg-gray-50 rounded-sm overflow-hidden mb-4 relative">
-                  {/* Como ya filtramos, imagenPrincipal siempre debería existir, pero dejamos la validación por seguridad */}
                   {imagenPrincipal && (
                     <img 
                       src={imagenPrincipal} 
@@ -91,8 +92,17 @@ export default async function Home() {
                 <p className="text-gray-900 font-semibold mt-1">
                   ${Number(item.Precio_Venta).toLocaleString('es-CO')}
                 </p>
-                <span className="text-[10px] text-gray-400 uppercase tracking-widest">Stock: {item.Stock}</span>
-              </div>
+                
+                {cantidadVariantes > 1 ? (
+                  <span className="text-[10px] text-gray-400 uppercase tracking-widest block mt-1">
+                    {cantidadVariantes} Opciones disponibles
+                  </span>
+                ) : (
+                  <span className="text-[10px] text-gray-400 uppercase tracking-widest block mt-1">
+                    Stock: {item.Stock}
+                  </span>
+                )}
+              </Link>
             );
           })}
         </div>
