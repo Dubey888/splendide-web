@@ -3,10 +3,18 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
+// 🔥 Lógica idéntica a la página principal para generar el handle
+const generarHandle = (item: any) => {
+  if (item.Handle && item.Handle.trim() !== "") {
+    return item.Handle;
+  }
+  return item.Producto.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+};
+
 export default function DetalleProducto() {
   const params = useParams();
   const router = useRouter();
-  const handle = params.handle as string; // Captura el handle desde la URL
+  const handleUrl = params.handle as string;
 
   const [productoPadre, setProductoPadre] = useState<any>(null);
   const [varianteActiva, setVarianteActiva] = useState<any>(null);
@@ -16,15 +24,23 @@ export default function DetalleProducto() {
     fetch("https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_catalogo_web")
       .then(res => res.json())
       .then(json => {
-        // Buscamos todas las variantes que tengan este handle
-        const variantes = json.data.filter((p: any) => p.Handle === handle);
+        // 🔥 Buscamos todas las variantes que, al procesar su handle, coincidan con la URL
+        const variantes = json.data.filter((p: any) => {
+            const handleCalculado = generarHandle(p);
+            return handleCalculado === handleUrl;
+        });
+
         if (variantes.length > 0) {
-          setProductoPadre({ Producto: variantes[0].Producto, Variantes: variantes });
-          setVarianteActiva(variantes[0]); // Seleccionamos la primera por defecto
+          // Usamos el nombre del primer producto encontrado como título principal
+          setProductoPadre({ 
+            Producto: variantes[0].Producto, 
+            Variantes: variantes 
+          });
+          setVarianteActiva(variantes[0]); 
         }
         setCargando(false);
       });
-  }, [handle]);
+  }, [handleUrl]);
 
   if (cargando) return <div className="min-h-screen flex items-center justify-center">Cargando...</div>;
   if (!varianteActiva) return <div className="min-h-screen flex items-center justify-center">Producto no encontrado</div>;
@@ -37,13 +53,18 @@ export default function DetalleProducto() {
 
       <div className="grid md:grid-cols-2 gap-12">
         <div className="aspect-[3/4] bg-gray-50 overflow-hidden">
-          <img src={varianteActiva.URL_Imagen.split(",")[0]} className="w-full h-full object-cover" alt={varianteActiva.Producto} />
+          <img 
+            src={varianteActiva.URL_Imagen.split(",")[0]} 
+            className="w-full h-full object-cover" 
+            alt={varianteActiva.Producto} 
+          />
         </div>
 
         <div>
           <h1 className="text-3xl font-serif mb-4">{productoPadre.Producto}</h1>
           <p className="text-2xl text-gray-800 mb-8">${Number(varianteActiva.Precio_Venta).toLocaleString('es-CO')}</p>
 
+          {/* Selector de Variantes */}
           <div className="mb-8">
             <p className="text-xs uppercase tracking-widest mb-3">Variante (SKU):</p>
             <div className="flex flex-wrap gap-2">
