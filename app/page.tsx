@@ -54,12 +54,12 @@ export default async function Home() {
   );
 
   return (
-    // 🔥 CORRECCIÓN: Quitamos bg-white para liberar el fondo rosado suave global
-    <div className="min-h-screen text-splendide-dark font-sans">
+    // 🔥 CORRECCIÓN: Agregamos el color de fondo explícito (#FAF4F4) para garantizar el tono crema/rosado
+    <div className="min-h-screen bg-[#FAF4F4] text-[#1A1A1A] font-sans">
       
       {/* NAVEGACIÓN */}
-      <nav className="border-b border-splendide-lightPink/40 py-6 text-center bg-transparent">
-        <h1 className="text-3xl font-serif tracking-widest uppercase text-splendide-dark">Splendide</h1>
+      <nav className="border-b border-[#D7A1A4]/30 py-6 text-center bg-transparent">
+        <h1 className="text-3xl font-serif tracking-widest uppercase">Splendide</h1>
       </nav>
 
       {/* HERO BANNER */}
@@ -78,9 +78,11 @@ export default async function Home() {
         </div>
       </header>
 
-      {/* CATÁLOGO (Ajustado con max-w-7xl óptimo para PC y monitores anchos) */}
-      <main className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-12">
+      {/* 🔥 CATÁLOGO CORREGIDO: Usamos max-w-[1600px] y padding fluido para estirarlo a los bordes */}
+      <main className="w-full max-w-[1600px] mx-auto px-6 md:px-12 lg:px-20 py-16">
+        
+        {/* En monitores extra grandes (xl) podemos incluso mostrar 5 productos para aprovechar mejor el espacio */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 lg:gap-x-10 gap-y-14">
           {productosAgrupados.map((item: any) => {
             const imagenes = item.URL_Imagen ? item.URL_Imagen.split(",") : [];
             const imagenPrincipal = imagenes[0] || null;
@@ -88,29 +90,31 @@ export default async function Home() {
 
             return (
               <Link href={`/producto/${item.HandleFinal}`} key={item.HandleFinal} className="group cursor-pointer block">
-                {/* Imagen con efecto hover suave */}
-                <div className="aspect-[3/4] bg-white rounded-md overflow-hidden mb-4 relative shadow-sm border border-splendide-lightPink/20">
+                {/* Imagen con contenedor blanco para que resalte sobre el fondo de la página */}
+                <div className="aspect-[3/4] bg-white rounded-md overflow-hidden mb-4 relative shadow-sm border border-[#D7A1A4]/20">
                   {imagenPrincipal && (
                     <img 
                       src={imagenPrincipal} 
                       alt={item.Producto} 
-                      className="object-cover w-full h-full group-hover:scale-102 transition-transform duration-500" 
+                      className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" 
                     />
                   )}
                 </div>
                 
-                {/* Info producto aplicando la paleta de colores oficial */}
-                <h3 className="font-medium text-splendide-dark text-sm transition-colors group-hover:text-splendide-pink">{item.Producto}</h3>
-                <p className="text-splendide-dark font-medium mt-1">
+                {/* Info producto */}
+                <h3 className="font-medium text-[#1A1A1A] text-sm transition-colors group-hover:text-[#D7A1A4] line-clamp-2 min-h-[40px]">
+                  {item.Producto}
+                </h3>
+                <p className="text-[#1A1A1A] font-semibold mt-2">
                   ${Number(item.Precio_Venta).toLocaleString('es-CO')}
                 </p>
                 
                 {cantidadVariantes > 1 ? (
-                  <span className="text-[10px] text-splendide-gray uppercase tracking-widest block mt-1">
+                  <span className="text-[10px] text-[#707070] uppercase tracking-widest block mt-2">
                     {cantidadVariantes} Opciones disponibles
                   </span>
                 ) : (
-                  <span className="text-[10px] text-splendide-gray uppercase tracking-widest block mt-1">
+                  <span className="text-[10px] text-[#707070] uppercase tracking-widest block mt-2">
                     Stock: {item.Stock}
                   </span>
                 )}
@@ -121,7 +125,7 @@ export default async function Home() {
       </main>
 
       {/* FOOTER */}
-      <footer className="border-t border-splendide-lightPink/40 py-12 text-center text-sm text-splendide-gray">
+      <footer className="border-t border-[#D7A1A4]/30 py-12 text-center text-sm text-[#707070]">
         <p>©️ 2026 Splendide Co. Todos los derechos reservados.</p>
       </footer>
     </div>
