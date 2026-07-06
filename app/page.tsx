@@ -9,8 +9,13 @@ interface Producto {
   Precio_Venta: number;
   Stock: number;
   URL_Imagen: string;
-  Handle: string; // 🔥 Asegurado el campo Handle
+  Handle: string;
 }
+
+// Función auxiliar para crear un Handle desde el nombre si el campo está vacío
+const generarHandle = (nombre: string) => {
+  return nombre.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+};
 
 async function getProductos(): Promise<Producto[]> {
   const urlApi = "https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_catalogo_web";
@@ -31,14 +36,19 @@ export default async function Home() {
     (item) => item.URL_Imagen && item.URL_Imagen.trim() !== ""
   );
 
-  // 2. LÓGICA DE AGRUPACIÓN POR HANDLE
+  // 2. LÓGICA DE AGRUPACIÓN (Con fallback si falta el Handle)
   const productosAgrupados = Object.values(
     productosConImagen.reduce((acc: any, item) => {
-      if (!item.Handle) return acc; // Por si acaso hay algo sin Handle
-      if (!acc[item.Handle]) {
-        acc[item.Handle] = { ...item, Variantes: [] };
+      // Usamos el Handle de la BD, o generamos uno desde el nombre si está vacío
+      const handleFinal = (item.Handle && item.Handle.trim() !== "") 
+                          ? item.Handle 
+                          : generarHandle(item.Producto);
+      
+      if (!acc[handleFinal]) {
+        // Guardamos el handleFinal en el objeto para usarlo en el Link
+        acc[handleFinal] = { ...item, HandleFinal: handleFinal, Variantes: [] };
       }
-      acc[item.Handle].Variantes.push(item);
+      acc[handleFinal].Variantes.push(item);
       return acc;
     }, {})
   );
@@ -75,7 +85,7 @@ export default async function Home() {
             const cantidadVariantes = item.Variantes.length;
 
             return (
-              <Link href={`/producto/${item.Handle}`} key={item.Handle} className="group cursor-pointer block">
+              <Link href={`/producto/${item.HandleFinal}`} key={item.HandleFinal} className="group cursor-pointer block">
                 {/* Imagen con efecto hover */}
                 <div className="aspect-[3/4] bg-gray-50 rounded-sm overflow-hidden mb-4 relative">
                   {imagenPrincipal && (
