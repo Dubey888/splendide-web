@@ -19,8 +19,7 @@ export default function BotonAnadir({ id, nombre, precio, imagen }: BotonAnadirP
       nombre,
       precio,
       imagen,
-      shadow: false,
-      cantidad: 1,
+      cantidad: 1, // Quitamos 'shadow' de aquí para que TypeScript esté feliz
     });
   };
 
