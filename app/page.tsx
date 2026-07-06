@@ -24,6 +24,11 @@ async function getProductos(): Promise<Producto[]> {
 export default async function Home() {
   const productos = await getProductos();
 
+  // 🔥 NUEVA LÓGICA: Filtramos el array para quedarnos SOLO con los que tienen imagen
+  const productosConImagen = productos.filter(
+    (item) => item.URL_Imagen && item.URL_Imagen.trim() !== ""
+  );
+
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans">
       {/* NAVEGACIÓN */}
@@ -43,8 +48,10 @@ export default async function Home() {
       {/* CATÁLOGO */}
       <main className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-12">
-          {productos.map((item) => {
-            // 🔥 MODIFICACIÓN: Separar las URLs por comas y extraer de forma segura el primer elemento
+          
+          {/* Usamos el array filtrado en lugar del original */}
+          {productosConImagen.map((item) => {
+            // Separar las URLs por comas y extraer de forma segura el primer elemento
             const imagenes = item.URL_Imagen ? item.URL_Imagen.split(",") : [];
             const imagenPrincipal = imagenes[0] || null;
 
@@ -52,14 +59,13 @@ export default async function Home() {
               <div key={item.Codigo} className="group cursor-pointer">
                 {/* Imagen con efecto hover */}
                 <div className="aspect-[3/4] bg-gray-50 rounded-sm overflow-hidden mb-4 relative">
-                  {imagenPrincipal ? (
+                  {/* Como ya filtramos, imagenPrincipal siempre debería existir, pero dejamos la validación por seguridad */}
+                  {imagenPrincipal && (
                     <img 
                       src={imagenPrincipal} 
                       alt={item.Producto} 
                       className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" 
                     />
-                  ) : (
-                    <div className="flex items-center justify-center h-full text-gray-300">Splendide</div>
                   )}
                 </div>
                 
