@@ -1,67 +1,97 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
-// 1. Definimos qué datos va a guardar nuestro carrito
-type CartItem = {
-  id: string; // Código o Handle del producto
+// Estructura oficial de un producto dentro del carrito
+export interface CartItem {
+  id: string;
   nombre: string;
   precio: number;
   imagen: string;
   cantidad: number;
-};
+}
 
-type CartContextType = {
+// Definición de todo lo que el "Cerebro" comparte con la app
+interface CartContextType {
   cartItems: CartItem[];
   isCartOpen: boolean;
-  cartCount: number;
   addToCart: (item: CartItem) => void;
+  removeFromCart: (id: string) => void; // ¡Aquí aseguramos la función que faltaba!
   toggleCart: () => void;
-};
+  cartTotal: number;
+}
 
-// 2. Creamos el contexto vacío
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-// 3. Creamos el "Proveedor" que envolverá nuestra app
-export function CartProvider({ children }: { children: ReactNode }) {
+export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false); // Controla el menú lateral
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // Función para añadir al carrito
-  const addToCart = (item: CartItem) => {
-    setCartItems((prev) => {
-      const existe = prev.find((i) => i.id === item.id);
-      if (existe) {
-        // Si ya está en la bolsa, le sumamos 1 a la cantidad
-        return prev.map((i) =>
-          i.id === item.id ? { ...i, cantidad: i.cantidad + 1 } : i
+  // 1. Recuperar los productos guardados cuando el cliente abre la página
+  useEffect(() => {
+    const savedCart = localStorage.getItem("splendide_cart");
+    if (savedCart) {
+      try {
+        setCartItems(JSON.parse(savedCart));
+      } catch (e) {
+        console.error("Error al recuperar el carrito", e);
+      }
+    }
+  }, []);
+
+  // 2. Guardar automáticamente en el navegador cada vez que el carrito cambie
+  useEffect(() => {
+    localStorage.setItem("splendide_cart", JSON.stringify(cartItems));
+  }, [cartItems]);
+
+  // Función para añadir productos
+  const addToCart = (newItem: CartItem) => {
+    setCartItems((prevItems) => {
+      const itemExists = prevItems.find((item) => item.id === newItem.id);
+      if (itemExists) {
+        return prevItems.map((item) =>
+          item.id === newItem.id
+            ? { ...item, cantidad: item.cantidad + newItem.cantidad }
+            : item
         );
       }
-      // Si es nuevo, lo agregamos con cantidad 1
-      return [...prev, { ...item, cantidad: 1 }];
+      return [...prevItems, newItem];
     });
-    
-    // Opcional: Abre el menú lateral automáticamente al añadir un producto
-    setIsCartOpen(true); 
+    setIsCartOpen(true); // Abre el menú lateral automáticamente al añadir
   };
 
-  // Función para abrir/cerrar la bolsa
-  const toggleCart = () => setIsCartOpen(!isCartOpen);
+  // Función para eliminar productos (La que causaba el error)
+  const removeFromCart = (id: string) => {
+    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+  };
 
-  // Calcula cuántos productos hay en total en la bolsita
-  const cartCount = cartItems.reduce((total, item) => total + item.cantidad, 0);
+  // Función para abrir/cerrar el menú lateral
+  const toggleCart = () => {
+    setIsCartOpen((prev) => !prev);
+  };
+
+  // Cálculo automático del total de la compra
+  const cartTotal = cartItems.reduce((total, item) => total + item.precio * item.cantidad, 0);
 
   return (
-    <CartContext.Provider value={{ cartItems, isCartOpen, cartCount, addToCart, toggleCart }}>
+    <CartContext.Provider
+      value={{
+        cartItems,
+        isCartOpen,
+        addToCart,
+        removeFromCart,
+        toggleCart,
+        cartTotal,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
 }
 
-// 4. Hook personalizado para usar el cerebro fácilmente en otros archivos
 export function useCart() {
   const context = useContext(CartContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error("useCart debe usarse dentro de un CartProvider");
   }
   return context;
