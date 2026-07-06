@@ -37,11 +37,28 @@ export default async function Home() {
       </nav>
 
       {/* HERO BANNER */}
-      <header className="relative w-full h-[400px] bg-gray-200 flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-gray-300 to-gray-200" />
-        <div className="relative text-center">
-          <p className="text-sm uppercase tracking-[0.3em] mb-2 text-gray-700">Nueva Colección</p>
-          <h2 className="text-5xl font-serif text-gray-900">Girl, es tu momento de brillar</h2>
+      <header className="relative w-full h-[400px] md:h-[500px] lg:h-[600px] flex items-center justify-center overflow-hidden">
+        
+        {/* IMAGEN DE PORTADA */}
+        <Image 
+          src="/portada.jpeg" /* Asegúrate de que el nombre y extensión coincidan con el archivo en tu carpeta public */
+          alt="Nueva Colección Splendide"
+          fill
+          priority
+          className="object-cover object-center"
+        />
+
+        {/* CAPA OSCURA (Opcional): Para que el texto blanco resalte sobre la imagen */}
+        <div className="absolute inset-0 bg-black/20" />
+
+        {/* TEXTO DE LA PORTADA */}
+        <div className="relative text-center px-4 text-white">
+          <p className="text-xs md:text-sm uppercase tracking-[0.3em] mb-2 drop-shadow-md">
+            Nueva Colección
+          </p>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif drop-shadow-lg">
+            Girl, es tu momento de brillar
+          </h2>
         </div>
       </header>
 
