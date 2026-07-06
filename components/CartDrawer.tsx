@@ -72,9 +72,22 @@ export default function CartDrawer() {
                       >
                         −
                       </button>
-                      <span className="px-3 py-1 text-xs font-medium font-sans text-center min-w-[32px]">
-                        {item.cantidad}
-                      </span>
+                      
+                      {/* INPUT PARA ESCRIBIR LA CANTIDAD */}
+                      <input 
+                        type="number"
+                        min="1"
+                        value={item.cantidad}
+                        onChange={(e) => {
+                          const val = parseInt(e.target.value, 10);
+                          if (!isNaN(val) && val > 0) {
+                            updateQuantity(item.id, val);
+                          }
+                        }}
+                        className="w-10 px-1 py-1 text-xs font-medium font-sans text-center bg-transparent focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none m-0"
+                        style={{ MozAppearance: 'textfield' }}
+                      />
+
                       <button 
                         onClick={() => updateQuantity(item.id, item.cantidad + 1)}
                         className="px-3 py-1 text-gray-500 hover:bg-gray-100 transition-colors"
@@ -113,7 +126,7 @@ export default function CartDrawer() {
             
             <button 
               onClick={() => alert("¡Próximamente conectaremos con WhatsApp!")}
-              className="w-full bg-[#1A1A1A] text-white font-sans uppercase tracking-widest text-[11px] h-12 flex items-center justify-center transition-colors duration-300 hover:bg-[#D7A1A4] font-medium cursor-pointer rounded-sm"
+              className="w-full bg-[#1A1A1A] text-white font-sans uppercase tracking-widest text-[11px] h-12 flex items-center justify-center transition-colors duration-300 hover:bg-[#D7A1A4] font-medium cursor-pointer rounded-full"
             >
               Iniciar Pedido
             </button>
