@@ -57,11 +57,6 @@ export default async function Home() {
     // 🔥 CORRECCIÓN: Agregamos el color de fondo explícito (#FAF4F4) para garantizar el tono crema/rosado
     <div className="min-h-screen bg-[#FAF4F4] text-[#1A1A1A] font-sans">
       
-      {/* NAVEGACIÓN */}
-      <nav className="border-b border-[#D7A1A4]/30 py-6 text-center bg-transparent">
-        <h1 className="text-3xl font-serif tracking-widest uppercase">Splendide</h1>
-      </nav>
-
       {/* HERO BANNER */}
       <header className="relative w-full h-[400px] md:h-[500px] lg:h-[550px] flex items-center justify-center overflow-hidden">
         <Image 
