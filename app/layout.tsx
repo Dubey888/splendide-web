@@ -3,8 +3,8 @@ import { Montserrat, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 // Importamos nuestros nuevos componentes globales
-import Navbar from "./components/Navbar";
-import WhatsAppButton from "./components/WhatsAppButton";
+import Navbar from "..Navbar/components/Navbar";
+import WhatsAppButton from ".WhatsAppButton./components/WhatsAppButton";
 
 // Configuración de la fuente Sans-serif (para textos, precios y botones)
 const sansFont = Montserrat({
