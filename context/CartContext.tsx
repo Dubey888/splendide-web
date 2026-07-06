@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-// Estructura oficial de un producto dentro del carrito
+// Estructura de un producto dentro del carrito
 export interface CartItem {
   id: string;
   nombre: string;
@@ -11,14 +11,15 @@ export interface CartItem {
   cantidad: number;
 }
 
-// Definición de todo lo que el "Cerebro" comparte con la app
+// Aquí le agregamos 'cartCount' para que el Navbar esté feliz
 interface CartContextType {
   cartItems: CartItem[];
   isCartOpen: boolean;
   addToCart: (item: CartItem) => void;
-  removeFromCart: (id: string) => void; // ¡Aquí aseguramos la función que faltaba!
+  removeFromCart: (id: string) => void;
   toggleCart: () => void;
   cartTotal: number;
+  cartCount: number; // <-- ¡Agregado!
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -27,7 +28,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // 1. Recuperar los productos guardados cuando el cliente abre la página
+  // Recuperar del navegador al cargar
   useEffect(() => {
     const savedCart = localStorage.getItem("splendide_cart");
     if (savedCart) {
@@ -39,12 +40,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // 2. Guardar automáticamente en el navegador cada vez que el carrito cambie
+  // Guardar en el navegador cada vez que cambie
   useEffect(() => {
     localStorage.setItem("splendide_cart", JSON.stringify(cartItems));
   }, [cartItems]);
 
-  // Función para añadir productos
   const addToCart = (newItem: CartItem) => {
     setCartItems((prevItems) => {
       const itemExists = prevItems.find((item) => item.id === newItem.id);
@@ -57,21 +57,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
       return [...prevItems, newItem];
     });
-    setIsCartOpen(true); // Abre el menú lateral automáticamente al añadir
+    setIsCartOpen(true); 
   };
 
-  // Función para eliminar productos (La que causaba el error)
   const removeFromCart = (id: string) => {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
 
-  // Función para abrir/cerrar el menú lateral
   const toggleCart = () => {
     setIsCartOpen((prev) => !prev);
   };
 
-  // Cálculo automático del total de la compra
+  // Cálculos automáticos
   const cartTotal = cartItems.reduce((total, item) => total + item.precio * item.cantidad, 0);
+  
+  // ¡Cálculo de la cantidad de productos para el Navbar!
+  const cartCount = cartItems.reduce((total, item) => total + item.cantidad, 0);
 
   return (
     <CartContext.Provider
@@ -82,6 +83,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         removeFromCart,
         toggleCart,
         cartTotal,
+        cartCount, // <-- ¡Lo pasamos al resto de la app!
       }}
     >
       {children}
