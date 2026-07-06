@@ -82,7 +82,7 @@ export default function DetalleProducto() {
           {/* Indicadores (Dots) */}
           {listaImagenes.length > 1 && (
             <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
-              {listaImagenes.map((_, index) => (
+              {listaImagenes.map((_: any, index) => (
                 <div 
                   key={index} 
                   className={`h-2 w-2 rounded-full transition-colors ${currentIndex === index ? 'bg-black' : 'bg-gray-400'}`} 
