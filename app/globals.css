@@ -1,26 +1,29 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Vinculamos las variables de las fuentes de Next.js */
+  --font-sans: var(--font-sans), sans-serif;
+  --font-serif: var(--font-serif), serif;
+
+  /* Registramos la gama de colores oficial */
+  --color-splendide-pink: #D7A1A4;
+  --color-splendide-lightPink: #F3E1E3;
+  --color-splendide-bg: #FAF4F4;
+  --color-splendide-dark: #1A1A1A;
+  --color-splendide-gray: #707070;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Forzamos a que el navegador aplique los colores base desde el arranque */
+html, body {
+  background-color: #FAF4F4;
+  color: #1A1A1A;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Utilidad global útil para ocultar barras de scroll en carruseles */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
