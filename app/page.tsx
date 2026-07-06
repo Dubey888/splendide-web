@@ -1,9 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-// Importamos el botón cliente que creamos previamente para el home
-import BotonAnadir from "@/components/BotonAñadir";
+import BotonAnadir from "@/components/BotonAnadir";
 
-// Estructura de tus productos
 interface Producto {
   Codigo: string;
   Producto: string;
@@ -69,6 +67,7 @@ export default async function Home() {
         </div>
       </header>
 
+      {/* CATÁLOGO EN CUADRÍCULA */}
       <main className="w-full max-w-[1600px] mx-auto px-6 md:px-12 lg:px-20 py-16">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 lg:gap-x-10 gap-y-14">
           
@@ -78,10 +77,9 @@ export default async function Home() {
             const cantidadVariantes = item.Variantes.length;
 
             return (
-              // Cambiamos el Link global por un div para evitar conflictos HTML
-              <div key={item.HandleFinal} className="group flex flex-col h-full">
+              <div key={item.HandleFinal} className="group flex flex-col h-full justify-between">
                 
-                {/* 1. ZONA CLICKEABLE HACIA EL DETALLE */}
+                {/* Zona superior clickeable del producto */}
                 <Link href={`/producto/${item.HandleFinal}`} className="cursor-pointer block flex-grow">
                   <div className="aspect-[3/4] bg-white rounded-md overflow-hidden mb-4 relative shadow-sm border border-[#D7A1A4]/20">
                     {imagenPrincipal && (
@@ -99,20 +97,28 @@ export default async function Home() {
                   <p className="text-[#1A1A1A] font-semibold mt-2">
                     ${Number(item.Precio_Venta).toLocaleString('es-CO')}
                   </p>
+                  
+                  {cantidadVariantes > 1 ? (
+                    <span className="text-[10px] text-[#707070] uppercase tracking-widest block mt-2 mb-3">
+                      {cantidadVariantes} Opciones disponibles
+                    </span>
+                  ) : (
+                    <span className="text-[10px] text-[#707070] uppercase tracking-widest block mt-2 mb-3">
+                      Stock: {item.Stock}
+                    </span>
+                  )}
                 </Link>
 
-                {/* 2. ZONA DE ACCIÓN RÁPIDA */}
-                <div className="mt-4">
+                {/* Zona de botones: Aspecto unificado y simétrico */}
+                <div className="mt-2 w-full">
                   {cantidadVariantes > 1 ? (
-                    // Si tiene variantes de color, le pedimos que vaya a ver las opciones
                     <Link 
                       href={`/producto/${item.HandleFinal}`} 
-                      className="w-full text-center block border border-[#1A1A1A] text-[#1A1A1A] py-2 text-[10px] uppercase tracking-widest hover:bg-[#1A1A1A] hover:text-white transition-colors"
+                      className="w-full bg-[#1A1A1A] text-white font-sans uppercase tracking-widest text-[11px] h-11 flex items-center justify-center transition-colors duration-300 hover:bg-[#D7A1A4] font-medium text-center border border-transparent"
                     >
-                      Ver Opciones ({cantidadVariantes})
+                      Ver Opciones
                     </Link>
                   ) : (
-                    // Si es producto único, habilitamos el Añadir Rápido
                     <BotonAnadir 
                       id={item.Codigo}
                       nombre={item.Producto}

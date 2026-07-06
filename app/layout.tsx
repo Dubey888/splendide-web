@@ -6,7 +6,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import WhatsAppButton from "@/components/WhatsAppButton";
 
-// Importamos el Cerebro (Provider) del carrito
+// Importamos el Cerebro (Provider) del carrito y su menú lateral
 import CartDrawer from "@/components/CartDrawer";
 import { CartProvider } from "@/context/CartContext";
 
@@ -49,6 +49,9 @@ export default function RootLayout({
 
           {/* Botón flotante de WhatsApp global */}
           <WhatsAppButton />
+
+          {/* Menú lateral desplegable del carrito (Agregado para la interactividad) */}
+          <CartDrawer />
         </CartProvider>
         
       </body>
