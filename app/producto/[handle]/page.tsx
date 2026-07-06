@@ -79,10 +79,10 @@ export default function DetalleProducto() {
             ))}
           </div>
 
-          {/* Indicadores (Dots) */}
+          {/* Indicadores (Dots) corregidos para TypeScript */}
           {listaImagenes.length > 1 && (
             <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
-              {listaImagenes.map((_: any, index) => (
+              {listaImagenes.map((_: any, index: number) => (
                 <div 
                   key={index} 
                   className={`h-2 w-2 rounded-full transition-colors ${currentIndex === index ? 'bg-black' : 'bg-gray-400'}`} 
