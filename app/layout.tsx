@@ -4,10 +4,10 @@ import "./globals.css";
 
 // Importamos nuestros nuevos componentes globales (Rutas corregidas a "componentes")
 import Navbar from "@/components/Navbar";
-import WhatsAppButton from "@/components/WhatsAppButton;
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 // Importamos el Cerebro (Provider) del carrito
-import { CartProvider } from "../context/CartContext";
+import { CartProvider } from "@/context/CartContext";
 
 // Configuración de la fuente Sans-serif (para textos, precios y botones)
 const sansFont = Montserrat({
