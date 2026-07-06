@@ -140,7 +140,7 @@ export default function DetalleProducto() {
                 <button 
                   key={v.Codigo} 
                   onClick={() => setVarianteActiva(v)}
-                  className={`px-4 py-2 text-sm border transition-colors cursor-pointer ${varianteActiva.Codigo === v.Codigo ? 'bg-black text-white border-black' : 'bg-white border-gray-200 hover:border-black text-gray-700'}`}
+                  className={`px-4 py-2 text-sm border transition-colors cursor-pointer rounded-sm ${varianteActiva.Codigo === v.Codigo ? 'bg-black text-white border-black' : 'bg-white border-gray-200 hover:border-black text-gray-700'}`}
                 >
                   {v.Variante_Color || v.Codigo}
                 </button>
@@ -151,7 +151,8 @@ export default function DetalleProducto() {
           {/* 4. BOTÓN DE AÑADIR CON EL EVENTO onClick */}
           <button 
             onClick={manejarAnadir}
-            className="w-full bg-splendide-dark text-white py-4 text-sm uppercase tracking-widest hover:bg-black transition-colors shadow-lg cursor-pointer"
+            /* AQUÍ SE AGREGÓ rounded-full */
+            className="w-full bg-splendide-dark text-white py-4 text-sm uppercase tracking-widest hover:bg-black transition-colors shadow-lg cursor-pointer rounded-full"
           >
             Añadir al Carrito
           </button>
