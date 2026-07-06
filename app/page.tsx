@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import BotonAnadir from "@/components/BotonAnadir";
 
+// Estructura de tus productos
 interface Producto {
   Codigo: string;
   Producto: string;
@@ -12,6 +13,7 @@ interface Producto {
   Handle: string;
 }
 
+// Función auxiliar para crear un Handle desde el nombre si el campo está vacío
 const generarHandle = (nombre: string) => {
   return nombre.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 };
@@ -30,17 +32,21 @@ async function getProductos(): Promise<Producto[]> {
 export default async function Home() {
   const productos = await getProductos();
 
+  // 1. Filtrar los que tienen imagen
   const productosConImagen = productos.filter(
     (item) => item.URL_Imagen && item.URL_Imagen.trim() !== ""
   );
 
+  // 2. LÓGICA DE AGRUPACIÓN (Con fallback si falta el Handle)
   const productosAgrupados = Object.values(
     productosConImagen.reduce((acc: any, item) => {
+      // Usamos el Handle de la BD, o generamos uno desde el nombre si está vacío
       const handleFinal = (item.Handle && item.Handle.trim() !== "") 
                           ? item.Handle 
                           : generarHandle(item.Producto);
       
       if (!acc[handleFinal]) {
+        // Guardamos el handleFinal en el objeto para usarlo en el Link
         acc[handleFinal] = { ...item, HandleFinal: handleFinal, Variantes: [] };
       }
       acc[handleFinal].Variantes.push(item);
@@ -69,8 +75,8 @@ export default async function Home() {
 
       {/* CATÁLOGO EN CUADRÍCULA */}
       <main className="w-full max-w-[1600px] mx-auto px-6 md:px-12 lg:px-20 py-16">
+        
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 lg:gap-x-10 gap-y-14">
-          
           {productosAgrupados.map((item: any) => {
             const imagenes = item.URL_Imagen ? item.URL_Imagen.split(",") : [];
             const imagenPrincipal = imagenes[0] || null;
@@ -91,6 +97,7 @@ export default async function Home() {
                     )}
                   </div>
                   
+                  {/* Info producto */}
                   <h3 className="font-medium text-[#1A1A1A] text-sm transition-colors group-hover:text-[#D7A1A4] line-clamp-2 min-h-[40px]">
                     {item.Producto}
                   </h3>
@@ -127,15 +134,15 @@ export default async function Home() {
                     />
                   )}
                 </div>
-
               </div>
             );
           })}
         </div>
       </main>
 
+      {/* FOOTER */}
       <footer className="border-t border-[#D7A1A4]/30 py-12 text-center text-sm text-[#707070]">
-        <p>© 2026 Splendide Co. Todos los derechos reservados.</p>
+        <p>©️ 2026 Splendide Co. Todos los derechos reservados.</p>
       </footer>
     </div>
   );

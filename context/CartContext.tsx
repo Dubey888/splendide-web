@@ -2,7 +2,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-// Estructura de un producto dentro del carrito
 export interface CartItem {
   id: string;
   nombre: string;
@@ -11,15 +10,15 @@ export interface CartItem {
   cantidad: number;
 }
 
-// Aquí le agregamos 'cartCount' para que el Navbar esté feliz
 interface CartContextType {
   cartItems: CartItem[];
   isCartOpen: boolean;
   addToCart: (item: CartItem) => void;
   removeFromCart: (id: string) => void;
+  updateQuantity: (id: string, cantidad: number) => void; // ¡Nueva función!
   toggleCart: () => void;
   cartTotal: number;
-  cartCount: number; // <-- ¡Agregado!
+  cartCount: number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -28,7 +27,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // Recuperar del navegador al cargar
   useEffect(() => {
     const savedCart = localStorage.getItem("splendide_cart");
     if (savedCart) {
@@ -40,7 +38,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Guardar en el navegador cada vez que cambie
   useEffect(() => {
     localStorage.setItem("splendide_cart", JSON.stringify(cartItems));
   }, [cartItems]);
@@ -64,14 +61,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
 
+  // Función para los botones de + y - en el carrito
+  const updateQuantity = (id: string, cantidad: number) => {
+    if (cantidad < 1) return; // No permite bajar de 1 (para eso está la papelera)
+    setCartItems((prevItems) =>
+      prevItems.map((item) => (item.id === id ? { ...item, cantidad } : item))
+    );
+  };
+
   const toggleCart = () => {
     setIsCartOpen((prev) => !prev);
   };
 
-  // Cálculos automáticos
   const cartTotal = cartItems.reduce((total, item) => total + item.precio * item.cantidad, 0);
-  
-  // ¡Cálculo de la cantidad de productos para el Navbar!
   const cartCount = cartItems.reduce((total, item) => total + item.cantidad, 0);
 
   return (
@@ -81,9 +83,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         isCartOpen,
         addToCart,
         removeFromCart,
+        updateQuantity, // La pasamos al contexto
         toggleCart,
         cartTotal,
-        cartCount, // <-- ¡Lo pasamos al resto de la app!
+        cartCount,
       }}
     >
       {children}
