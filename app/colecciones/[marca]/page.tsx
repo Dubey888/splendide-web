@@ -1,4 +1,3 @@
-// app/colecciones/[marca]/page.tsx
 import Image from "next/image";
 import Link from "next/link";
 
@@ -9,7 +8,7 @@ interface Producto {
   Precio_Venta: number;
   Stock: number;
   URL_Imagen: string;
-  Handle?: string; // Lo hacemos opcional por si la API no lo trae
+  Handle?: string;
 }
 
 const generarHandle = (nombre: string) => {
@@ -17,8 +16,11 @@ const generarHandle = (nombre: string) => {
 };
 
 async function getProductosPorMarca(marca: string): Promise<Producto[]> {
-  // Usamos tu URL real con la nueva acción
-  const urlApi = `https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_por_marca&marca=${marca}`;
+  // Protección contra envíos vacíos o "undefined"
+  if (!marca || marca === "undefined") return [];
+
+  // Usamos encodeURIComponent para que soporte tildes y espacios sin romperse
+  const urlApi = `https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_por_marca&marca=${encodeURIComponent(marca)}`;
   try {
     const res = await fetch(urlApi, { cache: 'no-store' });
     const json = await res.json();
@@ -29,11 +31,10 @@ async function getProductosPorMarca(marca: string): Promise<Producto[]> {
 }
 
 export default async function MarcaPage({ params }: { params: { marca: string } }) {
-  // Descodificamos la marca por si tiene espacios (ej. "Dolce Bella")
+  // Descodificamos la marca
   const marcaBuscada = decodeURIComponent(params.marca);
   const productos = await getProductosPorMarca(marcaBuscada);
 
-  // Reutilizamos tu lógica de filtrado e imágenes
   const productosConImagen = productos.filter(
     (item) => item.URL_Imagen && item.URL_Imagen.trim() !== ""
   );

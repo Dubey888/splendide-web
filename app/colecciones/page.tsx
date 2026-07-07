@@ -1,13 +1,12 @@
-// app/colecciones/page.tsx
 import Link from 'next/link';
 import Image from 'next/image';
 
-// Aquí configuras los nombres exactos de tus proveedores según la base de datos
+// REGLA DE ORO: El 'id' debe ser EXACTAMENTE igual a como está en la columna Proveedor de tu base de datos.
 const marcas = [
   { id: 'Atenea', nombre: 'Atenea', imagen: '/marcas/atenea.jpg' },
   { id: 'Bloomshell', nombre: 'Bloomshell', imagen: '/marcas/bloomshell.jpg' },
   { id: 'Bioaqua', nombre: 'Bioaqua', imagen: '/marcas/bioaqua.jpg' },
-  { id: 'Salome', nombre: 'Salomé Makeup', imagen: '/marcas/salome.jpg' }
+  { id: 'Salomé Makeup', nombre: 'Salomé Makeup', imagen: '/marcas/salome.jpg' } 
 ];
 
 export default function ColeccionesPage() {
@@ -17,7 +16,7 @@ export default function ColeccionesPage() {
       {/* HEADER DE COLECCIONES */}
       <header className="relative w-full h-[250px] flex items-center justify-center overflow-hidden mb-12">
         <Image 
-          src="/portada.jpeg" // Usa tu misma portada de fondo
+          src="/portada.jpeg" 
           alt="Colecciones Splendide"
           fill
           priority
@@ -33,12 +32,12 @@ export default function ColeccionesPage() {
       </header>
 
       <main className="w-full max-w-[1200px] mx-auto px-6 md:px-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* CUADRÍCULA CORREGIDA: 2 en móviles (grid-cols-2), 4 en PC (md:grid-cols-4) */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
           {marcas.map((marca) => (
             <Link href={`/colecciones/${marca.id}`} key={marca.id} className="group cursor-pointer block">
               <div className="relative overflow-hidden rounded-md bg-white shadow-sm transition-transform duration-500 group-hover:-translate-y-2 border border-[#D7A1A4]/20">
-                <div className="aspect-[4/5] relative">
-                  {/* Si no tienes la imagen aún, mostrará un fondo gris de respaldo temporal */}
+                <div className="aspect-[4/5] relative bg-[#EAEAEA]">
                   <Image
                     src={marca.imagen}
                     alt={`Colección ${marca.nombre}`}
@@ -46,11 +45,11 @@ export default function ColeccionesPage() {
                     className="object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                 </div>
-                <div className="p-6 bg-white flex justify-between items-center">
-                  <h2 className="text-xl font-serif text-[#1A1A1A]">
+                <div className="p-4 md:p-6 bg-white flex justify-between items-center">
+                  <h2 className="text-sm md:text-xl font-serif text-[#1A1A1A] truncate">
                     {marca.nombre}
                   </h2>
-                  <span className="text-[#D7A1A4] text-xl transition-transform group-hover:translate-x-2">→</span>
+                  <span className="text-[#D7A1A4] text-lg md:text-xl transition-transform group-hover:translate-x-2 hidden md:block">→</span>
                 </div>
               </div>
             </Link>
