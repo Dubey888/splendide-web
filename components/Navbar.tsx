@@ -139,7 +139,7 @@ export default function Navbar() {
           {/* LADO DERECHO: Lupa (solo móvil), Usuario (solo PC) y Carrito */}
           <div className="flex items-center justify-end gap-3 md:gap-4 flex-1">
             
-            {/* LUPA VERSIÓN MÓVIL (Aparece a la derecha junto al carrito) */}
+            {/* LUPA VERSIÓN MÓVIL */}
             <button 
               onClick={() => setIsSearchOpen(true)}
               className="text-[#1A1A1A] hover:text-[#D7A1A4] transition-colors md:hidden cursor-pointer p-1"
@@ -173,90 +173,80 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* MENÚ MÓVIL (DRAWER FULL SCREEN) */}
+      {/* MENÚ MÓVIL (PANEL LATERAL TIPO DRAWER) */}
       {isMenuOpen && (
-        <div className="fixed inset-0 z-[60] bg-[#FAF4F4] flex flex-col animate-in slide-in-from-left duration-300">
-          
-          {/* Top Bar del Menú Móvil (idéntico a Shopify) */}
-          <div className="flex items-center justify-between px-4 h-20 border-b border-[#D7A1A4]/30">
-            <button 
-              onClick={() => setIsMenuOpen(false)}
-              className="text-[#1A1A1A] p-2"
-            >
-              <svg className="w-8 h-8 font-light" fill="none" stroke="currentColor" strokeWidth="1" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+        <>
+          {/* Backdrop (Fondo oscuro semitransparente) */}
+          <div 
+            className="fixed inset-0 bg-[#1A1A1A]/50 backdrop-blur-sm z-[60] transition-opacity animate-in fade-in duration-300"
+            onClick={() => setIsMenuOpen(false)}
+          />
 
-            <span className="text-2xl font-serif tracking-widest uppercase text-[#1A1A1A]">
-              Splendide
-            </span>
-
-            <div className="flex items-center gap-3">
-              <button onClick={() => { setIsMenuOpen(false); setIsSearchOpen(true); }} className="text-[#1A1A1A] p-1">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                </svg>
-              </button>
-              <button onClick={() => { setIsMenuOpen(false); toggleCart(); }} className="text-[#1A1A1A] relative p-1">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z" />
-                </svg>
-                {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-[#D7A1A4] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-sans">
-                    {cartCount}
-                  </span>
-                )}
-              </button>
-            </div>
-          </div>
-
-          {/* Enlaces del Menú */}
-          <div className="flex-1 overflow-y-auto py-2">
-            <ul className="flex flex-col">
-              {menuLinks.map((link, index) => (
-                <li key={index}>
-                  <Link 
-                    href={link.href}
-                    onClick={() => setIsMenuOpen(false)}
-                    className="block px-6 py-4 text-[15px] text-[#1A1A1A] border-b border-[#D7A1A4]/10 hover:bg-[#F5EBEB] transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Footer del Menú (Usuario y Redes) */}
-          <div className="p-6 bg-[#FAF4F4] border-t border-[#D7A1A4]/30 pb-12">
-            <Link 
-              href="/login" 
-              onClick={() => setIsMenuOpen(false)}
-              className="flex items-center gap-3 text-[#1A1A1A] mb-6 text-[15px]"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-              </svg>
-              Iniciar sesión
-            </Link>
+          {/* Menú Lateral */}
+          <div className="fixed inset-y-0 left-0 w-[85%] max-w-[360px] bg-[#FAF4F4] z-[70] flex flex-col shadow-2xl animate-in slide-in-from-left duration-300">
             
-            <div className="flex items-center gap-5">
-              {/* Instagram */}
-              <a href="https://instagram.com" target="_blank" rel="noreferrer" className="text-[#1A1A1A] hover:text-[#D7A1A4] transition-colors">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+            {/* Cabecera del Menú */}
+            <div className="flex items-center justify-between px-6 h-20 border-b border-[#D7A1A4]/30">
+              <span className="text-xl font-serif tracking-widest uppercase text-[#1A1A1A]">
+                Menú
+              </span>
+              <button 
+                onClick={() => setIsMenuOpen(false)}
+                className="text-[#707070] hover:text-[#1A1A1A] p-2 transition-colors rounded-full hover:bg-white"
+              >
+                <svg className="w-7 h-7 font-light" fill="none" stroke="currentColor" strokeWidth="1.2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
-              </a>
-              {/* TikTok */}
-              <a href="https://tiktok.com" target="_blank" rel="noreferrer" className="text-[#1A1A1A] hover:text-[#D7A1A4] transition-colors">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+              </button>
+            </div>
+
+            {/* Enlaces de Navegación */}
+            <div className="flex-1 overflow-y-auto py-4">
+              <ul className="flex flex-col">
+                {menuLinks.map((link, index) => (
+                  <li key={index}>
+                    <Link 
+                      href={link.href}
+                      onClick={() => setIsMenuOpen(false)}
+                      className="block px-6 py-4 text-base font-medium text-[#1A1A1A] border-l-2 border-transparent hover:border-[#D7A1A4] hover:bg-white transition-all"
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Pie del Menú (Usuario y Redes Sociales) */}
+            <div className="px-6 py-8 bg-[#FAF4F4] border-t border-[#D7A1A4]/30">
+              <Link 
+                href="/login" 
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center justify-center gap-2 w-full py-3 mb-6 bg-white border border-[#D7A1A4] text-[#1A1A1A] font-medium rounded-sm hover:bg-[#D7A1A4] hover:text-white transition-all shadow-sm"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                 </svg>
-              </a>
+                Iniciar sesión
+              </Link>
+              
+              <div className="flex items-center justify-center gap-6">
+                {/* Instagram */}
+                <a href="https://instagram.com" target="_blank" rel="noreferrer" className="text-[#707070] hover:text-[#D7A1A4] transition-colors">
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+                  </svg>
+                </a>
+                {/* TikTok */}
+                <a href="https://tiktok.com" target="_blank" rel="noreferrer" className="text-[#707070] hover:text-[#D7A1A4] transition-colors">
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                  </svg>
+                </a>
+              </div>
             </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* DROPDOWN DE BÚSQUEDA Y BACKDROP (Se mantiene intacto) */}
