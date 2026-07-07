@@ -33,11 +33,12 @@ async function getProductosPorMarca(marca: string): Promise<Producto[]> {
   }
 }
 
-export default async function MarcaPage({ params }: { params: { marca: string } }) {
-  // 1. Extraemos el parámetro
-  const marcaRaw = params.marca;
+export default async function MarcaPage({ params }: { params: Promise<{ marca: string }> }) {
+  // 1. SOLUCIÓN NEXT.JS 15: Usamos 'await' porque los params ahora son una Promesa
+  const resolvedParams = await params;
+  const marcaRaw = resolvedParams.marca;
   
-  // 2. VALIDACIÓN DE SEGURIDAD: Evita que busque la palabra literal "undefined"
+  // 2. VALIDACIÓN DE SEGURIDAD
   if (!marcaRaw) {
     return (
       <div className="min-h-screen bg-[#FAF4F4] flex flex-col items-center justify-center text-center">
@@ -51,7 +52,7 @@ export default async function MarcaPage({ params }: { params: { marca: string } 
     );
   }
 
-  // 3. Si todo está bien, decodificamos y procedemos
+  // 3. Decodificamos la marca (ej: "Atenea") y buscamos en la BD
   const marcaBuscada = decodeURIComponent(marcaRaw);
   const productos = await getProductosPorMarca(marcaBuscada);
 
