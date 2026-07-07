@@ -1,3 +1,38 @@
+import Image from "next/image";
+import Link from "next/link";
+
+interface Producto {
+  Codigo: string;
+  Producto: string;
+  Categoria: string;
+  Precio_Venta: number;
+  Stock: number;
+  URL_Imagen: string;
+  Handle?: string;
+}
+
+const generarHandle = (nombre: string) => {
+  return nombre.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+};
+
+async function getProductosPorMarca(marca: string): Promise<Producto[]> {
+  if (!marca || marca === "undefined") return [];
+
+  const urlApi = `https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_por_marca&marca=${encodeURIComponent(marca)}`;
+  
+  try {
+    const res = await fetch(urlApi, { cache: 'no-store' });
+    const json = await res.json();
+    
+    // CORRECCIÓN: Si tu API devuelve { "status": "success", "data": [...] }
+    // o simplemente un array directo, esto lo manejará bien.
+    return json.data || json || [];
+  } catch (error) {
+    console.error("Error al conectar con la BD:", error);
+    return [];
+  }
+}
+
 export default async function MarcaPage({ params }: { params: { marca: string } }) {
   // 1. Extraemos el parámetro
   const marcaRaw = params.marca;
