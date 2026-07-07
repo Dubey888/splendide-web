@@ -16,24 +16,33 @@ const generarHandle = (nombre: string) => {
 };
 
 async function getProductosPorMarca(marca: string): Promise<Producto[]> {
-  // Protección contra envíos vacíos o "undefined"
   if (!marca || marca === "undefined") return [];
 
-  // Usamos encodeURIComponent para que soporte tildes y espacios sin romperse
   const urlApi = `https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_por_marca&marca=${encodeURIComponent(marca)}`;
+  
   try {
     const res = await fetch(urlApi, { cache: 'no-store' });
     const json = await res.json();
-    return json.data || [];
+    
+    // CORRECCIÓN: Si tu API devuelve { "status": "success", "data": [...] }
+    // o simplemente un array directo, esto lo manejará bien.
+    return json.data || json || [];
   } catch (error) {
+    console.error("Error al conectar con la BD:", error);
     return [];
   }
 }
 
 export default async function MarcaPage({ params }: { params: { marca: string } }) {
-  // Descodificamos la marca
-  const marcaBuscada = decodeURIComponent(params.marca);
+  // Aseguramos que params.marca exista (Next.js suele pasar esto como un objeto)
+  const marcaRaw = params.marca;
+  const marcaBuscada = decodeURIComponent(marcaRaw);
+  
   const productos = await getProductosPorMarca(marcaBuscada);
+
+  // DEBUG: Si esto sale vacío en tu terminal de Vercel/Local, 
+  // significa que la consulta SQL en el PHP no está devolviendo nada.
+  console.log(`Buscando marca: ${marcaBuscada}. Productos encontrados: ${productos.length}`);
 
   const productosConImagen = productos.filter(
     (item) => item.URL_Imagen && item.URL_Imagen.trim() !== ""
@@ -77,7 +86,10 @@ export default async function MarcaPage({ params }: { params: { marca: string } 
         </div>
 
         {productosAgrupados.length === 0 ? (
-          <p className="text-center text-[#707070] py-20">No hay productos disponibles de esta marca en este momento.</p>
+          <div className="text-center py-20">
+            <p className="text-[#707070] text-lg">No hay productos disponibles de {marcaBuscada} en este momento.</p>
+            <p className="text-[#707070] text-sm mt-2">Verifica que el nombre del proveedor en la base de datos coincida exactamente con la URL.</p>
+          </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 lg:gap-x-10 gap-y-14">
             {productosAgrupados.map((item: any) => {

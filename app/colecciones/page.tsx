@@ -1,12 +1,19 @@
 import Link from 'next/link';
 import Image from 'next/image';
 
-// REGLA DE ORO: El 'id' debe ser EXACTAMENTE igual a como está en la columna Proveedor de tu base de datos.
+// AQUÍ ES DONDE AGREGAS MÁS COLECCIONES.
+// Copia y pega una línea por cada marca que tengas en tu base de datos.
+// Recuerda que el 'id' debe ser EXACTAMENTE el proveedor de tu base de datos.
 const marcas = [
   { id: 'Atenea', nombre: 'Atenea', imagen: '/marcas/atenea.jpg' },
   { id: 'Bloomshell', nombre: 'Bloomshell', imagen: '/marcas/bloomshell.jpg' },
   { id: 'Bioaqua', nombre: 'Bioaqua', imagen: '/marcas/bioaqua.jpg' },
-  { id: 'Salomé Makeup', nombre: 'Salomé Makeup', imagen: '/marcas/salome.jpg' } 
+  { id: 'Salomé Makeup', nombre: 'Salomé Makeup', imagen: '/marcas/salome.jpg' },
+  // Ejemplos de las que vi en tu base de datos (descomenta y ajusta si quieres usarlas):
+  { id: 'Karite', nombre: 'Karite', imagen: '/marcas/karite.jpg' },
+  { id: 'Kiss Beauty', nombre: 'Kiss Beauty', imagen: '/marcas/kiss-beauty.jpg' },
+  { id: 'Kevin & Coco', nombre: 'Kevin & Coco', imagen: '/marcas/kevin-coco.jpg' },
+  { id: 'Sadoer', nombre: 'Sadoer', imagen: '/marcas/sadoer.jpg' }
 ];
 
 export default function ColeccionesPage() {
@@ -31,9 +38,18 @@ export default function ColeccionesPage() {
         </div>
       </header>
 
-      <main className="w-full max-w-[1200px] mx-auto px-6 md:px-12">
-        {/* CUADRÍCULA CORREGIDA: 2 en móviles (grid-cols-2), 4 en PC (md:grid-cols-4) */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+      {/* CORRECCIÓN DE ANCHO: 
+        Cambiamos max-w-[1200px] a max-w-[1600px] (o xl:max-w-[90%]) para ocupar más pantalla.
+      */}
+      <main className="w-full max-w-[1600px] mx-auto px-6 md:px-12">
+        
+        {/* CORRECCIÓN DE COLUMNAS: 
+          - Móvil: 2 columnas (grid-cols-2)
+          - Tablets/PC pequeño: 4 columnas (md:grid-cols-4)
+          - Monitores grandes: 5 columnas (xl:grid-cols-5)
+          - Monitores gigantes: 6 columnas (2xl:grid-cols-6)
+        */}
+        <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-8">
           {marcas.map((marca) => (
             <Link href={`/colecciones/${marca.id}`} key={marca.id} className="group cursor-pointer block">
               <div className="relative overflow-hidden rounded-md bg-white shadow-sm transition-transform duration-500 group-hover:-translate-y-2 border border-[#D7A1A4]/20">
@@ -46,7 +62,7 @@ export default function ColeccionesPage() {
                   />
                 </div>
                 <div className="p-4 md:p-6 bg-white flex justify-between items-center">
-                  <h2 className="text-sm md:text-xl font-serif text-[#1A1A1A] truncate">
+                  <h2 className="text-sm md:text-xl font-serif text-[#1A1A1A] truncate pr-2">
                     {marca.nombre}
                   </h2>
                   <span className="text-[#D7A1A4] text-lg md:text-xl transition-transform group-hover:translate-x-2 hidden md:block">→</span>
