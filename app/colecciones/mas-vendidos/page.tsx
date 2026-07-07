@@ -36,7 +36,7 @@ export default async function MasVendidosPage() {
     (item) => item.URL_Imagen && item.URL_Imagen.trim() !== ""
   );
 
-  // Reutilizamos tu lógica de agrupación
+  // Reutilizamos tu lógica de agrupación Y AÑADIMOS EL LÍMITE DE 20
   const productosAgrupados = Object.values(
     productosConImagen.reduce((acc: any, item) => {
       const handleFinal = (item.Handle && item.Handle.trim() !== "") ? item.Handle : generarHandle(item.Producto);
@@ -46,7 +46,7 @@ export default async function MasVendidosPage() {
       acc[handleFinal].Variantes.push(item);
       return acc;
     }, {})
-  );
+  ).slice(0, 20); // <-- ESTA ES LA MAGIA: Limita el array a un máximo de 20 elementos
 
   return (
     <div className="min-h-screen bg-[#FAF4F4] text-[#1A1A1A] font-sans pb-20">
