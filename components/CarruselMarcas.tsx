@@ -6,14 +6,13 @@ import Link from 'next/link';
 export default function CarruselMarcas({ marcas }: { marcas: any[] }) {
   return (
     <Swiper
-      // En celular muestra 2, pero en PC mostrará EXACTAMENTE 5 ajustadas
       slidesPerView={2} 
       spaceBetween={16}
       breakpoints={{
         480: { slidesPerView: 2, spaceBetween: 16 },
         768: { slidesPerView: 3, spaceBetween: 20 },
-        1024: { slidesPerView: 4, spaceBetween: 24 },
-        // Aquí arreglamos el problema para que ya no salga la "sexta" tarjeta cortada:
+        // Aquí le decimos que en pantallas grandes muestre SOLO 5, ni una más ni una menos
+        1024: { slidesPerView: 5, spaceBetween: 20 },
         1280: { slidesPerView: 5, spaceBetween: 24 },
         1536: { slidesPerView: 5, spaceBetween: 28 }, 
       }}
@@ -33,7 +32,7 @@ export default function CarruselMarcas({ marcas }: { marcas: any[] }) {
               />
             </div>
             <div className="p-4 flex justify-between items-center bg-white">
-              {/* Usamos font-light también aquí para mantener lo "delicado" */}
+              {/* Letra fina y delicada en las marcas también */}
               <span className="font-serif text-[#1A1A1A] font-light text-base md:text-lg">{marca.nombre}</span>
               <span className="text-[#1A1A1A] font-light transition-transform duration-300 group-hover:translate-x-2">&rarr;</span>
             </div>
