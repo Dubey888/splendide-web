@@ -4,25 +4,24 @@ import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-// Datos de los banners (Ajusta las rutas de imágenes según tu carpeta public)
 const BANNERS_DATA = [
   {
     id: 1,
-    title: "Atenea profesional", // CAMBIO: Maxglow -> Atenea
+    title: "Atenea profesional",
     subtitle: "Diseñados para un acabado impecable y duradero en cada aplicación.",
     buttonText: "Comprar ahora",
-    linkUrl: "/colecciones/atenea", // CAMBIO: enlace a /colecciones/atenea
-    imageUrl: "/banners/banner-atenea.jpg", // CAMBIO: imagen a banner-atenea.jpg
-    textPosition: "right" // La tarjeta de texto flotará a la derecha
+    linkUrl: "/colecciones/atenea",
+    imageUrl: "/banners/banner-atenea.jpg",
+    textPosition: "right"
   },
   {
     id: 2,
-    title: "Insumos & Nail Art",
-    subtitle: "Todo lo que necesitas para crear diseños espectaculares y profesionales.",
+    title: "Maquillaje", // CORREGIDO: Cambiado de Nail Art a Maquillaje
+    subtitle: "Todo lo que necesitas para crear looks espectaculares y profesionales.",
     buttonText: "Ver colección",
-    linkUrl: "/colecciones/nail-art",
-    imageUrl: "/banners/banner-nailart.jpg",
-    textPosition: "center" // La tarjeta de texto flotará al centro
+    linkUrl: "/colecciones/maquillaje", // CORREGIDO: Enlace a maquillaje
+    imageUrl: "/banners/banner-maquillaje.jpg", // Asegúrate de tener esta imagen o poner el nombre correcto
+    textPosition: "center"
   }
 ];
 
@@ -38,7 +37,6 @@ export default function HeroSlider() {
     setCurrentIndex((prevIndex) => (prevIndex - 1 + BANNERS_DATA.length) % BANNERS_DATA.length);
   };
 
-  // Efecto para el cambio automático de imagen (Autoplay cada 5 segundos)
   useEffect(() => {
     if (!isPlaying) return;
     const interval = setInterval(nextSlide, 5000);
@@ -48,13 +46,11 @@ export default function HeroSlider() {
   return (
     <section className="relative w-full aspect-[16/10] md:aspect-[21/9] overflow-hidden bg-[#FCF6F6]">
       
-      {/* Contenedor de las Slides */}
       <div className="relative w-full h-full">
         {BANNERS_DATA.map((slide, index) => {
           const isActive = index === currentIndex;
           
-          // Determinamos la alineación de la tarjeta flotante blanca
-          let positionClass = "left-1/2 -translate-x-1/2"; // default center
+          let positionClass = "left-1/2 -translate-x-1/2"; 
           if (slide.textPosition === "right") positionClass = "md:left-auto md:right-12 md:translate-x-0 left-1/2 -translate-x-1/2";
           if (slide.textPosition === "left") positionClass = "md:left-12 md:translate-x-0 left-1/2 -translate-x-1/2";
 
@@ -65,7 +61,6 @@ export default function HeroSlider() {
                 isActive ? "opacity-100 z-10" : "opacity-0 z-0"
               }`}
             >
-              {/* Imagen de fondo */}
               <Image
                 src={slide.imageUrl}
                 alt={slide.title}
@@ -74,10 +69,8 @@ export default function HeroSlider() {
                 priority={index === 0}
               />
 
-              {/* Capa de contraste sutil para móviles */}
               <div className="absolute inset-0 bg-black/5 md:bg-transparent" />
 
-              {/* Tarjeta de Contenido Flotante Elegante (Estilo Shopify Premium) */}
               <div className={`absolute bottom-12 md:bottom-auto md:top-1/2 md:-translate-y-1/2 w-[90%] md:w-[420px] bg-white rounded-2xl p-6 md:p-8 shadow-xl border border-gray-100 transition-all duration-700 ${positionClass} ${
                 isActive ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
               }`}>
@@ -99,15 +92,11 @@ export default function HeroSlider() {
         })}
       </div>
 
-      {/* Panel de Controles Inferior Centralizado (Flechas, Dots, Play/Pause) */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-4 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-200/50 shadow-sm">
-        
-        {/* Flecha Izquierda */}
         <button onClick={prevSlide} className="text-gray-700 hover:text-[#E5B5C4] text-xs font-bold transition-colors px-1">
           &lt;
         </button>
 
-        {/* Indicadores en Puntos (Dots) */}
         <div className="flex items-center gap-2">
           {BANNERS_DATA.map((_, index) => (
             <button
@@ -120,15 +109,12 @@ export default function HeroSlider() {
           ))}
         </div>
 
-        {/* Flecha Derecha */}
         <button onClick={nextSlide} className="text-gray-700 hover:text-[#E5B5C4] text-xs font-bold transition-colors px-1">
           &gt;
         </button>
 
-        {/* Separador Visual */}
         <span className="w-[1px] h-3 bg-gray-300 mx-0.5" />
 
-        {/* Botón de Play / Pausa Simulado con Texto Sutil */}
         <button 
           onClick={() => setIsPlaying(!isPlaying)} 
           className="text-[10px] uppercase font-bold tracking-widest text-gray-500 hover:text-[#1A1A1A] transition-colors"
@@ -136,7 +122,6 @@ export default function HeroSlider() {
           {isPlaying ? "‖ Pausa" : "▶️ Play"}
         </button>
       </div>
-
     </section>
   );
 }

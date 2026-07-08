@@ -35,12 +35,11 @@ export default async function Home() {
   const productos = await getProductos();
   const productosConImagen = productos.filter((item) => item.URL_Imagen && item.URL_Imagen.trim() !== "");
 
-  // Lógica de Marcas (Cambiado Maxglow por Atenea)
   const colecciones = [
     { nombre: "Salomé Makeup", imagen: "/marcas/salome.jpg", url: "/colecciones/salome" },
     { nombre: "Dolce Bella", imagen: "/marcas/dolcebella.jpg", url: "/colecciones/dolce-bella" },
     { nombre: "Ushas", imagen: "/marcas/ushas.jpg", url: "/colecciones/ushas" },
-    { nombre: "Atenea Cosmetics", imagen: "/marcas/atenea.jpg", url: "/colecciones/atenea" }, // CAMBIO A ATENEA
+    { nombre: "Atenea Cosmetics", imagen: "/marcas/atenea.jpg", url: "/colecciones/atenea" },
     { nombre: "Kevin&Coco", imagen: "/marcas/kevincoco.jpg", url: "/colecciones/kevin-coco" },
     { nombre: "Kiss Beauty", imagen: "/marcas/kissbeauty.jpg", url: "/colecciones/kiss-beauty" }
   ];
@@ -56,7 +55,6 @@ export default async function Home() {
   
   const productosEsenciales = productosAgrupados.slice(0, 4);
 
-  // Lógica para obtener productos de ATENEA
   const productosAtenea = productosAgrupados.filter((item: any) => {
     return item.Proveedor?.toLowerCase().includes('atenea') || item.Producto?.toLowerCase().includes('atenea'); 
   }).slice(0, 4); 
@@ -69,28 +67,24 @@ export default async function Home() {
         Welcome to our store
       </div>
 
-      {/* 1. SECCIÓN: Carrusel Hero Automático */}
-      <HeroSlider />
-
       <main className="w-full">
         
-        {/* NUEVA IMAGEN: Portada.jpeg con el texto como la captura del celular */}
+        {/* 1. SECCIÓN BIENVENIDA: Imagen Portada con texto "Girl..." */}
         <div className="relative w-full aspect-[4/5] md:aspect-[21/9] mb-16 overflow-hidden">
           <Image
             src="/portada.jpeg" 
-            alt="Delicada, es tu momento de brillar"
+            alt="Girl, es tu momento de brillar"
             fill
             className="object-cover"
             sizes="100vw"
             priority
           />
-          {/* Capa superpuesta con los textos */}
           <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-6 bg-black/10">
               <span className="text-[10px] md:text-sm tracking-[0.3em] uppercase text-white/90 mb-2 md:mb-4 font-medium">
                 Nueva Colección
               </span>
               <h2 className="text-4xl md:text-6xl font-serif text-white font-normal tracking-tight max-w-3xl leading-snug drop-shadow-md">
-                Delicada, es tu momento <br /> de brillar
+                Girl, es tu momento <br /> de brillar
               </h2>
           </div>
         </div>
@@ -201,7 +195,12 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* 6. SECCIÓN: Atenea Cosmetics (Moviendo esta sección justo DESPUÉS de Sweet Body) */}
+        {/* 6. SECCIÓN: Carrusel Hero Automático (Movido aquí) */}
+        <div className="w-full mb-16">
+          <HeroSlider />
+        </div>
+
+        {/* 7. SECCIÓN: Atenea Cosmetics */}
         <section className="max-w-[1400px] mx-auto px-6 mb-24">
           <div className="mb-10 flex items-center justify-between">
             <h3 className="text-3xl font-serif text-[#1A1A1A]">Atenea Cosmetics</h3>
@@ -251,7 +250,7 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* 7. SECCIÓN: Complementos */}
+        {/* 8. SECCIÓN: Complementos */}
         <section className="max-w-[1400px] mx-auto px-6 mb-24">
           <div className="mb-8">
             <h3 className="text-3xl font-serif text-[#1A1A1A]">Complementos</h3>
