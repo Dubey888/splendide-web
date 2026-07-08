@@ -8,11 +8,11 @@ import Link from 'next/link';
 const BANNERS_DATA = [
   {
     id: 1,
-    title: "Maxglow profesional",
+    title: "Atenea profesional", // CAMBIO: Maxglow -> Atenea
     subtitle: "Diseñados para un acabado impecable y duradero en cada aplicación.",
     buttonText: "Comprar ahora",
-    linkUrl: "/colecciones/maxglow",
-    imageUrl: "/banners/banner-maxglow.jpg", 
+    linkUrl: "/colecciones/atenea", // CAMBIO: enlace a /colecciones/atenea
+    imageUrl: "/banners/banner-atenea.jpg", // CAMBIO: imagen a banner-atenea.jpg
     textPosition: "right" // La tarjeta de texto flotará a la derecha
   },
   {
@@ -133,7 +133,7 @@ export default function HeroSlider() {
           onClick={() => setIsPlaying(!isPlaying)} 
           className="text-[10px] uppercase font-bold tracking-widest text-gray-500 hover:text-[#1A1A1A] transition-colors"
         >
-          {isPlaying ? "‖ Pausa" : "▶ Play"}
+          {isPlaying ? "‖ Pausa" : "▶️ Play"}
         </button>
       </div>
 
