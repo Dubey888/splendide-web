@@ -131,8 +131,8 @@ export default function Navbar() {
             </button>
           </div>
 
-          {/* CENTRO: Logo */}
-          <Link href="/" className="text-2xl md:text-3xl font-serif tracking-widest uppercase text-center flex-[2] md:flex-1 text-[#1A1A1A]">
+          {/* CENTRO: Logo (Cambiado a fuente Serif, cursiva y color específico) */}
+          <Link href="/" className="text-3xl md:text-4xl font-serif italic tracking-wide text-center flex-[2] md:flex-1 text-[#955F71]">
             Splendide
           </Link>
 
@@ -249,7 +249,7 @@ export default function Navbar() {
         </>
       )}
 
-      {/* DROPDOWN DE BÚSQUEDA Y BACKDROP (Se mantiene intacto) */}
+      {/* DROPDOWN DE BÚSQUEDA Y BACKDROP */}
       {isSearchOpen && (
         <>
           <div 
