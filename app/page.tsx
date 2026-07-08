@@ -63,7 +63,6 @@ export default async function Home() {
     }, {})
   );
   
-  // Aumentamos a 5 productos para que llene mejor las pantallas anchas
   const productosEsenciales = productosAgrupados.slice(0, 5); 
 
   return (
@@ -72,8 +71,8 @@ export default async function Home() {
       {/* 1. HERO BANNER INTERACTIVO */}
       <CarruselBanner />
 
-      {/* Ajuste de contenedor: sin max-w, usando padding dinámico */}
-      <main className="w-full mx-auto px-4 sm:px-8 md:px-16 lg:px-24 xl:px-32 2xl:px-40 py-8">
+      {/* AQUÍ ESTÁ EL CAMBIO: Quitamos los márgenes gigantes. Ahora se expande de lado a lado */}
+      <main className="w-full mx-auto px-4 md:px-8 py-8">
         
         {/* 2. FRASE INSPIRACIONAL */}
         <div className="text-center mb-10 md:mb-14">
@@ -115,7 +114,6 @@ export default async function Home() {
           <div className="flex justify-between items-end mb-6">
             <h3 className="text-xl md:text-2xl font-serif text-[#1A1A1A]">Esenciales</h3>
           </div>
-          {/* Ajuste de cuadrícula: hasta 5 y 6 columnas en pantallas muy grandes */}
           <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-6 lg:gap-8">
             {productosEsenciales.map((item: any) => {
               const imagenPrincipal = item.URL_Imagen ? item.URL_Imagen.split(",")[0] : null;
@@ -178,8 +176,7 @@ export default async function Home() {
       
       {/* FOOTER */}
       <footer className="bg-white border-t border-gray-100 py-16 mt-10">
-        {/* Ajuste de contenedor del footer */}
-        <div className="w-full mx-auto px-4 sm:px-8 md:px-16 lg:px-24 xl:px-32 2xl:px-40 text-center text-sm text-[#707070]">
+        <div className="w-full mx-auto px-4 md:px-8 text-center text-sm text-[#707070]">
           <h3 className="text-2xl font-serif text-[#D7A1A4] mb-4">Splendide</h3>
           <p className="mb-6 max-w-md mx-auto">Desde la preparación hasta el diseño final. Encuentra herramientas, esmaltes y accesorios con calidad profesional.</p>
           <p>©️ 2026 Splendide Co.</p>
