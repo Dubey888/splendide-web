@@ -35,23 +35,17 @@ export default async function Home() {
   const productos = await getProductos();
   const productosConImagen = productos.filter((item) => item.URL_Imagen && item.URL_Imagen.trim() !== "");
 
-  // Lógica de Marcas
-  const marcasMap = new Map();
-  productosConImagen.forEach((p) => {
-    const nombreMarca = p.Proveedor || p.Categoria; 
-    if (nombreMarca && nombreMarca !== "undefined" && nombreMarca.trim() !== "") {
-      if (!marcasMap.has(nombreMarca)) {
-        marcasMap.set(nombreMarca, {
-          nombre: nombreMarca,
-          imagen: p.URL_Imagen.split(",")[0],
-          url: `/colecciones/${encodeURIComponent(nombreMarca)}`
-        });
-      }
-    }
-  });
-  const colecciones = Array.from(marcasMap.values());
+  // Lógica de Marcas (Manual y Premium apuntando a tu carpeta public/marcas)
+  const colecciones = [
+    { nombre: "Salomé Makeup", imagen: "/marcas/salome.jpg", url: "/colecciones/salome" },
+    { nombre: "Dolce Bella", imagen: "/marcas/dolcebella.jpg", url: "/colecciones/dolce-bella" },
+    { nombre: "Ushas", imagen: "/marcas/ushas.jpg", url: "/colecciones/ushas" },
+    { nombre: "Maxglow Cosmetics", imagen: "/marcas/maxglow.jpg", url: "/colecciones/maxglow" },
+    { nombre: "Kevin&Coco", imagen: "/marcas/kevincoco.jpg", url: "/colecciones/kevin-coco" },
+    { nombre: "Kiss Beauty", imagen: "/marcas/kissbeauty.jpg", url: "/colecciones/kiss-beauty" }
+  ];
 
-  // Lógica de Productos (Agrupando)
+  // Lógica de Productos (Agrupando para los destacados)
   const productosAgrupados = Object.values(
     productosConImagen.reduce((acc: any, item) => {
       const handleFinal = (item.Handle && item.Handle.trim() !== "") ? item.Handle : generarHandle(item.Producto);
@@ -61,7 +55,7 @@ export default async function Home() {
     }, {})
   );
   
-  // Tomamos los primeros 4 u 8 productos para los Destacados
+  // Tomamos los primeros 4 productos para los Destacados
   const productosEsenciales = productosAgrupados.slice(0, 4);
 
   return (
