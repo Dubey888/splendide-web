@@ -1,45 +1,48 @@
 "use client";
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 
 const destacados = [
-  { id: 1, title: "Maxglow Profesional", desc: "Diseñados para ofrecer un manejo sencillo, máxima durabilidad y un acabado espectacular.", img: "/pro1.jpg" },
-  { id: 2, title: "Serum Vitalidad", desc: "Nutrición profunda para una piel radiante y llena de vida.", img: "/pro2.jpg" },
+  { id: 1, title: "Maxglow Profesional", desc: "Diseñados para un acabado impecable.", img: "/prod1.jpg" },
+  { id: 2, title: "Serum Radiance", desc: "La esencia del brillo natural.", img: "/prod2.jpg" },
+  { id: 3, title: "Kit Esencial", desc: "Todo lo que necesitas en un solo set.", img: "/prod3.jpg" },
 ];
 
 export default function ShowcaseInteractivo() {
-  const [index, setIndex] = useState(0);
+  const [activo, setActivo] = useState(destacados[0]);
 
   return (
-    <section className="py-16 bg-[#FDFBFB]">
-      <div className="max-w-4xl mx-auto px-6 text-center">
+    <section className="max-w-[1400px] mx-auto py-20 px-6 grid md:grid-cols-2 gap-12 items-center">
+      {/* Lado de la Imagen con Transición */}
+      <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden">
         <AnimatePresence mode="wait">
-          <motion.div 
-            key={index}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="flex flex-col items-center"
+          <motion.div
+            key={activo.id}
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="absolute inset-0"
           >
-            <div className="w-full aspect-[16/9] bg-gray-200 mb-8 rounded-2xl overflow-hidden shadow-xl">
-              {/* Aquí iría la imagen */}
-              <div className="w-full h-full bg-gradient-to-br from-pink-100 to-white flex items-center justify-center text-pink-300">Imagen {destacados[index].title}</div>
-            </div>
-            <h2 className="font-serif text-3xl md:text-4xl text-[#1A1A1A] mb-4 italic">{destacados[index].title}</h2>
-            <p className="text-[#707070] max-w-lg mb-8 leading-relaxed">{destacados[index].desc}</p>
+            <Image src={activo.img} alt={activo.title} fill className="object-cover" />
           </motion.div>
         </AnimatePresence>
+      </div>
 
-        {/* Controles de paginación */}
-        <div className="flex justify-center gap-4">
-          {destacados.map((_, i) => (
-            <button 
-              key={i}
-              onClick={() => setIndex(i)}
-              className={`w-3 h-3 rounded-full transition-all ${index === i ? 'bg-[#DFB2C0] w-8' : 'bg-gray-300'}`}
-            />
-          ))}
-        </div>
+      {/* Lado de los Botones Interactivos */}
+      <div className="space-y-8">
+        <h2 className="font-serif text-5xl italic">Nuestros favoritos</h2>
+        {destacados.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => setActivo(item)}
+            className={`w-full text-left p-6 rounded-2xl transition-all border ${activo.id === item.id ? 'bg-white border-[#DFB2C0] shadow-md' : 'border-transparent hover:bg-white/50'}`}
+          >
+            <h3 className="text-2xl font-serif">{item.title}</h3>
+            <p className="font-sans text-gray-500">{item.desc}</p>
+          </button>
+        ))}
       </div>
     </section>
   );
