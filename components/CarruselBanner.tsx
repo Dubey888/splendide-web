@@ -14,28 +14,28 @@ export default function CarruselBanner() {
       pagination={{ clickable: true }}
       autoplay={{ delay: 4000, disableOnInteraction: false }}
       loop={true}
-      // AQUÍ ESTÁ EL CAMBIO: Mayor altura en pantallas grandes (lg y xl)
-      className="w-full h-[500px] md:h-[600px] lg:h-[750px] xl:h-[800px] bg-white pb-10 banner-splendide"
+      // Ajustamos la altura usando porcentajes de la pantalla (vh) para que escale bien
+      // y agregamos el fondo para que los lados se vean bien integrados
+      className="w-full h-[60vh] md:h-[70vh] lg:h-[85vh] bg-[#FAF4F4] pb-10 banner-splendide"
     >
       {/* Slide 1 */}
-      <SwiperSlide className="relative w-full h-full">
+      <SwiperSlide className="relative w-full h-full flex justify-center items-center">
         <Image 
           src="/portada.jpeg" 
           alt="Banner 1" 
           fill 
           priority 
-          // AQUÍ ESTÁ EL CAMBIO: Enfoca el recorte al 20% desde arriba (mantiene el rostro)
-          className="object-cover object-[center_20%]" 
+          // Clave: En móvil usamos 'cover', en PC usamos 'contain' para que se vea la foto entera
+          className="object-cover md:object-contain object-center" 
         />
       </SwiperSlide>
-      
-      {/* Slide 2 (Repetido como ejemplo, asegúrate de aplicar el mismo object-position a tus otras fotos) */}
-      <SwiperSlide className="relative w-full h-full">
+      {/* Slide 2 */}
+      <SwiperSlide className="relative w-full h-full flex justify-center items-center">
         <Image 
           src="/portada.jpeg" 
           alt="Banner 2" 
           fill 
-          className="object-cover object-[center_20%]" 
+          className="object-cover md:object-contain object-center" 
         />
       </SwiperSlide>
     </Swiper>

@@ -63,7 +63,8 @@ export default async function Home() {
     }, {})
   );
   
-  const productosEsenciales = productosAgrupados.slice(0, 5); 
+  // Seleccionamos 4 productos para la sección de "Esenciales"
+  const productosEsenciales = productosAgrupados.slice(0, 4); 
 
   return (
     <div className="min-h-screen bg-[#FAF4F4] text-[#1A1A1A] font-sans">
@@ -71,12 +72,12 @@ export default async function Home() {
       {/* 1. HERO BANNER INTERACTIVO */}
       <CarruselBanner />
 
-      {/* AQUÍ ESTÁ EL CAMBIO: Quitamos los márgenes gigantes. Ahora se expande de lado a lado */}
-      <main className="w-full mx-auto px-4 md:px-8 py-8">
+      {/* Se aumentó el max-w a 1800px para aprovechar las pantallas amplias y reducir los bordes vacíos */}
+      <main className="w-full max-w-[1800px] mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
         
         {/* 2. FRASE INSPIRACIONAL */}
         <div className="text-center mb-10 md:mb-14">
-            <h2 className="text-2xl md:text-4xl font-serif text-[#1A1A1A] italic font-light tracking-wide">
+            <h2 className="text-2xl md:text-4xl lg:text-5xl font-serif text-[#1A1A1A] italic font-light tracking-wide">
               "Tu espacio favorito para brillar"
             </h2>
         </div>
@@ -92,19 +93,19 @@ export default async function Home() {
         </section>
 
         {/* 4. BLOQUE CATEGORÍAS 1 */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
-          <Link href="/colecciones/skincare" className="group relative block aspect-[4/3] md:aspect-[16/9] overflow-hidden rounded-md">
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 mb-16">
+          <Link href="/colecciones/skincare" className="group relative block aspect-[4/3] md:aspect-video lg:aspect-[21/9] overflow-hidden rounded-xl shadow-sm">
             <Image src="/categorias/skincare.jpg" alt="Skincare" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
-            <div className="absolute inset-0 bg-black/10"></div>
-            <h3 className="absolute bottom-6 left-6 text-white font-serif text-2xl flex items-center gap-2">
-              Skincare <span className="text-sm">&rarr;</span>
+            <div className="absolute inset-0 bg-black/10 transition-colors group-hover:bg-black/20"></div>
+            <h3 className="absolute bottom-6 left-6 text-white font-serif text-2xl md:text-3xl flex items-center gap-2">
+              Skincare <span className="text-sm md:text-base transition-transform group-hover:translate-x-2">&rarr;</span>
             </h3>
           </Link>
-          <Link href="/colecciones/esenciales" className="group relative block aspect-[4/3] md:aspect-[16/9] overflow-hidden rounded-md">
+          <Link href="/colecciones/esenciales" className="group relative block aspect-[4/3] md:aspect-video lg:aspect-[21/9] overflow-hidden rounded-xl shadow-sm">
             <Image src="/categorias/esenciales.jpg" alt="Esenciales" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
-            <div className="absolute inset-0 bg-black/10"></div>
-            <h3 className="absolute bottom-6 left-6 text-white font-serif text-2xl flex items-center gap-2">
-              Esenciales <span className="text-sm">&rarr;</span>
+            <div className="absolute inset-0 bg-black/10 transition-colors group-hover:bg-black/20"></div>
+            <h3 className="absolute bottom-6 left-6 text-white font-serif text-2xl md:text-3xl flex items-center gap-2">
+              Esenciales <span className="text-sm md:text-base transition-transform group-hover:translate-x-2">&rarr;</span>
             </h3>
           </Link>
         </section>
@@ -114,31 +115,31 @@ export default async function Home() {
           <div className="flex justify-between items-end mb-6">
             <h3 className="text-xl md:text-2xl font-serif text-[#1A1A1A]">Esenciales</h3>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-6 lg:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
             {productosEsenciales.map((item: any) => {
               const imagenPrincipal = item.URL_Imagen ? item.URL_Imagen.split(",")[0] : null;
               const cantidadVariantes = item.Variantes.length;
 
               return (
-                <div key={item.HandleFinal} className="group flex flex-col bg-white rounded-xl p-3 shadow-sm border border-gray-100 h-full justify-between">
+                <div key={item.HandleFinal} className="group flex flex-col bg-white rounded-xl p-4 shadow-sm border border-gray-100 h-full justify-between hover:shadow-md transition-shadow">
                   <Link href={`/producto/${item.HandleFinal}`} className="cursor-pointer block">
-                    <div className="aspect-square bg-gray-50 rounded-lg overflow-hidden mb-3 relative">
+                    <div className="aspect-square bg-gray-50 rounded-lg overflow-hidden mb-4 relative">
                       {imagenPrincipal && (
                         <img src={imagenPrincipal} alt={item.Producto} className="object-contain w-full h-full p-2 group-hover:scale-105 transition-transform duration-500" />
                       )}
                     </div>
-                    <h4 className="font-medium text-[#1A1A1A] text-sm line-clamp-2 h-10">{item.Producto}</h4>
-                    <p className="text-[#1A1A1A] font-semibold mt-1 mb-3">
+                    <h4 className="font-medium text-[#1A1A1A] text-sm md:text-base line-clamp-2 h-12">{item.Producto}</h4>
+                    <p className="text-[#1A1A1A] font-semibold mt-2 mb-4 text-lg">
                       ${Number(item.Precio_Venta).toLocaleString('es-CO')}
                     </p>
                   </Link>
-                  <div className="w-full">
+                  <div className="w-full mt-auto">
                     {cantidadVariantes > 1 ? (
-                      <Link href={`/producto/${item.HandleFinal}`} className="w-full border border-gray-300 text-gray-700 hover:border-[#D7A1A4] hover:text-[#D7A1A4] text-xs h-10 flex items-center justify-center rounded-full transition-all">
+                      <Link href={`/producto/${item.HandleFinal}`} className="w-full border border-gray-300 text-gray-700 hover:border-[#D7A1A4] hover:text-[#D7A1A4] text-sm h-11 flex items-center justify-center rounded-full transition-all font-medium">
                         Seleccionar opciones
                       </Link>
                     ) : (
-                      <div className="w-full [&>button]:w-full [&>button]:h-10 [&>button]:text-xs [&>button]:rounded-full [&>button]:border [&>button]:border-gray-300 [&>button]:bg-transparent [&>button]:text-gray-700 hover:[&>button]:border-[#D7A1A4] hover:[&>button]:text-[#D7A1A4] [&>button]:transition-all">
+                      <div className="w-full [&>button]:w-full [&>button]:h-11 [&>button]:text-sm [&>button]:rounded-full [&>button]:border [&>button]:border-gray-300 [&>button]:bg-transparent [&>button]:text-gray-700 hover:[&>button]:border-[#D7A1A4] hover:[&>button]:text-[#D7A1A4] [&>button]:transition-all [&>button]:font-medium">
                         <BotonAnadir id={item.Codigo} nombre={item.Producto} precio={item.Precio_Venta} imagen={imagenPrincipal} />
                       </div>
                     )}
@@ -147,27 +148,27 @@ export default async function Home() {
               );
             })}
           </div>
-          <div className="text-center mt-8">
-            <Link href="/all" className="bg-[#D7A1A4] text-white px-8 py-3 rounded-full text-sm hover:bg-[#c28d90] transition-colors">
+          <div className="text-center mt-10">
+            <Link href="/all" className="bg-[#D7A1A4] text-white px-8 py-3 rounded-full text-sm hover:bg-[#c28d90] transition-colors shadow-sm">
               Ver todo
             </Link>
           </div>
         </section>
 
         {/* 6. BLOQUE CATEGORÍAS 2 */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
-          <Link href="/colecciones/perfumes" className="group relative block aspect-[4/3] md:aspect-[16/9] overflow-hidden rounded-md">
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 mb-16">
+          <Link href="/colecciones/perfumes" className="group relative block aspect-[4/3] md:aspect-video lg:aspect-[21/9] overflow-hidden rounded-xl shadow-sm">
             <Image src="/categorias/perfumes.jpg" alt="Perfumes & Splash" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
-            <div className="absolute inset-0 bg-black/10"></div>
-            <h3 className="absolute bottom-6 left-6 text-white font-serif text-2xl flex items-center gap-2">
-              Fragancias <span className="text-sm">&rarr;</span>
+            <div className="absolute inset-0 bg-black/10 transition-colors group-hover:bg-black/20"></div>
+            <h3 className="absolute bottom-6 left-6 text-white font-serif text-2xl md:text-3xl flex items-center gap-2">
+              Fragancias <span className="text-sm md:text-base transition-transform group-hover:translate-x-2">&rarr;</span>
             </h3>
           </Link>
-          <Link href="/colecciones/corporal" className="group relative block aspect-[4/3] md:aspect-[16/9] overflow-hidden rounded-md">
+          <Link href="/colecciones/corporal" className="group relative block aspect-[4/3] md:aspect-video lg:aspect-[21/9] overflow-hidden rounded-xl shadow-sm">
             <Image src="/categorias/corporal.jpg" alt="Cuidado Corporal" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
-            <div className="absolute inset-0 bg-black/10"></div>
-            <h3 className="absolute bottom-6 left-6 text-white font-serif text-2xl flex items-center gap-2">
-              Corporal <span className="text-sm">&rarr;</span>
+            <div className="absolute inset-0 bg-black/10 transition-colors group-hover:bg-black/20"></div>
+            <h3 className="absolute bottom-6 left-6 text-white font-serif text-2xl md:text-3xl flex items-center gap-2">
+              Corporal <span className="text-sm md:text-base transition-transform group-hover:translate-x-2">&rarr;</span>
             </h3>
           </Link>
         </section>
@@ -176,7 +177,7 @@ export default async function Home() {
       
       {/* FOOTER */}
       <footer className="bg-white border-t border-gray-100 py-16 mt-10">
-        <div className="w-full mx-auto px-4 md:px-8 text-center text-sm text-[#707070]">
+        <div className="max-w-[1800px] mx-auto px-6 text-center text-sm text-[#707070]">
           <h3 className="text-2xl font-serif text-[#D7A1A4] mb-4">Splendide</h3>
           <p className="mb-6 max-w-md mx-auto">Desde la preparación hasta el diseño final. Encuentra herramientas, esmaltes y accesorios con calidad profesional.</p>
           <p>©️ 2026 Splendide Co.</p>
