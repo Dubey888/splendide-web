@@ -3,7 +3,6 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';
 import Image from 'next/image';
 
-// Importar estilos de Swiper
 import 'swiper/css';
 import 'swiper/css/pagination';
 
@@ -12,31 +11,33 @@ export default function CarruselBanner() {
     <Swiper
       modules={[Pagination, Autoplay]}
       pagination={{ clickable: true }}
-      autoplay={{ delay: 4000, disableOnInteraction: false }}
+      autoplay={{ delay: 5000, disableOnInteraction: false }}
       loop={true}
-      // Ajustamos la altura usando porcentajes de la pantalla (vh) para que escale bien
-      // y agregamos el fondo para que los lados se vean bien integrados
-      className="w-full h-[60vh] md:h-[70vh] lg:h-[85vh] bg-[#FAF4F4] pb-10 banner-splendide"
+      // Altura responsiva: llena un buen porcentaje de la pantalla
+      className="w-full h-[60vh] md:h-[70vh] lg:h-[80vh] bg-black banner-splendide"
     >
-      {/* Slide 1 */}
-      <SwiperSlide className="relative w-full h-full flex justify-center items-center">
+      <SwiperSlide className="relative w-full h-full">
+        {/* LA CLAVE: object-[center_20%] asegura que al estirar la imagen en PC, NO le corte la cabeza a la modelo */}
         <Image 
           src="/portada.jpeg" 
-          alt="Banner 1" 
+          alt="Banner Principal" 
           fill 
           priority 
-          // Clave: En móvil usamos 'cover', en PC usamos 'contain' para que se vea la foto entera
-          className="object-cover md:object-contain object-center" 
+          className="object-cover object-[center_20%] md:object-[center_15%]" 
         />
-      </SwiperSlide>
-      {/* Slide 2 */}
-      <SwiperSlide className="relative w-full h-full flex justify-center items-center">
-        <Image 
-          src="/portada.jpeg" 
-          alt="Banner 2" 
-          fill 
-          className="object-cover md:object-contain object-center" 
-        />
+        
+        {/* Capa oscura suave para que las letras blancas resalten */}
+        <div className="absolute inset-0 bg-black/20" /> 
+        
+        {/* Textos flotantes "NUEVA COLECCIÓN" y "Girl, es tu momento de brillar" */}
+        <div className="absolute inset-0 flex flex-col justify-center items-center text-center z-10 px-4">
+          <p className="text-white text-xs md:text-sm lg:text-base tracking-[0.25em] uppercase mb-4 drop-shadow-md">
+            Nueva Colección
+          </p>
+          <h2 className="text-4xl md:text-6xl lg:text-7xl font-serif text-white drop-shadow-lg leading-tight">
+            Girl, es tu momento de<br />brillar
+          </h2>
+        </div>
       </SwiperSlide>
     </Swiper>
   );

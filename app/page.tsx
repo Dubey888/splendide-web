@@ -63,122 +63,156 @@ export default async function Home() {
     }, {})
   );
   
-  // Seleccionamos 4 productos para la sección de "Esenciales"
   const productosEsenciales = productosAgrupados.slice(0, 4); 
 
   return (
-    <div className="min-h-screen bg-[#FAF4F4] text-[#1A1A1A] font-sans">
+    <div className="min-h-screen bg-[#FCF6F6] text-[#1A1A1A] font-sans">
       
-      {/* 1. HERO BANNER INTERACTIVO */}
+      {/* BARRA DE ANUNCIO SUPERIOR (Opcional, estilo Shopify) */}
+      <div className="w-full bg-[#E5B5C4] text-white text-center py-2 text-xs md:text-sm tracking-widest font-light">
+        Welcome to our store
+      </div>
+
+      {/* 1. HERO BANNER INTERACTIVO CON TEXTO FLOTANTE */}
       <CarruselBanner />
 
-      {/* Se aumentó el max-w a 1800px para aprovechar las pantallas amplias y reducir los bordes vacíos */}
-      <main className="w-full max-w-[1800px] mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
+      <main className="w-full">
         
         {/* 2. FRASE INSPIRACIONAL */}
-        <div className="text-center mb-10 md:mb-14">
-            <h2 className="text-2xl md:text-4xl lg:text-5xl font-serif text-[#1A1A1A] italic font-light tracking-wide">
+        <div className="text-center mt-12 mb-10 md:mt-16 md:mb-14 px-4">
+            <h2 className="text-2xl md:text-4xl font-serif text-[#1A1A1A] italic font-light tracking-wide">
               "Tu espacio favorito para brillar"
             </h2>
         </div>
 
-        {/* 3. CARRUSEL DE MARCAS */}
-        <section className="mb-16">
-          <CarruselMarcas marcas={colecciones} />
-          <div className="text-center mt-8">
-            <Link href="/colecciones" className="bg-[#D7A1A4] text-white px-8 py-3 rounded-full text-sm hover:bg-[#c28d90] transition-colors">
-              Ver todo
-            </Link>
+        {/* 3. CARRUSEL DE MARCAS (CON FONDO ROSADO DE LADO A LADO) */}
+        <section className="bg-[#DFB2C0] w-full py-12 md:py-16 mb-16">
+          <div className="max-w-[1800px] mx-auto px-4 md:px-8 lg:px-12">
+            <CarruselMarcas marcas={colecciones} />
+            <div className="text-center mt-10">
+              <Link href="/colecciones" className="inline-block bg-white text-[#DFB2C0] font-medium px-8 py-3 rounded-full text-sm hover:bg-gray-50 transition-colors shadow-sm">
+                Ver todo
+              </Link>
+            </div>
           </div>
         </section>
 
-        {/* 4. BLOQUE CATEGORÍAS 1 */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 mb-16">
-          <Link href="/colecciones/skincare" className="group relative block aspect-[4/3] md:aspect-video lg:aspect-[21/9] overflow-hidden rounded-xl shadow-sm">
-            <Image src="/categorias/skincare.jpg" alt="Skincare" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
-            <div className="absolute inset-0 bg-black/10 transition-colors group-hover:bg-black/20"></div>
-            <h3 className="absolute bottom-6 left-6 text-white font-serif text-2xl md:text-3xl flex items-center gap-2">
-              Skincare <span className="text-sm md:text-base transition-transform group-hover:translate-x-2">&rarr;</span>
-            </h3>
-          </Link>
-          <Link href="/colecciones/esenciales" className="group relative block aspect-[4/3] md:aspect-video lg:aspect-[21/9] overflow-hidden rounded-xl shadow-sm">
-            <Image src="/categorias/esenciales.jpg" alt="Esenciales" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
-            <div className="absolute inset-0 bg-black/10 transition-colors group-hover:bg-black/20"></div>
-            <h3 className="absolute bottom-6 left-6 text-white font-serif text-2xl md:text-3xl flex items-center gap-2">
-              Esenciales <span className="text-sm md:text-base transition-transform group-hover:translate-x-2">&rarr;</span>
-            </h3>
-          </Link>
-        </section>
+        {/* CONTENEDOR CENTRAL PARA CATEGORÍAS Y PRODUCTOS */}
+        <div className="max-w-[1800px] mx-auto px-4 md:px-8 lg:px-12">
 
-        {/* 5. PRODUCTOS ESENCIALES */}
-        <section className="mb-16">
-          <div className="flex justify-between items-end mb-6">
-            <h3 className="text-xl md:text-2xl font-serif text-[#1A1A1A]">Esenciales</h3>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
-            {productosEsenciales.map((item: any) => {
-              const imagenPrincipal = item.URL_Imagen ? item.URL_Imagen.split(",")[0] : null;
-              const cantidadVariantes = item.Variantes.length;
+          {/* 4. BLOQUE CATEGORÍAS 1 (Igual a Shopify: Texto centrado en imagen y subtexto abajo) */}
+          <section className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-10 mb-20">
+            {/* Skincare */}
+            <div className="group flex flex-col">
+              <Link href="/colecciones/skincare" className="relative aspect-[4/3] md:aspect-[16/9] lg:aspect-[21/9] overflow-hidden rounded-lg shadow-sm block">
+                <Image src="/categorias/skincare.jpg" alt="Skincare" fill className="object-cover transition-transform duration-1000 group-hover:scale-110" />
+                <div className="absolute inset-0 bg-black/15 group-hover:bg-black/25 transition-colors duration-500"></div>
+                <h3 className="absolute inset-0 flex items-center justify-center text-white font-serif text-4xl lg:text-5xl drop-shadow-md">
+                  Skincare
+                </h3>
+              </Link>
+              <Link href="/colecciones/skincare" className="flex items-center gap-2 mt-4 text-[#1A1A1A] px-2">
+                <span className="font-light text-lg">Cuidado Facial</span>
+                <span className="transition-transform duration-300 group-hover:translate-x-2">&rarr;</span>
+              </Link>
+            </div>
 
-              return (
-                <div key={item.HandleFinal} className="group flex flex-col bg-white rounded-xl p-4 shadow-sm border border-gray-100 h-full justify-between hover:shadow-md transition-shadow">
-                  <Link href={`/producto/${item.HandleFinal}`} className="cursor-pointer block">
-                    <div className="aspect-square bg-gray-50 rounded-lg overflow-hidden mb-4 relative">
-                      {imagenPrincipal && (
-                        <img src={imagenPrincipal} alt={item.Producto} className="object-contain w-full h-full p-2 group-hover:scale-105 transition-transform duration-500" />
+            {/* Esenciales */}
+            <div className="group flex flex-col">
+              <Link href="/colecciones/esenciales" className="relative aspect-[4/3] md:aspect-[16/9] lg:aspect-[21/9] overflow-hidden rounded-lg shadow-sm block">
+                <Image src="/categorias/esenciales.jpg" alt="Esenciales" fill className="object-cover transition-transform duration-1000 group-hover:scale-110" />
+                <div className="absolute inset-0 bg-black/15 group-hover:bg-black/25 transition-colors duration-500"></div>
+                <h3 className="absolute inset-0 flex items-center justify-center text-white font-serif text-4xl lg:text-5xl drop-shadow-md">
+                  Esenciales
+                </h3>
+              </Link>
+              <Link href="/colecciones/esenciales" className="flex items-center gap-2 mt-4 text-[#1A1A1A] px-2">
+                <span className="font-light text-lg">Ver productos</span>
+                <span className="transition-transform duration-300 group-hover:translate-x-2">&rarr;</span>
+              </Link>
+            </div>
+          </section>
+
+          {/* 5. PRODUCTOS ESENCIALES (Tarjetas elegantes) */}
+          <section className="mb-20">
+            <div className="flex justify-between items-end mb-8">
+              <h3 className="text-2xl md:text-3xl font-serif text-[#1A1A1A] italic">Esenciales</h3>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
+              {productosEsenciales.map((item: any) => {
+                const imagenPrincipal = item.URL_Imagen ? item.URL_Imagen.split(",")[0] : null;
+                const cantidadVariantes = item.Variantes.length;
+
+                return (
+                  <div key={item.HandleFinal} className="group flex flex-col bg-white rounded-2xl p-0 shadow-sm hover:shadow-lg border border-transparent hover:border-[#DFB2C0]/40 transition-all duration-300 h-full overflow-hidden">
+                    <Link href={`/producto/${item.HandleFinal}`} className="cursor-pointer block p-4 pb-0">
+                      <div className="aspect-square bg-gray-50 rounded-xl overflow-hidden mb-4 relative">
+                        {imagenPrincipal && (
+                          <img src={imagenPrincipal} alt={item.Producto} className="object-contain w-full h-full p-2 group-hover:scale-110 transition-transform duration-700" />
+                        )}
+                      </div>
+                      <h4 className="font-medium text-[#1A1A1A] text-sm md:text-base line-clamp-2 h-10 md:h-12">{item.Producto}</h4>
+                      <p className="text-[#1A1A1A] font-semibold mt-2 mb-4 text-lg">
+                        ${Number(item.Precio_Venta).toLocaleString('es-CO')}
+                      </p>
+                    </Link>
+                    <div className="w-full mt-auto p-4 pt-0">
+                      {cantidadVariantes > 1 ? (
+                        <Link href={`/producto/${item.HandleFinal}`} className="w-full border border-gray-200 bg-gray-50 text-gray-700 hover:bg-[#DFB2C0] hover:text-white hover:border-[#DFB2C0] text-sm h-11 flex items-center justify-center rounded-full transition-all font-medium">
+                          Seleccionar opciones
+                        </Link>
+                      ) : (
+                        <div className="w-full [&>button]:w-full [&>button]:h-11 [&>button]:text-sm [&>button]:rounded-full [&>button]:border [&>button]:border-gray-200 [&>button]:bg-gray-50 [&>button]:text-gray-700 hover:[&>button]:bg-[#DFB2C0] hover:[&>button]:text-white hover:[&>button]:border-[#DFB2C0] [&>button]:transition-all [&>button]:font-medium">
+                          <BotonAnadir id={item.Codigo} nombre={item.Producto} precio={item.Precio_Venta} imagen={imagenPrincipal} />
+                        </div>
                       )}
                     </div>
-                    <h4 className="font-medium text-[#1A1A1A] text-sm md:text-base line-clamp-2 h-12">{item.Producto}</h4>
-                    <p className="text-[#1A1A1A] font-semibold mt-2 mb-4 text-lg">
-                      ${Number(item.Precio_Venta).toLocaleString('es-CO')}
-                    </p>
-                  </Link>
-                  <div className="w-full mt-auto">
-                    {cantidadVariantes > 1 ? (
-                      <Link href={`/producto/${item.HandleFinal}`} className="w-full border border-gray-300 text-gray-700 hover:border-[#D7A1A4] hover:text-[#D7A1A4] text-sm h-11 flex items-center justify-center rounded-full transition-all font-medium">
-                        Seleccionar opciones
-                      </Link>
-                    ) : (
-                      <div className="w-full [&>button]:w-full [&>button]:h-11 [&>button]:text-sm [&>button]:rounded-full [&>button]:border [&>button]:border-gray-300 [&>button]:bg-transparent [&>button]:text-gray-700 hover:[&>button]:border-[#D7A1A4] hover:[&>button]:text-[#D7A1A4] [&>button]:transition-all [&>button]:font-medium">
-                        <BotonAnadir id={item.Codigo} nombre={item.Producto} precio={item.Precio_Venta} imagen={imagenPrincipal} />
-                      </div>
-                    )}
                   </div>
-                </div>
-              );
-            })}
-          </div>
-          <div className="text-center mt-10">
-            <Link href="/all" className="bg-[#D7A1A4] text-white px-8 py-3 rounded-full text-sm hover:bg-[#c28d90] transition-colors shadow-sm">
-              Ver todo
-            </Link>
-          </div>
-        </section>
+                );
+              })}
+            </div>
+          </section>
 
-        {/* 6. BLOQUE CATEGORÍAS 2 */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 mb-16">
-          <Link href="/colecciones/perfumes" className="group relative block aspect-[4/3] md:aspect-video lg:aspect-[21/9] overflow-hidden rounded-xl shadow-sm">
-            <Image src="/categorias/perfumes.jpg" alt="Perfumes & Splash" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
-            <div className="absolute inset-0 bg-black/10 transition-colors group-hover:bg-black/20"></div>
-            <h3 className="absolute bottom-6 left-6 text-white font-serif text-2xl md:text-3xl flex items-center gap-2">
-              Fragancias <span className="text-sm md:text-base transition-transform group-hover:translate-x-2">&rarr;</span>
-            </h3>
-          </Link>
-          <Link href="/colecciones/corporal" className="group relative block aspect-[4/3] md:aspect-video lg:aspect-[21/9] overflow-hidden rounded-xl shadow-sm">
-            <Image src="/categorias/corporal.jpg" alt="Cuidado Corporal" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
-            <div className="absolute inset-0 bg-black/10 transition-colors group-hover:bg-black/20"></div>
-            <h3 className="absolute bottom-6 left-6 text-white font-serif text-2xl md:text-3xl flex items-center gap-2">
-              Corporal <span className="text-sm md:text-base transition-transform group-hover:translate-x-2">&rarr;</span>
-            </h3>
-          </Link>
-        </section>
+          {/* 6. BLOQUE CATEGORÍAS 2 */}
+          <section className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-10 mb-16">
+            {/* Perfumes */}
+            <div className="group flex flex-col">
+              <Link href="/colecciones/perfumes" className="relative aspect-[4/3] md:aspect-[16/9] lg:aspect-[21/9] overflow-hidden rounded-lg shadow-sm block">
+                <Image src="/categorias/perfumes.jpg" alt="Perfumes & Splash" fill className="object-cover transition-transform duration-1000 group-hover:scale-110" />
+                <div className="absolute inset-0 bg-black/15 group-hover:bg-black/25 transition-colors duration-500"></div>
+                <h3 className="absolute inset-0 flex items-center justify-center text-white font-serif text-4xl lg:text-5xl italic drop-shadow-md">
+                  Perfumes & Splash
+                </h3>
+              </Link>
+              <Link href="/colecciones/perfumes" className="flex items-center gap-2 mt-4 text-[#1A1A1A] px-2">
+                <span className="font-light text-lg">Fragancias</span>
+                <span className="transition-transform duration-300 group-hover:translate-x-2">&rarr;</span>
+              </Link>
+            </div>
 
+            {/* Corporal */}
+            <div className="group flex flex-col">
+              <Link href="/colecciones/corporal" className="relative aspect-[4/3] md:aspect-[16/9] lg:aspect-[21/9] overflow-hidden rounded-lg shadow-sm block">
+                <Image src="/categorias/corporal.jpg" alt="Cuidado Corporal" fill className="object-cover transition-transform duration-1000 group-hover:scale-110" />
+                <div className="absolute inset-0 bg-black/15 group-hover:bg-black/25 transition-colors duration-500"></div>
+                <h3 className="absolute inset-0 flex items-center justify-center text-white font-serif text-4xl lg:text-5xl italic drop-shadow-md">
+                  Cuidado Corporal
+                </h3>
+              </Link>
+              <Link href="/colecciones/corporal" className="flex items-center gap-2 mt-4 text-[#1A1A1A] px-2">
+                <span className="font-light text-lg">Corporal</span>
+                <span className="transition-transform duration-300 group-hover:translate-x-2">&rarr;</span>
+              </Link>
+            </div>
+          </section>
+
+        </div>
       </main>
       
       {/* FOOTER */}
       <footer className="bg-white border-t border-gray-100 py-16 mt-10">
         <div className="max-w-[1800px] mx-auto px-6 text-center text-sm text-[#707070]">
-          <h3 className="text-2xl font-serif text-[#D7A1A4] mb-4">Splendide</h3>
+          <h3 className="text-2xl font-serif text-[#DFB2C0] mb-4">Splendide</h3>
           <p className="mb-6 max-w-md mx-auto">Desde la preparación hasta el diseño final. Encuentra herramientas, esmaltes y accesorios con calidad profesional.</p>
           <p>©️ 2026 Splendide Co.</p>
         </div>
