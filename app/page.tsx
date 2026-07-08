@@ -63,16 +63,17 @@ export default async function Home() {
     }, {})
   );
   
-  // Seleccionamos 4 productos para la sección de "Esenciales"
-  const productosEsenciales = productosAgrupados.slice(0, 4); 
+  // Aumentamos a 5 productos para que llene mejor las pantallas anchas
+  const productosEsenciales = productosAgrupados.slice(0, 5); 
 
   return (
     <div className="min-h-screen bg-[#FAF4F4] text-[#1A1A1A] font-sans">
       
-      {/* 1. HERO BANNER INTERACTIVO (Igual a Shopify) */}
+      {/* 1. HERO BANNER INTERACTIVO */}
       <CarruselBanner />
 
-      <main className="w-full max-w-[1400px] mx-auto px-4 md:px-8 lg:px-12 py-8">
+      {/* Ajuste de contenedor: sin max-w, usando padding dinámico */}
+      <main className="w-full mx-auto px-4 sm:px-8 md:px-16 lg:px-24 xl:px-32 2xl:px-40 py-8">
         
         {/* 2. FRASE INSPIRACIONAL */}
         <div className="text-center mb-10 md:mb-14">
@@ -81,7 +82,7 @@ export default async function Home() {
             </h2>
         </div>
 
-        {/* 3. CARRUSEL DE MARCAS (Deslizables) */}
+        {/* 3. CARRUSEL DE MARCAS */}
         <section className="mb-16">
           <CarruselMarcas marcas={colecciones} />
           <div className="text-center mt-8">
@@ -91,17 +92,16 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* 4. BLOQUE CATEGORÍAS 1 (Skincare y Esenciales portadas) */}
+        {/* 4. BLOQUE CATEGORÍAS 1 */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
-          <Link href="/colecciones/skincare" className="group relative block aspect-[4/3] overflow-hidden rounded-md">
-            {/* Recuerda poner estas imágenes en public/categorias/ */}
+          <Link href="/colecciones/skincare" className="group relative block aspect-[4/3] md:aspect-[16/9] overflow-hidden rounded-md">
             <Image src="/categorias/skincare.jpg" alt="Skincare" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-black/10"></div>
             <h3 className="absolute bottom-6 left-6 text-white font-serif text-2xl flex items-center gap-2">
               Skincare <span className="text-sm">&rarr;</span>
             </h3>
           </Link>
-          <Link href="/colecciones/esenciales" className="group relative block aspect-[4/3] overflow-hidden rounded-md">
+          <Link href="/colecciones/esenciales" className="group relative block aspect-[4/3] md:aspect-[16/9] overflow-hidden rounded-md">
             <Image src="/categorias/esenciales.jpg" alt="Esenciales" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-black/10"></div>
             <h3 className="absolute bottom-6 left-6 text-white font-serif text-2xl flex items-center gap-2">
@@ -110,12 +110,13 @@ export default async function Home() {
           </Link>
         </section>
 
-        {/* 5. PRODUCTOS ESENCIALES (Grid de 4 productos) */}
+        {/* 5. PRODUCTOS ESENCIALES */}
         <section className="mb-16">
           <div className="flex justify-between items-end mb-6">
             <h3 className="text-xl md:text-2xl font-serif text-[#1A1A1A]">Esenciales</h3>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          {/* Ajuste de cuadrícula: hasta 5 y 6 columnas en pantallas muy grandes */}
+          <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-6 lg:gap-8">
             {productosEsenciales.map((item: any) => {
               const imagenPrincipal = item.URL_Imagen ? item.URL_Imagen.split(",")[0] : null;
               const cantidadVariantes = item.Variantes.length;
@@ -155,16 +156,16 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* 6. BLOQUE CATEGORÍAS 2 (Perfumes y Corporal portadas) */}
+        {/* 6. BLOQUE CATEGORÍAS 2 */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
-          <Link href="/colecciones/perfumes" className="group relative block aspect-[4/3] overflow-hidden rounded-md">
+          <Link href="/colecciones/perfumes" className="group relative block aspect-[4/3] md:aspect-[16/9] overflow-hidden rounded-md">
             <Image src="/categorias/perfumes.jpg" alt="Perfumes & Splash" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-black/10"></div>
             <h3 className="absolute bottom-6 left-6 text-white font-serif text-2xl flex items-center gap-2">
               Fragancias <span className="text-sm">&rarr;</span>
             </h3>
           </Link>
-          <Link href="/colecciones/corporal" className="group relative block aspect-[4/3] overflow-hidden rounded-md">
+          <Link href="/colecciones/corporal" className="group relative block aspect-[4/3] md:aspect-[16/9] overflow-hidden rounded-md">
             <Image src="/categorias/corporal.jpg" alt="Cuidado Corporal" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-black/10"></div>
             <h3 className="absolute bottom-6 left-6 text-white font-serif text-2xl flex items-center gap-2">
@@ -177,7 +178,8 @@ export default async function Home() {
       
       {/* FOOTER */}
       <footer className="bg-white border-t border-gray-100 py-16 mt-10">
-        <div className="max-w-[1400px] mx-auto px-6 text-center text-sm text-[#707070]">
+        {/* Ajuste de contenedor del footer */}
+        <div className="w-full mx-auto px-4 sm:px-8 md:px-16 lg:px-24 xl:px-32 2xl:px-40 text-center text-sm text-[#707070]">
           <h3 className="text-2xl font-serif text-[#D7A1A4] mb-4">Splendide</h3>
           <p className="mb-6 max-w-md mx-auto">Desde la preparación hasta el diseño final. Encuentra herramientas, esmaltes y accesorios con calidad profesional.</p>
           <p>©️ 2026 Splendide Co.</p>

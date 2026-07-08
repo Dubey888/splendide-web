@@ -10,7 +10,10 @@ export default function CarruselMarcas({ marcas }: { marcas: any[] }) {
       spaceBetween={15}
       breakpoints={{
         640: { slidesPerView: 3.5, spaceBetween: 20 },
-        1024: { slidesPerView: 5.5, spaceBetween: 20 }, // 5 en PC
+        1024: { slidesPerView: 5.5, spaceBetween: 20 }, // 5 en laptops pequeñas/tablets
+        1280: { slidesPerView: 6.5, spaceBetween: 24 }, // 6.5 en laptops estándar
+        1536: { slidesPerView: 7.5, spaceBetween: 24 }, // 7.5 en monitores de escritorio
+        1920: { slidesPerView: 9.5, spaceBetween: 24 }, // 9.5 en monitores ultra-anchos
       }}
       className="w-full pb-4 cursor-grab active:cursor-grabbing"
     >
