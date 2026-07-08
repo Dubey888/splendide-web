@@ -98,23 +98,44 @@ export default async function Home() {
         {/* Sección Interactiva (El toque premium) */}
         <ShowcaseInteractivo />
 
-        {/* Bloque Categorías Ampliado */}
-        <section className="max-w-[1400px] mx-auto px-6 py-20">
-          <h3 className="text-3xl font-serif text-[#1A1A1A] mb-12">Explora nuestras colecciones</h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-            {categoriasDestacadas.map((cat) => (
-                <div key={cat.title} className="group flex flex-col">
-                    <Link href={cat.link} className="relative aspect-[3/4] overflow-hidden rounded-2xl shadow-sm block">
-                        <Image src={cat.url} alt={cat.title} fill className="object-cover transition-transform duration-1000 group-hover:scale-105" />
-                        <div className="absolute inset-0 bg-black/10 transition-colors duration-500"></div>
-                        <div className="absolute bottom-6 left-6 text-white font-serif text-2xl drop-shadow-md">
-                            {cat.title}
-                        </div>
-                    </Link>
-                </div>
-            ))}
-          </div>
-        </section>
+       {/* Bloque Categorías Estilo Hero (Grande y Premium) */}
+<section className="py-12">
+  <div className="max-w-[1600px] mx-auto px-4 md:px-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      {/* Categoría Grande Izquierda */}
+      <Link href="/colecciones/skincare" className="group relative block w-full aspect-[4/5] md:aspect-[3/4] overflow-hidden rounded-3xl">
+        <Image 
+          src="/categorias/skincare.jpg" 
+          alt="Skincare" 
+          fill 
+          className="object-cover transition-transform duration-[2000ms] group-hover:scale-105" 
+        />
+        <div className="absolute inset-0 bg-black/20 transition-colors group-hover:bg-black/30" />
+        <div className="absolute bottom-12 left-12">
+          <h3 className="text-white font-serif text-5xl md:text-6xl mb-4">Skincare</h3>
+          <span className="text-white border-b border-white pb-1 uppercase tracking-[0.2em] text-sm">Explorar</span>
+        </div>
+      </Link>
+
+      {/* Categoría Grande Derecha */}
+      <Link href="/colecciones/esenciales" className="group relative block w-full aspect-[4/5] md:aspect-[3/4] overflow-hidden rounded-3xl">
+        <Image 
+          src="/categorias/esenciales.jpg" 
+          alt="Esenciales" 
+          fill 
+          className="object-cover transition-transform duration-[2000ms] group-hover:scale-105" 
+        />
+        <div className="absolute inset-0 bg-black/20 transition-colors group-hover:bg-black/30" />
+        <div className="absolute bottom-12 left-12">
+          <h3 className="text-white font-serif text-5xl md:text-6xl mb-4">Esenciales</h3>
+          <span className="text-white border-b border-white pb-1 uppercase tracking-[0.2em] text-sm">Explorar</span>
+        </div>
+      </Link>
+
+    </div>
+  </div>
+</section>
 
         {/* Productos Esenciales */}
         <section className="max-w-[1400px] mx-auto px-6 mb-24">
