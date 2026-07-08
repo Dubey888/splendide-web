@@ -27,3 +27,17 @@ html, body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+/* Estilos para los puntitos de Swiper del Banner */
+.banner-splendide .swiper-pagination-bullet {
+  background: white !important;
+  opacity: 0.5;
+  width: 10px;
+  height: 10px;
+  transition: all 0.3s ease;
+}
+.banner-splendide .swiper-pagination-bullet-active {
+  background: white !important;
+  opacity: 1;
+  width: 25px;
+  border-radius: 5px;
+}
