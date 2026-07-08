@@ -2,22 +2,17 @@ import type { Metadata } from "next";
 import { Montserrat, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
-// Importamos nuestros nuevos componentes globales (Rutas corregidas a "componentes")
 import Navbar from "@/components/Navbar";
 import WhatsAppButton from "@/components/WhatsAppButton";
-
-// Importamos el Cerebro (Provider) del carrito y su menú lateral
 import CartDrawer from "@/components/CartDrawer";
 import { CartProvider } from "@/context/CartContext";
 
-// Configuración de la fuente Sans-serif (para textos, precios y botones)
 const sansFont = Montserrat({
   subsets: ["latin"],
   variable: "--font-sans",
   weight: ["300", "400", "500", "600"],
 });
 
-// Configuración de la fuente Serif (para títulos elegantes de marca y colecciones)
 const serifFont = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-serif",
@@ -36,24 +31,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${sansFont.variable} ${serifFont.variable} h-full antialiased`}>
-      {/* Aplicamos la estructura flexible junto con el color de fondo y fuente base */}
       <body className="min-h-full flex flex-col bg-splendide-bg text-splendide-dark font-sans">
-        
-        {/* Envolvemos toda la app con el Provider del carrito */}
         <CartProvider>
-          {/* Barra de navegación global */}
           <Navbar />
-
-          {/* Contenido dinámico de las páginas */}
-          {children}
-
-          {/* Botón flotante de WhatsApp global */}
+          <main className="flex-grow">{children}</main>
           <WhatsAppButton />
-
-          {/* Menú lateral desplegable del carrito (Agregado para la interactividad) */}
           <CartDrawer />
         </CartProvider>
-        
       </body>
     </html>
   );
