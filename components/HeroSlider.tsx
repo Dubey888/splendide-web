@@ -16,11 +16,11 @@ const BANNERS_DATA = [
   },
   {
     id: 2,
-    title: "Maquillaje",
+    title: "Maquillaje", 
     subtitle: "Todo lo que necesitas para crear looks espectaculares y profesionales.",
     buttonText: "Ver colección",
-    linkUrl: "/colecciones/maquillaje",
-    imageUrl: "/banners/banner-maquillaje.jpg",
+    linkUrl: "/colecciones/maquillaje", 
+    imageUrl: "/banners/banner-maquillaje.jpg", 
     textPosition: "center"
   }
 ];
@@ -71,19 +71,22 @@ export default function HeroSlider() {
 
               <div className="absolute inset-0 bg-black/5 md:bg-transparent" />
 
-              {/* TARJETA AJUSTADA PARA MÓVIL */}
-              <div className={`absolute bottom-6 md:bottom-auto md:top-1/2 md:-translate-y-1/2 w-[85%] md:w-[420px] bg-white rounded-xl p-5 md:p-8 shadow-xl border border-gray-100 transition-all duration-700 ${positionClass} ${
+              {/* AQUÍ ESTÁ LA MAGIA: p-4 en móvil, md:p-8 en PC. w-[75%] en móvil, md:w-[420px] en PC */}
+              <div className={`absolute bottom-[52px] md:bottom-auto md:top-1/2 md:-translate-y-1/2 w-[75%] md:w-[420px] bg-white rounded-lg md:rounded-2xl p-3 md:p-8 shadow-xl border border-gray-100 transition-all duration-700 ${positionClass} ${
                 isActive ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
               }`}>
-                <h2 className="font-serif text-2xl md:text-4xl text-[#1A1A1A] mb-2 font-normal tracking-tight">
+                {/* Título: text-lg en móvil, md:text-4xl en PC */}
+                <h2 className="font-serif text-lg md:text-4xl text-[#1A1A1A] mb-1 md:mb-3 font-normal tracking-tight">
                   {slide.title}
                 </h2>
-                <p className="font-sans text-xs md:text-sm text-gray-600 mb-4 leading-relaxed line-clamp-3">
+                {/* Subtítulo: text-[10px] en móvil, md:text-sm en PC */}
+                <p className="font-sans text-[10px] md:text-sm text-gray-600 mb-2 md:mb-6 leading-tight md:leading-relaxed">
                   {slide.subtitle}
                 </p>
+                {/* Botón: texto súper pequeño y menos padding en móvil */}
                 <Link 
                   href={slide.linkUrl}
-                  className="inline-block w-full text-center bg-[#1A1A1A] text-white font-sans text-[10px] md:text-xs uppercase tracking-widest py-3 px-6 rounded hover:bg-[#E5B5C4] transition-colors duration-300"
+                  className="inline-block w-full md:w-auto text-center bg-[#1A1A1A] text-white font-sans text-[9px] md:text-xs uppercase tracking-widest py-2 md:py-3.5 px-4 md:px-8 rounded hover:bg-[#E5B5C4] transition-colors duration-300"
                 >
                   {slide.buttonText}
                 </Link>
