@@ -67,7 +67,8 @@ export default async function Home() {
         Welcome to our store
       </div>
 
-      <main className="w-full">
+      {/* Agregado overflow-hidden al main para evitar scroll horizontal indeseado */}
+      <main className="w-full overflow-hidden">
         
         {/* 1. SECCIÓN BIENVENIDA: Imagen Portada con texto "Girl..." */}
         <div className="relative w-full aspect-[4/5] md:aspect-[21/9] mb-16 overflow-hidden">
@@ -91,14 +92,14 @@ export default async function Home() {
 
         {/* 2. SECCIÓN: Marcas Deslizantes */}
         <section className="bg-[#DFB2C0]/20 w-full py-12 mb-16">
-          <div className="max-w-[1400px] mx-auto px-6">
+          <div className="w-full px-4 md:px-12 lg:px-24 mx-auto">
             <CarruselMarcas marcas={colecciones} />
           </div>
         </section>
 
         {/* 3. SECCIÓN: Bloque Asimétrico (Skincare y Esenciales) */}
-        <section className="max-w-[1400px] mx-auto px-6 mb-20">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <section className="w-full px-4 md:px-12 lg:px-24 mx-auto mb-20">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8">
             <div className="md:col-span-7">
               <CategoryBlock 
                 title="Skincare" 
@@ -119,8 +120,8 @@ export default async function Home() {
         </section>
 
         {/* 4. SECCIÓN: Grid de Productos Destacados */}
-        <section className="max-w-[1400px] mx-auto px-6 mb-24">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-12">
+        <section className="w-full px-4 md:px-12 lg:px-24 mx-auto mb-24">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 lg:gap-x-10 gap-y-12">
               {productosEsenciales.map((item: any) => {
                 const imagenPrincipal = item.URL_Imagen ? item.URL_Imagen.split(",")[0] : null;
                 const precioVenta = Number(item.Precio_Venta);
@@ -142,7 +143,7 @@ export default async function Home() {
                     
                     <div className="flex flex-col gap-1 px-1">
                       <Link href={`/producto/${item.HandleFinal}`}>
-                        <h4 className="font-sans text-sm text-[#1A1A1A] line-clamp-2 hover:underline decoration-gray-300 underline-offset-4">
+                        <h4 className="font-sans text-sm md:text-base text-[#1A1A1A] line-clamp-2 hover:underline decoration-gray-300 underline-offset-4">
                           {item.Producto}
                         </h4>
                       </Link>
@@ -173,11 +174,11 @@ export default async function Home() {
         </section>
 
         {/* 5. SECCIÓN: Sweet Body */}
-        <section className="max-w-[1400px] mx-auto px-6 mb-24">
+        <section className="w-full px-4 md:px-12 lg:px-24 mx-auto mb-24">
           <div className="mb-8">
             <h3 className="text-3xl font-serif text-[#1A1A1A]">Sweet Body</h3>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10">
             <CategoryBlock 
               title="Fragancias" 
               cursiveOverlay="Perfumes & Splash" 
@@ -201,14 +202,14 @@ export default async function Home() {
         </div>
 
         {/* 7. SECCIÓN: Atenea Cosmetics */}
-        <section className="max-w-[1400px] mx-auto px-6 mb-24">
+        <section className="w-full px-4 md:px-12 lg:px-24 mx-auto mb-24">
           <div className="mb-10 flex items-center justify-between">
             <h3 className="text-3xl font-serif text-[#1A1A1A]">Atenea Cosmetics</h3>
             <Link href="/colecciones/atenea" className="text-sm text-[#B58B99] hover:underline flex items-center gap-1.5 font-medium uppercase tracking-wider">
               Ver Colección Completa <span className="text-lg">→</span>
             </Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 lg:gap-x-10 gap-y-12">
             {productosAtenea.map((item: any) => {
               const imagenPrincipal = item.URL_Imagen ? item.URL_Imagen.split(",")[0] : null;
               const precioVenta = Number(item.Precio_Venta);
@@ -229,7 +230,7 @@ export default async function Home() {
                   
                   <div className="flex flex-col gap-1 px-1">
                     <Link href={`/producto/${item.HandleFinal}`}>
-                      <h4 className="font-sans text-sm text-[#1A1A1A] line-clamp-2 hover:underline decoration-gray-300 underline-offset-4">
+                      <h4 className="font-sans text-sm md:text-base text-[#1A1A1A] line-clamp-2 hover:underline decoration-gray-300 underline-offset-4">
                         {item.Producto}
                       </h4>
                     </Link>
@@ -251,11 +252,11 @@ export default async function Home() {
         </section>
 
         {/* 8. SECCIÓN: Complementos */}
-        <section className="max-w-[1400px] mx-auto px-6 mb-24">
+        <section className="w-full px-4 md:px-12 lg:px-24 mx-auto mb-24">
           <div className="mb-8">
             <h3 className="text-3xl font-serif text-[#1A1A1A]">Complementos</h3>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10">
             <CategoryBlock 
               title="Bolsos" 
               cursiveOverlay="Bolsos & Mochilas" 
