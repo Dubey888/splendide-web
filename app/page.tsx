@@ -67,10 +67,9 @@ export default async function Home() {
         Welcome to our store
       </div>
 
-      {/* Agregado overflow-hidden al main para evitar scroll horizontal indeseado */}
       <main className="w-full overflow-hidden">
         
-        {/* 1. SECCIÓN BIENVENIDA: Imagen Portada con texto "Girl..." */}
+        {/* 1. SECCIÓN BIENVENIDA: Imagen Portada */}
         <div className="relative w-full aspect-[4/5] md:aspect-[21/9] mb-16 overflow-hidden">
           <Image
             src="/portada.jpeg" 
@@ -92,15 +91,17 @@ export default async function Home() {
 
         {/* 2. SECCIÓN: Marcas Deslizantes */}
         <section className="bg-[#DFB2C0]/20 w-full py-12 mb-16">
-          <div className="w-full px-4 md:px-12 lg:px-24 mx-auto">
+          {/* Se redujo el padding a lg:px-8 para empujar a los bordes en PC */}
+          <div className="w-full px-4 lg:px-8 mx-auto">
             <CarruselMarcas marcas={colecciones} />
           </div>
         </section>
 
         {/* 3. SECCIÓN: Bloque Asimétrico (Skincare y Esenciales) */}
-        <section className="w-full px-4 md:px-12 lg:px-24 mx-auto mb-20">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8">
-            <div className="md:col-span-7">
+        <section className="w-full px-4 lg:px-8 mx-auto mb-20">
+          {/* Ahora son 2 columnas en celular también (grid-cols-2) */}
+          <div className="grid grid-cols-2 md:grid-cols-12 gap-3 md:gap-6 lg:gap-8">
+            <div className="col-span-1 md:col-span-7">
               <CategoryBlock 
                 title="Skincare" 
                 imageUrl="/categorias/skincare.jpg" 
@@ -108,7 +109,7 @@ export default async function Home() {
                 aspectRatio="aspect-[4/5] md:aspect-[4/3]" 
               />
             </div>
-            <div className="md:col-span-5">
+            <div className="col-span-1 md:col-span-5">
               <CategoryBlock 
                 title="Esenciales" 
                 imageUrl="/categorias/esenciales.jpg" 
@@ -120,8 +121,8 @@ export default async function Home() {
         </section>
 
         {/* 4. SECCIÓN: Grid de Productos Destacados */}
-        <section className="w-full px-4 md:px-12 lg:px-24 mx-auto mb-24">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 lg:gap-x-10 gap-y-12">
+        <section className="w-full px-4 lg:px-8 mx-auto mb-24">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-3 gap-y-8 md:gap-x-6 lg:gap-x-10 lg:gap-y-12">
               {productosEsenciales.map((item: any) => {
                 const imagenPrincipal = item.URL_Imagen ? item.URL_Imagen.split(",")[0] : null;
                 const precioVenta = Number(item.Precio_Venta);
@@ -174,11 +175,12 @@ export default async function Home() {
         </section>
 
         {/* 5. SECCIÓN: Sweet Body */}
-        <section className="w-full px-4 md:px-12 lg:px-24 mx-auto mb-24">
-          <div className="mb-8">
-            <h3 className="text-3xl font-serif text-[#1A1A1A]">Sweet Body</h3>
+        <section className="w-full px-4 lg:px-8 mx-auto mb-24">
+          <div className="mb-6 md:mb-8">
+            <h3 className="text-2xl md:text-3xl font-serif text-[#1A1A1A]">Sweet Body</h3>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10">
+          {/* AQUÍ ESTÁ LA MAGIA MÓVIL: grid-cols-2 obliga a que sean 2 cajas lado a lado en el celular */}
+          <div className="grid grid-cols-2 gap-3 md:gap-6 lg:gap-10">
             <CategoryBlock 
               title="Fragancias" 
               cursiveOverlay="Perfumes & Splash" 
@@ -196,20 +198,20 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* 6. SECCIÓN: Carrusel Hero Automático (Movido aquí) */}
+        {/* 6. SECCIÓN: Carrusel Hero Automático */}
         <div className="w-full mb-16">
           <HeroSlider />
         </div>
 
         {/* 7. SECCIÓN: Atenea Cosmetics */}
-        <section className="w-full px-4 md:px-12 lg:px-24 mx-auto mb-24">
-          <div className="mb-10 flex items-center justify-between">
-            <h3 className="text-3xl font-serif text-[#1A1A1A]">Atenea Cosmetics</h3>
-            <Link href="/colecciones/atenea" className="text-sm text-[#B58B99] hover:underline flex items-center gap-1.5 font-medium uppercase tracking-wider">
+        <section className="w-full px-4 lg:px-8 mx-auto mb-24">
+          <div className="mb-8 md:mb-10 flex flex-col md:flex-row md:items-center justify-between gap-2">
+            <h3 className="text-2xl md:text-3xl font-serif text-[#1A1A1A]">Atenea Cosmetics</h3>
+            <Link href="/colecciones/atenea" className="text-xs md:text-sm text-[#B58B99] hover:underline flex items-center gap-1.5 font-medium uppercase tracking-wider">
               Ver Colección Completa <span className="text-lg">→</span>
             </Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 lg:gap-x-10 gap-y-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-3 gap-y-8 md:gap-x-6 lg:gap-x-10 lg:gap-y-12">
             {productosAtenea.map((item: any) => {
               const imagenPrincipal = item.URL_Imagen ? item.URL_Imagen.split(",")[0] : null;
               const precioVenta = Number(item.Precio_Venta);
@@ -252,11 +254,12 @@ export default async function Home() {
         </section>
 
         {/* 8. SECCIÓN: Complementos */}
-        <section className="w-full px-4 md:px-12 lg:px-24 mx-auto mb-24">
-          <div className="mb-8">
-            <h3 className="text-3xl font-serif text-[#1A1A1A]">Complementos</h3>
+        <section className="w-full px-4 lg:px-8 mx-auto mb-24">
+          <div className="mb-6 md:mb-8">
+            <h3 className="text-2xl md:text-3xl font-serif text-[#1A1A1A]">Complementos</h3>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10">
+          {/* Igualmente aplicamos las 2 columnas en celular aquí */}
+          <div className="grid grid-cols-2 gap-3 md:gap-6 lg:gap-10">
             <CategoryBlock 
               title="Bolsos" 
               cursiveOverlay="Bolsos & Mochilas" 
