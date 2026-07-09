@@ -16,11 +16,11 @@ const BANNERS_DATA = [
   },
   {
     id: 2,
-    title: "Maquillaje", // CORREGIDO: Cambiado de Nail Art a Maquillaje
+    title: "Maquillaje",
     subtitle: "Todo lo que necesitas para crear looks espectaculares y profesionales.",
     buttonText: "Ver colección",
-    linkUrl: "/colecciones/maquillaje", // CORREGIDO: Enlace a maquillaje
-    imageUrl: "/banners/banner-maquillaje.jpg", // Asegúrate de tener esta imagen o poner el nombre correcto
+    linkUrl: "/colecciones/maquillaje",
+    imageUrl: "/banners/banner-maquillaje.jpg",
     textPosition: "center"
   }
 ];
@@ -71,18 +71,19 @@ export default function HeroSlider() {
 
               <div className="absolute inset-0 bg-black/5 md:bg-transparent" />
 
-              <div className={`absolute bottom-12 md:bottom-auto md:top-1/2 md:-translate-y-1/2 w-[90%] md:w-[420px] bg-white rounded-2xl p-6 md:p-8 shadow-xl border border-gray-100 transition-all duration-700 ${positionClass} ${
+              {/* TARJETA AJUSTADA PARA MÓVIL */}
+              <div className={`absolute bottom-6 md:bottom-auto md:top-1/2 md:-translate-y-1/2 w-[85%] md:w-[420px] bg-white rounded-xl p-5 md:p-8 shadow-xl border border-gray-100 transition-all duration-700 ${positionClass} ${
                 isActive ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
               }`}>
-                <h2 className="font-serif text-3xl md:text-4xl text-[#1A1A1A] mb-3 font-normal tracking-tight">
+                <h2 className="font-serif text-2xl md:text-4xl text-[#1A1A1A] mb-2 font-normal tracking-tight">
                   {slide.title}
                 </h2>
-                <p className="font-sans text-sm text-gray-600 mb-6 leading-relaxed">
+                <p className="font-sans text-xs md:text-sm text-gray-600 mb-4 leading-relaxed line-clamp-3">
                   {slide.subtitle}
                 </p>
                 <Link 
                   href={slide.linkUrl}
-                  className="inline-block w-full md:w-auto text-center bg-[#1A1A1A] text-white font-sans text-xs uppercase tracking-widest py-3.5 px-8 rounded hover:bg-[#E5B5C4] transition-colors duration-300"
+                  className="inline-block w-full text-center bg-[#1A1A1A] text-white font-sans text-[10px] md:text-xs uppercase tracking-widest py-3 px-6 rounded hover:bg-[#E5B5C4] transition-colors duration-300"
                 >
                   {slide.buttonText}
                 </Link>
