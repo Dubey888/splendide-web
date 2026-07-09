@@ -50,9 +50,10 @@ export default function HeroSlider() {
         {BANNERS_DATA.map((slide, index) => {
           const isActive = index === currentIndex;
           
-          let positionClass = "left-1/2 -translate-x-1/2"; 
-          if (slide.textPosition === "right") positionClass = "md:left-auto md:right-12 md:translate-x-0 left-1/2 -translate-x-1/2";
-          if (slide.textPosition === "left") positionClass = "md:left-12 md:translate-x-0 left-1/2 -translate-x-1/2";
+          // Lógica de posición: Siempre a la derecha en celular (right-4). En PC, respeta la configuración.
+          let positionClass = "right-4 md:right-auto md:left-1/2 md:-translate-x-1/2"; 
+          if (slide.textPosition === "right") positionClass = "right-4 md:left-auto md:right-12 md:translate-x-0";
+          if (slide.textPosition === "left") positionClass = "right-4 md:left-12 md:right-auto md:translate-x-0";
 
           return (
             <div
@@ -71,22 +72,24 @@ export default function HeroSlider() {
 
               <div className="absolute inset-0 bg-black/5 md:bg-transparent" />
 
-              {/* AQUÍ ESTÁ LA MAGIA: p-4 en móvil, md:p-8 en PC. w-[75%] en móvil, md:w-[420px] en PC */}
-              <div className={`absolute bottom-[52px] md:bottom-auto md:top-1/2 md:-translate-y-1/2 w-[75%] md:w-[420px] bg-white rounded-lg md:rounded-2xl p-3 md:p-8 shadow-xl border border-gray-100 transition-all duration-700 ${positionClass} ${
+              {/* TARJETA MINIATURA PARA CELULAR */}
+              <div className={`absolute bottom-[70px] md:bottom-auto md:top-1/2 md:-translate-y-1/2 w-auto max-w-[160px] md:max-w-none md:w-[420px] bg-white/95 backdrop-blur-sm rounded md:rounded-2xl p-2.5 md:p-8 shadow-xl border border-gray-100 transition-all duration-700 ${positionClass} ${
                 isActive ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
               }`}>
-                {/* Título: text-lg en móvil, md:text-4xl en PC */}
-                <h2 className="font-serif text-lg md:text-4xl text-[#1A1A1A] mb-1 md:mb-3 font-normal tracking-tight">
+                {/* Título pequeño en celular */}
+                <h2 className="font-serif text-[14px] md:text-4xl text-[#1A1A1A] mb-1.5 md:mb-3 font-semibold md:font-normal tracking-tight leading-tight">
                   {slide.title}
                 </h2>
-                {/* Subtítulo: text-[10px] en móvil, md:text-sm en PC */}
-                <p className="font-sans text-[10px] md:text-sm text-gray-600 mb-2 md:mb-6 leading-tight md:leading-relaxed">
+                
+                {/* EL SECRETO: Subtítulo oculto en celular (hidden) para ahorrar espacio */}
+                <p className="hidden md:block font-sans text-sm text-gray-600 mb-6 leading-relaxed">
                   {slide.subtitle}
                 </p>
-                {/* Botón: texto súper pequeño y menos padding en móvil */}
+
+                {/* Botón súper compacto */}
                 <Link 
                   href={slide.linkUrl}
-                  className="inline-block w-full md:w-auto text-center bg-[#1A1A1A] text-white font-sans text-[9px] md:text-xs uppercase tracking-widest py-2 md:py-3.5 px-4 md:px-8 rounded hover:bg-[#E5B5C4] transition-colors duration-300"
+                  className="inline-block w-full text-center bg-[#1A1A1A] text-white font-sans text-[8px] md:text-xs uppercase tracking-widest py-1.5 md:py-3.5 px-2 md:px-8 rounded-sm hover:bg-[#E5B5C4] transition-colors duration-300"
                 >
                   {slide.buttonText}
                 </Link>
