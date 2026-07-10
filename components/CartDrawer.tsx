@@ -1,9 +1,11 @@
 "use client";
 
 import { useCart } from "@/context/CartContext";
+import { useRouter } from "next/navigation"; // Importación agregada
 
 export default function CartDrawer() {
   const { cartItems, isCartOpen, toggleCart, removeFromCart, updateQuantity, cartTotal } = useCart();
+  const router = useRouter(); // Inicialización del enrutador agregada
 
   if (!isCartOpen) return null;
 
@@ -125,7 +127,10 @@ export default function CartDrawer() {
             </div>
             
             <button 
-              onClick={() => alert("¡Próximamente conectaremos con WhatsApp!")}
+              onClick={() => {
+                toggleCart(); // Cierra el carrito lateral
+                router.push('/checkout'); // Redirige a la nueva página
+              }}
               className="w-full bg-[#1A1A1A] text-white font-sans uppercase tracking-widest text-[11px] h-12 flex items-center justify-center transition-colors duration-300 hover:bg-[#D7A1A4] font-medium cursor-pointer rounded-full"
             >
               Iniciar Pedido
