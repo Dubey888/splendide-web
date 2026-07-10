@@ -39,7 +39,7 @@ export default function CheckoutPage() {
       return `- ${item.cantidad}x ${item.nombre}${nombreVariante} - $${Number(item.precio).toLocaleString('es-CO')}`;
     }).join('%0A');
 
-    const numeroTienda = "573224511590"; // Reemplaza con tu número real de WhatsApp
+    const numeroTienda = "573224511590"; // Tu número real de WhatsApp
     
     // Configurar el texto de entrega basado en la selección
     const infoEntrega = metodoEntrega === 'envio' 
@@ -55,6 +55,7 @@ export default function CheckoutPage() {
     const mensaje = `¡Hola Splendide! Quiero confirmar mi pedido web.%0A%0A` +
       `*Mi Pedido:*%0A${detalleProductos}%0A%0A` +
       infoEntrega +
+      `*Método de pago:* Transferencia Bancolombia / Llave BRED%0A` +
       `*Total a pagar:* $${subtotal.toLocaleString('es-CO')}%0A%0A` +
       `Aquí adjunto mi comprobante de pago.`;
 
@@ -171,7 +172,7 @@ export default function CheckoutPage() {
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="text-sm font-medium text-gray-900">Splendide</p>
-                      <p className="text-sm text-gray-600">Dirección de tu tienda física aquí, Medellín</p>
+                      <p className="text-sm text-gray-600">Carrera 49 #51-04 Local 101 El Santuario, Antioquia</p>
                     </div>
                     <span className="text-sm font-medium text-gray-900">GRATIS</span>
                   </div>
@@ -192,20 +193,34 @@ export default function CheckoutPage() {
               )}
             </div>
 
-            {/* SECCIÓN DE PAGO (Estilo Shopify) */}
+            {/* SECCIÓN DE PAGO (Centrado y con Llave BRED) */}
             <div className="mt-10">
               <h2 className="text-lg font-medium mb-1 text-gray-900">Pago</h2>
               <p className="text-sm text-gray-500 mb-4">Todas las transacciones son seguras y están encriptadas.</p>
               
-              <div className="border border-gray-300 rounded-md bg-[#F4F4F4] p-8 text-center flex flex-col items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+              <div className="border border-gray-300 rounded-md bg-[#F4F4F4] p-8 flex flex-col items-center justify-center">
+                {/* Icono de tarjeta centrado */}
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-gray-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                 </svg>
-                <p className="text-sm text-gray-700 mb-3">Para procesar tu pedido, transfiere el total a nuestra cuenta:</p>
-                <div className="bg-white px-6 py-3 rounded border border-gray-200 inline-block text-left">
-                  <p className="text-sm text-gray-600">Banco: <span className="font-medium text-black">Bancolombia</span></p>
-                  <p className="text-sm text-gray-600">Cuenta: <span className="font-medium text-black">Ahorros 123-456789-00</span></p> {/* Modifica tus datos aquí */}
-                  <p className="text-sm text-gray-600">A nombre de: <span className="font-medium text-black">Splendide</span></p>
+                
+                <p className="text-sm text-gray-700 mb-4 text-center">Para procesar tu pedido, transfiere el total a nuestra cuenta o Llave BRED:</p>
+                
+                {/* Cuadro de datos centrado */}
+                <div className="bg-white px-8 py-5 rounded border border-gray-200 inline-block text-center w-full max-w-sm shadow-sm">
+                  <div className="mb-4">
+                    <p className="text-sm text-gray-600 mb-1">Banco: <span className="font-medium text-black">Bancolombia</span></p>
+                    <p className="text-sm text-gray-600 mb-1">Cuenta: <span className="font-medium text-black">Ahorros 325-065268-91</span></p>
+                    <p className="text-sm text-gray-600">A nombre de: <span className="font-medium text-black">Splendide</span></p>
+                  </div>
+                  
+                  {/* Línea divisoria */}
+                  <div className="h-px w-full bg-gray-200 my-4"></div>
+                  
+                  <div>
+                    <p className="text-sm text-gray-600 mb-1">Llave BRED: <span className="font-medium text-black">322 451 1590</span></p>
+                    <p className="text-xs text-gray-400 mt-1">(Aceptamos envíos desde otros bancos)</p>
+                  </div>
                 </div>
               </div>
             </div>
