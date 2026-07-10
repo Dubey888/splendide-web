@@ -3,17 +3,16 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useCart } from '@/context/CartContext'; // Asegúrate de que esta ruta coincide con tu proyecto
+import { useCart } from '@/context/CartContext'; 
 
 export default function CheckoutPage() {
-  // Traemos los productos reales del contexto. 
-  // Nota: Si en tu contexto el array se llama 'cartItems' en vez de 'cart', cámbialo aquí.
-  const { cart } = useCart();
+  // CORRECCIÓN: Cambiado de 'cart' a 'cartItems'
+  const { cartItems } = useCart();
   
   // Calculamos el subtotal exacto
-  const subtotalReal = cart.reduce((total: number, item: any) => total + (Number(item.precio) * item.cantidad), 0);
+  const subtotalReal = cartItems.reduce((total: number, item: any) => total + (Number(item.precio) * item.cantidad), 0);
   
-  // Aplicamos la regla de redondeo a 100 pesos para mantener consistencia con el sistema local
+  // Mantenemos la regla de redondeo a la centena (100 pesos)
   const subtotal = Math.round(subtotalReal / 100) * 100;
   
   const [formData, setFormData] = useState({
@@ -34,13 +33,12 @@ export default function CheckoutPage() {
     e.preventDefault();
     
     // Armar la lista dinámica de productos para el mensaje
-    const detalleProductos = cart.map((item: any) => {
-      // Si manejas la variante en el carrito, la agregamos al texto
+    const detalleProductos = cartItems.map((item: any) => {
       const nombreVariante = item.variante ? ` (${item.variante})` : '';
       return `- ${item.cantidad}x ${item.nombre}${nombreVariante} - $${Number(item.precio).toLocaleString('es-CO')}`;
     }).join('%0A');
 
-    const numeroTienda = "573000000000"; // Reemplaza con el número real de WhatsApp de Splendide
+    const numeroTienda = "573000000000"; // Reemplaza con el número real
     
     const mensaje = `¡Hola Splendide! Quiero confirmar mi pedido web.%0A%0A` +
       `*Mi Pedido:*%0A${detalleProductos}%0A%0A` +
@@ -55,8 +53,8 @@ export default function CheckoutPage() {
     window.open(`https://wa.me/${numeroTienda}?text=${mensaje}`, '_blank');
   };
 
-  // Si el carrito está vacío, mostramos un mensaje para que vuelvan a la tienda
-  if (cart.length === 0) {
+  // Validación de carrito vacío
+  if (!cartItems || cartItems.length === 0) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#F5F5F5] font-sans px-4">
         <h2 className="text-2xl font-serif text-[#1A1A1A] mb-4">Tu carrito está vacío</h2>
@@ -71,7 +69,7 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-white md:bg-[#F5F5F5] flex flex-col md:flex-row font-sans">
       
-      {/* COLUMNA IZQUIERDA: Formulario de Datos (Envío) */}
+      {/* COLUMNA IZQUIERDA */}
       <div className="w-full md:w-[55%] bg-white p-6 md:p-12 lg:p-20 order-2 md:order-1 flex justify-end">
         <div className="w-full max-w-xl">
           
@@ -141,7 +139,7 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-      {/* COLUMNA DERECHA: Resumen del Pedido */}
+      {/* COLUMNA DERECHA */}
       <div className="w-full md:w-[45%] bg-[#FAFAFA] border-l border-gray-200 p-6 md:p-12 lg:p-20 order-1 md:order-2 flex justify-start">
         <div className="w-full max-w-md">
           
@@ -149,22 +147,15 @@ export default function CheckoutPage() {
             Splendide
           </Link>
 
-          {/* Lista de productos conectada al CartContext */}
           <div className="flex flex-col gap-4 mb-6 max-h-[50vh] overflow-y-auto pr-2">
-            {cart.map((item: any, index: number) => {
-              // Asegurarnos de tener una imagen válida
+            {cartItems.map((item: any, index: number) => {
               const imagenItem = item.imagen ? item.imagen.split(',')[0] : '/placeholder.jpg'; 
               
               return (
                 <div key={`${item.id}-${index}`} className="flex items-center gap-4">
                   <div className="relative">
                     <div className="w-16 h-16 bg-white border border-gray-200 rounded-md overflow-hidden relative">
-                      <Image 
-                        src={imagenItem} 
-                        alt={item.nombre} 
-                        fill 
-                        className="object-cover" 
-                      />
+                      <Image src={imagenItem} alt={item.nombre} fill className="object-cover" />
                     </div>
                     <span className="absolute -top-2 -right-2 bg-gray-500 text-white text-[11px] w-5 h-5 flex items-center justify-center rounded-full">
                       {item.cantidad}
@@ -189,7 +180,6 @@ export default function CheckoutPage() {
               <span>Subtotal</span>
               <span className="font-medium text-gray-900">${subtotalReal.toLocaleString('es-CO')}</span>
             </div>
-            {/* Si el subtotal redondeado es diferente, mostramos el ajuste */}
             {subtotalReal !== subtotal && (
               <div className="flex justify-between text-sm text-gray-600">
                 <span>Ajuste de redondeo</span>
