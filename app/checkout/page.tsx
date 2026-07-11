@@ -63,7 +63,7 @@ export default function CheckoutPage() {
 
     try {
       // 2. Enviar los datos a tu API PHP en Clever Cloud
-      const apiURL = "https://app-8bd88649-a976-47fc-9453-ddce1d45a3fd.cleverapps.io/index.php?accion=guardar_pedido";
+      const apiURL = "https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=guardar_pedido";
       
       const respuesta = await fetch(apiURL, {
         method: "POST",
