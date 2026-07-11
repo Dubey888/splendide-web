@@ -204,21 +204,22 @@ export default function CheckoutPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                 </svg>
                 
-                <p className="text-sm text-gray-700 mb-4 text-center">Para procesar tu pedido, transfiere el total a nuestra cuenta o Llave BRED:</p>
+                <p className="text-sm text-gray-700 mb-4 text-center">Para procesar tu pedido, transfiere el total a nuestra cuenta o Llave BRE-B:</p>
                 
                 {/* Cuadro de datos centrado */}
                 <div className="bg-white px-8 py-5 rounded border border-gray-200 inline-block text-center w-full max-w-sm shadow-sm">
                   <div className="mb-4">
                     <p className="text-sm text-gray-600 mb-1">Banco: <span className="font-medium text-black">Bancolombia</span></p>
                     <p className="text-sm text-gray-600 mb-1">Cuenta: <span className="font-medium text-black">Ahorros 325-065268-91</span></p>
-                    <p className="text-sm text-gray-600">A nombre de: <span className="font-medium text-black">Splendide</span></p>
+                    <p className="text-sm text-gray-600">A nombre de: <span className="font-medium text-black">Dubey Arcila</span></p>
                   </div>
                   
                   {/* Línea divisoria */}
                   <div className="h-px w-full bg-gray-200 my-4"></div>
                   
                   <div>
-                    <p className="text-sm text-gray-600 mb-1">Llave BRED: <span className="font-medium text-black">322 451 1590</span></p>
+                    <p className="text-sm text-gray-600 mb-1">Llave BRE-B: <span className="font-medium text-black">0091007756</span></p>
+                    <p className="text-sm text-gray-600">A nombre de: <span className="font-medium text-black">Splendide</span></p>
                     <p className="text-xs text-gray-400 mt-1">(Aceptamos envíos desde otros bancos)</p>
                   </div>
                 </div>
