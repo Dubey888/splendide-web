@@ -16,6 +16,9 @@ export default function CheckoutPage() {
   // Estado para el método de entrega
   const [metodoEntrega, setMetodoEntrega] = useState<'envio' | 'retiro'>('envio');
 
+  // Estado para evitar doble envío del formulario
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [formData, setFormData] = useState({
     email: '',
     nombre: '',
@@ -30,10 +33,11 @@ export default function CheckoutPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const procesarPedido = (e: React.FormEvent) => {
+  const procesarPedido = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     
-    // Armar la lista dinámica de productos para el mensaje
+    // Armar la lista dinámica de productos para el mensaje de WhatsApp
     const detalleProductos = cartItems.map((item: any) => {
       const nombreVariante = item.variante ? ` (${item.variante})` : '';
       return `- ${item.cantidad}x ${item.nombre}${nombreVariante} - $${Number(item.precio).toLocaleString('es-CO')}`;
@@ -41,25 +45,69 @@ export default function CheckoutPage() {
 
     const numeroTienda = "573224511590"; // Tu número real de WhatsApp
     
-    // Configurar el texto de entrega basado en la selección
-    const infoEntrega = metodoEntrega === 'envio' 
-      ? `*Datos de envío:*%0A` +
-        `Nombre: ${formData.nombre} ${formData.apellidos}%0A` +
-        `Dirección: ${formData.direccion}, ${formData.ciudad}%0A` +
-        `Detalles: ${formData.detalles || 'N/A'}%0A` +
-        `Teléfono: ${formData.telefono}%0A%0A`
-      : `*Método de entrega:* Retiro en Tienda%0A` +
-        `Nombre de quien retira: ${formData.nombre} ${formData.apellidos}%0A` +
-        `Teléfono: ${formData.telefono}%0A%0A`;
+    // 1. Armar el payload para la base de datos
+    const payload = {
+      crear_cuenta: false,
+      password: "", 
+      email_contacto: formData.email, 
+      nombre_entrega: formData.nombre,
+      apellidos_entrega: formData.apellidos,
+      telefono_contacto: formData.telefono,
+      metodo_entrega: metodoEntrega,
+      direccion: formData.direccion,
+      detalles_direccion: formData.detalles,
+      ciudad: formData.ciudad,
+      total_pagar: subtotal,
+      detalle_productos: cartItems 
+    };
 
-    const mensaje = `¡Hola Splendide! Quiero confirmar mi pedido web.%0A%0A` +
-      `*Mi Pedido:*%0A${detalleProductos}%0A%0A` +
-      infoEntrega +
-      `*Método de pago:* Transferencia Bancolombia / Llave BRED%0A` +
-      `*Total a pagar:* $${subtotal.toLocaleString('es-CO')}%0A%0A` +
-      `Aquí adjunto mi comprobante de pago.`;
+    try {
+      // 2. Enviar los datos a tu API PHP en Clever Cloud
+      const apiURL = "https://app-8bd88649-a976-47fc-9453-ddce1d45a3fd.cleverapps.io/index.php?accion=guardar_pedido";
+      
+      const respuesta = await fetch(apiURL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
-    window.open(`https://wa.me/${numeroTienda}?text=${mensaje}`, '_blank');
+      const datosBD = await respuesta.json();
+
+      // 3. Si se guardó correctamente, armamos y abrimos WhatsApp
+      if (datosBD.status === "success") {
+        
+        // Configurar el texto de entrega basado en la selección
+        const infoEntrega = metodoEntrega === 'envio' 
+          ? `*Datos de envío:*%0A` +
+            `Nombre: ${formData.nombre} ${formData.apellidos}%0A` +
+            `Dirección: ${formData.direccion}, ${formData.ciudad}%0A` +
+            `Detalles: ${formData.detalles || 'N/A'}%0A` +
+            `Teléfono: ${formData.telefono}%0A%0A`
+          : `*Método de entrega:* Retiro en Tienda%0A` +
+            `Nombre de quien retira: ${formData.nombre} ${formData.apellidos}%0A` +
+            `Teléfono: ${formData.telefono}%0A%0A`;
+
+        // Agregamos el número de pedido al mensaje
+        const mensaje = `¡Hola Splendide! Quiero confirmar mi pedido web.%0A%0A` +
+          `*Número de Pedido:* #${datosBD.pedido_id}%0A` +
+          `*Mi Pedido:*%0A${detalleProductos}%0A%0A` +
+          infoEntrega +
+          `*Método de pago:* Transferencia Bancolombia / Llave BRED%0A` +
+          `*Total a pagar:* $${subtotal.toLocaleString('es-CO')}%0A%0A` +
+          `Aquí adjunto mi comprobante de pago.`;
+
+        window.open(`https://wa.me/${numeroTienda}?text=${mensaje}`, '_blank');
+      } else {
+        alert("Hubo un problema al registrar tu pedido: " + datosBD.mensaje);
+      }
+    } catch (error) {
+      console.error("Error al procesar el pedido:", error);
+      alert("Hubo un error de conexión. Por favor, intenta de nuevo.");
+    } finally {
+      setIsSubmitting(false); // Rehabilitamos el botón al terminar
+    }
   };
 
   // Validación de carrito vacío
@@ -193,20 +241,18 @@ export default function CheckoutPage() {
               )}
             </div>
 
-            {/* SECCIÓN DE PAGO (Centrado y con Llave BRED) */}
+            {/* SECCIÓN DE PAGO */}
             <div className="mt-10">
               <h2 className="text-lg font-medium mb-1 text-gray-900">Pago</h2>
               <p className="text-sm text-gray-500 mb-4">Todas las transacciones son seguras y están encriptadas.</p>
               
               <div className="border border-gray-300 rounded-md bg-[#F4F4F4] p-8 flex flex-col items-center justify-center">
-                {/* Icono de tarjeta centrado */}
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-gray-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                 </svg>
                 
                 <p className="text-sm text-gray-700 mb-4 text-center">Para procesar tu pedido, transfiere el total a nuestra cuenta o Llave BRE-B:</p>
                 
-                {/* Cuadro de datos centrado */}
                 <div className="bg-white px-8 py-5 rounded border border-gray-200 inline-block text-center w-full max-w-sm shadow-sm">
                   <div className="mb-4">
                     <p className="text-sm text-gray-600 mb-1">Banco: <span className="font-medium text-black">Bancolombia</span></p>
@@ -214,7 +260,6 @@ export default function CheckoutPage() {
                     <p className="text-sm text-gray-600">A nombre de: <span className="font-medium text-black">Dubey Arcila</span></p>
                   </div>
                   
-                  {/* Línea divisoria */}
                   <div className="h-px w-full bg-gray-200 my-4"></div>
                   
                   <div>
@@ -228,9 +273,12 @@ export default function CheckoutPage() {
 
             <button 
               type="submit" 
-              className="w-full bg-[#1A1A1A] text-white py-4 rounded-md text-sm font-medium tracking-wide hover:bg-black transition-colors mt-6 shadow-md"
+              disabled={isSubmitting}
+              className={`w-full text-white py-4 rounded-md text-sm font-medium tracking-wide transition-colors mt-6 shadow-md ${
+                isSubmitting ? 'bg-gray-500 cursor-not-allowed' : 'bg-[#1A1A1A] hover:bg-black'
+              }`}
             >
-              Confirmar pedido y enviar comprobante
+              {isSubmitting ? 'Procesando...' : 'Confirmar pedido y enviar comprobante'}
             </button>
             <p className="text-center text-xs text-gray-500 mt-4">
               Serás redirigida a WhatsApp para enviar el comprobante de pago.
@@ -255,7 +303,6 @@ export default function CheckoutPage() {
                 <div key={`${item.id}-${index}`} className="flex items-center gap-4">
                   <div className="relative">
                     <div className="w-16 h-16 bg-white border border-gray-300 rounded-lg overflow-hidden relative flex items-center justify-center">
-                      {/* Usamos <img> estándar con onError para evitar errores si la URL falla */}
                       <img 
                         src={imagenItem || 'https://via.placeholder.com/150?text=Sin+Imagen'} 
                         alt={item.nombre} 
