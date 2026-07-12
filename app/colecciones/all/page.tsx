@@ -1,6 +1,5 @@
-// app/colecciones/all/page.tsx
 import Image from "next/image";
-import Link from "next/link";
+import ProductCardCatalog from "@/components/ProductCardCatalog";
 
 interface Producto {
   Codigo: string;
@@ -46,11 +45,11 @@ export default async function CatalogoCompleto() {
   );
 
   return (
+    // Fondo claro parecido a la página original
     <div className="min-h-screen bg-[#FAF4F4] text-[#1A1A1A] font-sans pb-20">
       
       {/* HEADER DEL CATÁLOGO */}
       <header className="relative w-full h-[300px] md:h-[400px] flex items-center justify-center overflow-hidden">
-        {/* Puedes cambiar esta imagen por otra si quieres una distinta al inicio */}
         <Image 
           src="/portada.jpeg" 
           alt="Catálogo Splendide"
@@ -58,7 +57,7 @@ export default async function CatalogoCompleto() {
           priority
           className="object-cover object-center"
         />
-        <div className="absolute inset-0 bg-[#1A1A1A]/40" />
+        <div className="absolute inset-0 bg-black/40" />
         <div className="relative text-center px-4 text-white">
           <h1 className="text-4xl md:text-5xl font-serif drop-shadow-lg mb-2">Nuestro Catálogo</h1>
           <p className="text-sm md:text-base uppercase tracking-[0.2em] opacity-90 drop-shadow-md">
@@ -68,10 +67,10 @@ export default async function CatalogoCompleto() {
       </header>
 
       {/* REJILLA DE PRODUCTOS */}
-      <main className="w-full max-w-[1600px] mx-auto px-6 md:px-12 lg:px-20 py-16">
+      <main className="w-full max-w-[1600px] mx-auto px-4 md:px-8 lg:px-16 py-12">
         
-        {/* Barra de utilidades (Filtros y Contador) */}
-        <div className="flex items-center justify-between border-b border-[#D7A1A4]/30 pb-4 mb-10">
+        {/* Barra de utilidades */}
+        <div className="flex items-center justify-between border-b border-[#D7A1A4]/30 pb-4 mb-8">
           <p className="text-[#707070] text-sm uppercase tracking-widest">
             {productosAgrupados.length} Productos
           </p>
@@ -83,34 +82,11 @@ export default async function CatalogoCompleto() {
           </div>
         </div>
 
-        {/* Productos */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 lg:gap-x-10 gap-y-14">
-          {productosAgrupados.map((item: any) => {
-            const imagenes = item.URL_Imagen ? item.URL_Imagen.split(",") : [];
-            const imagenPrincipal = imagenes[0] || null;
-            const cantidadVariantes = item.Variantes.length;
-
-            return (
-              <Link href={`/producto/${item.HandleFinal}`} key={item.HandleFinal} className="group cursor-pointer block">
-                <div className="aspect-[3/4] bg-white rounded-md overflow-hidden mb-4 relative shadow-sm border border-[#D7A1A4]/20">
-                  {imagenPrincipal && (
-                    <img src={imagenPrincipal} alt={item.Producto} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" />
-                  )}
-                </div>
-                <h3 className="font-medium text-[#1A1A1A] text-sm transition-colors group-hover:text-[#D7A1A4] line-clamp-2 min-h-[40px]">
-                  {item.Producto}
-                </h3>
-                <p className="text-[#1A1A1A] font-semibold mt-2">
-                  ${Number(item.Precio_Venta).toLocaleString('es-CO')}
-                </p>
-                {cantidadVariantes > 1 ? (
-                  <span className="text-[10px] text-[#707070] uppercase tracking-widest block mt-2">{cantidadVariantes} Opciones disponibles</span>
-                ) : (
-                  <span className="text-[10px] text-[#707070] uppercase tracking-widest block mt-2">Stock: {item.Stock}</span>
-                )}
-              </Link>
-            );
-          })}
+        {/* Implementación de la Rejilla usando nuestro nuevo Componente Cliente */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 md:gap-x-8 gap-y-12">
+          {productosAgrupados.map((item: any) => (
+            <ProductCardCatalog key={item.HandleFinal} item={item} />
+          ))}
         </div>
       </main>
     </div>
