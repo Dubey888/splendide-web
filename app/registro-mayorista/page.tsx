@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 export default function RegistroMayorista() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  // Eliminamos nombre_negocio del estado inicial
+  const [mensaje, setMensaje] = useState({ texto: '', tipo: '' });
   const [formData, setFormData] = useState({
     nombre: '', apellidos: '', telefono: '', 
     email: '', password: ''
@@ -19,6 +19,7 @@ export default function RegistroMayorista() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setMensaje({ texto: '', tipo: '' });
 
     try {
       const url = "https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=registrar_mayorista";
@@ -31,13 +32,13 @@ export default function RegistroMayorista() {
       const data = await respuesta.json();
 
       if (data.status === "success") {
-        alert("¡Registro exitoso! Ahora puedes iniciar sesión.");
-        router.push('/login');
+        setMensaje({ texto: "¡Registro exitoso! Redirigiendo...", tipo: 'success' });
+        setTimeout(() => router.push('/login'), 2000);
       } else {
-        alert("Error: " + data.mensaje);
+        setMensaje({ texto: data.mensaje, tipo: 'error' });
       }
     } catch (error) {
-      alert("Error de conexión. Inténtalo de nuevo.");
+      setMensaje({ texto: "Error de conexión. Inténtalo de nuevo.", tipo: 'error' });
     } finally {
       setLoading(false);
     }
@@ -48,8 +49,13 @@ export default function RegistroMayorista() {
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-sm border border-gray-100">
         <div className="text-center">
           <h2 className="mt-6 text-3xl font-serif text-gray-900">Registro Mayorista</h2>
-          <p className="mt-2 text-sm text-gray-600">Únete a Splendide y obtén precios especiales</p>
         </div>
+        
+        {mensaje.texto && (
+          <div className={`p-3 rounded text-sm text-center ${mensaje.tipo === 'error' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+            {mensaje.texto}
+          </div>
+        )}
         
         <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-4">
@@ -64,10 +70,6 @@ export default function RegistroMayorista() {
             {loading ? 'Registrando...' : 'Solicitar cuenta'}
           </button>
         </form>
-        
-        <p className="text-center text-sm text-gray-600">
-          ¿Ya tienes cuenta? <Link href="/login" className="font-medium text-black hover:underline">Inicia sesión aquí</Link>
-        </p>
       </div>
     </div>
   );
