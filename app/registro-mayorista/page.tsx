@@ -67,7 +67,7 @@ export default function RegistroMayorista() {
           <input name="password" type="password" required placeholder="Contraseña" onChange={handleChange} className="w-full border p-3 rounded text-sm outline-none focus:ring-1 focus:ring-black" />
 
           <button type="submit" disabled={loading} className="w-full bg-black text-white p-3 rounded text-sm font-medium hover:bg-gray-800 transition">
-            {loading ? 'Registrando...' : 'Solicitar cuenta'}
+            {loading ? 'Registrando...' : 'Crear cuenta'}
           </button>
         </form>
       </div>
