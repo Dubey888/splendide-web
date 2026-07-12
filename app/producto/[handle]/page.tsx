@@ -64,8 +64,13 @@ export default function DetalleProducto() {
           setVarianteActiva(variantes[0]); 
         }
 
-        // 2. Obtener productos relacionados (aleatorios que no sean el actual)
-        const otrosProductos = data.filter((p: any) => generarHandle(p) !== handleUrl);
+        // 2. Obtener productos relacionados (aleatorios que no sean el actual Y QUE TENGAN IMAGEN)
+        const otrosProductos = data.filter((p: any) => 
+          generarHandle(p) !== handleUrl && 
+          p.URL_Imagen && 
+          p.URL_Imagen.trim() !== ""
+        );
+        
         // Filtramos para tener productos únicos por nombre y no repetir variantes en sugerencias
         const unicos = otrosProductos.filter((valor: any, indice: number, arreglo: any[]) => 
           arreglo.findIndex(v => v.Producto === valor.Producto) === indice
