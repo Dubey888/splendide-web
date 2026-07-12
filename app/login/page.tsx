@@ -59,6 +59,16 @@ export default function Login() {
           <button type="submit" disabled={loading} className="w-full bg-black text-white p-3 rounded text-sm font-medium hover:bg-gray-800 transition">
             {loading ? 'Ingresando...' : 'Entrar'}
           </button>
+
+          {/* NUEVO: Enlace para crear cuenta */}
+          <div className="pt-4 text-center">
+            <p className="text-[#707070] text-sm">
+              ¿No tienes una cuenta?{' '}
+              <Link href="/registro-mayorista" className="text-[#955F71] hover:text-[#D7A1A4] font-medium transition-colors underline-offset-2 hover:underline">
+                Crear cuenta mayorista
+              </Link>
+            </p>
+          </div>
         </form>
       </div>
     </div>

@@ -69,6 +69,16 @@ export default function RegistroMayorista() {
           <button type="submit" disabled={loading} className="w-full bg-black text-white p-3 rounded text-sm font-medium hover:bg-gray-800 transition">
             {loading ? 'Registrando...' : 'Crear cuenta'}
           </button>
+
+          {/* NUEVO: Enlace para iniciar sesión */}
+          <div className="pt-4 text-center">
+            <p className="text-[#707070] text-sm">
+              ¿Ya tienes una cuenta?{' '}
+              <Link href="/login" className="text-[#955F71] hover:text-[#D7A1A4] font-medium transition-colors underline-offset-2 hover:underline">
+                Iniciar sesión aquí
+              </Link>
+            </p>
+          </div>
         </form>
       </div>
     </div>
