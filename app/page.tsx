@@ -36,10 +36,12 @@ export default async function Home() {
   const productosConImagen = productos.filter((item) => item.URL_Imagen && item.URL_Imagen.trim() !== "");
 
   const colecciones = [
-    { nombre: "Salomé Makeup", imagen: "/marcas/salome.jpeg", url: "/colecciones/salome" },
-    { nombre: "Dolce Bella", imagen: "/marcas/dolcebella.jpeg", url: "/colecciones/dolce-bella" },
+    { nombre: "Bloomshell", imagen: "/marcas/bloomshell.jpeg", url: "/colecciones/bloomshell" },
+    { nombre: "Atenea", imagen: "/marcas/atenea.jpeg", url: "/colecciones/atenea" },
+    { nombre: "Montoc", imagen: "/marcas/montoc.jpeg", url: "/colecciones/Montoc" },
+    { nombre: "Bioaqua", imagen: "/marcas/bioaqua.jpeg", url: "/colecciones/bioaqua" },
     { nombre: "Ushas", imagen: "/marcas/ushas.jpeg", url: "/colecciones/ushas" },
-    { nombre: "Atenea Cosmetics", imagen: "/marcas/atenea.jpeg", url: "/colecciones/atenea" },
+    { nombre: "Purpure", imagen: "/marcas/purpure.jpeg", url: "/colecciones/purpure" },
     { nombre: "Kevin&Coco", imagen: "/marcas/kevincoco.jpeg", url: "/colecciones/kevin-coco" },
     { nombre: "Kiss Beauty", imagen: "/marcas/kissbeauty.jpeg", url: "/colecciones/kiss-beauty" }
   ];
