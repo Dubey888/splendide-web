@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { useCart } from '@/context/CartContext'; 
 
 export default function CheckoutPage() {
-  const { cartItems } = useCart();
+  // 1. Extraemos clearCart del contexto manteniendo el resto igual
+  const { cartItems, clearCart } = useCart();
   
   // Calculamos el subtotal exacto
   const subtotalReal = cartItems.reduce((total: number, item: any) => total + (Number(item.precio) * item.cantidad), 0);
@@ -97,6 +98,9 @@ export default function CheckoutPage() {
           `*Método de pago:* Transferencia Bancolombia / Llave BRED%0A` +
           `*Total a pagar:* $${subtotal.toLocaleString('es-CO')}%0A%0A` +
           `Aquí adjunto mi comprobante de pago.`;
+
+        // 2. Limpiamos el carrito justo antes de ir a WhatsApp para dejarlo vacío
+        clearCart();
 
         window.open(`https://wa.me/${numeroTienda}?text=${mensaje}`, '_blank');
       } else {

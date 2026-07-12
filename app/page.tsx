@@ -36,12 +36,12 @@ export default async function Home() {
   const productosConImagen = productos.filter((item) => item.URL_Imagen && item.URL_Imagen.trim() !== "");
 
   const colecciones = [
-    { nombre: "Salomé Makeup", imagen: "/marcas/salome.jpg", url: "/colecciones/salome" },
-    { nombre: "Dolce Bella", imagen: "/marcas/dolcebella.jpg", url: "/colecciones/dolce-bella" },
-    { nombre: "Ushas", imagen: "/marcas/ushas.jpg", url: "/colecciones/ushas" },
-    { nombre: "Atenea Cosmetics", imagen: "/marcas/atenea.jpg", url: "/colecciones/atenea" },
-    { nombre: "Kevin&Coco", imagen: "/marcas/kevincoco.jpg", url: "/colecciones/kevin-coco" },
-    { nombre: "Kiss Beauty", imagen: "/marcas/kissbeauty.jpg", url: "/colecciones/kiss-beauty" }
+    { nombre: "Salomé Makeup", imagen: "/marcas/salome.jpeg", url: "/colecciones/salome" },
+    { nombre: "Dolce Bella", imagen: "/marcas/dolcebella.jpeg", url: "/colecciones/dolce-bella" },
+    { nombre: "Ushas", imagen: "/marcas/ushas.jpeg", url: "/colecciones/ushas" },
+    { nombre: "Atenea Cosmetics", imagen: "/marcas/atenea.jpeg", url: "/colecciones/atenea" },
+    { nombre: "Kevin&Coco", imagen: "/marcas/kevincoco.jpeg", url: "/colecciones/kevin-coco" },
+    { nombre: "Kiss Beauty", imagen: "/marcas/kissbeauty.jpeg", url: "/colecciones/kiss-beauty" }
   ];
 
   const productosAgrupados = Object.values(
@@ -91,7 +91,6 @@ export default async function Home() {
 
         {/* 2. SECCIÓN: Marcas Deslizantes */}
         <section className="bg-[#DFB2C0]/20 w-full py-12 mb-16">
-          {/* Se redujo el padding a lg:px-8 para empujar a los bordes en PC */}
           <div className="w-full px-4 lg:px-8 mx-auto">
             <CarruselMarcas marcas={colecciones} />
           </div>
@@ -99,12 +98,11 @@ export default async function Home() {
 
         {/* 3. SECCIÓN: Bloque Asimétrico (Skincare y Esenciales) */}
         <section className="w-full px-4 lg:px-8 mx-auto mb-20">
-          {/* Ahora son 2 columnas en celular también (grid-cols-2) */}
           <div className="grid grid-cols-2 md:grid-cols-12 gap-3 md:gap-6 lg:gap-8">
             <div className="col-span-1 md:col-span-7">
               <CategoryBlock 
                 title="Skincare" 
-                imageUrl="/categorias/skincare.jpg" 
+                imageUrl="/categorias/skincare.jpeg" 
                 linkUrl="/colecciones/skincare" 
                 aspectRatio="aspect-[4/5] md:aspect-[4/3]" 
               />
@@ -112,7 +110,7 @@ export default async function Home() {
             <div className="col-span-1 md:col-span-5">
               <CategoryBlock 
                 title="Esenciales" 
-                imageUrl="/categorias/esenciales.jpg" 
+                imageUrl="/categorias/esenciales.jpeg" 
                 linkUrl="/colecciones/esenciales" 
                 aspectRatio="aspect-[4/5] md:aspect-[3/4]" 
               />
@@ -126,11 +124,11 @@ export default async function Home() {
               {productosEsenciales.map((item: any) => {
                 const imagenPrincipal = item.URL_Imagen ? item.URL_Imagen.split(",")[0] : null;
                 const precioVenta = Number(item.Precio_Venta);
-                const precioTachado = precioVenta * 1.25;
 
                 return (
                   <div key={item.HandleFinal} className="group flex flex-col gap-3">
-                    <Link href={`/producto/${item.HandleFinal}`} className="relative w-full aspect-square bg-white rounded-lg overflow-hidden border border-gray-100 shadow-sm">
+                    {/* AQUI SE CAMBIÓ aspect-square POR aspect-[4/5] PARA EL FORMATO RETRATO */}
+                    <Link href={`/producto/${item.HandleFinal}`} className="relative w-full aspect-[4/5] bg-white rounded-lg overflow-hidden border border-gray-100 shadow-sm">
                       {imagenPrincipal && (
                         <Image 
                           src={imagenPrincipal} 
@@ -150,16 +148,14 @@ export default async function Home() {
                       </Link>
                       
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-gray-400 text-sm line-through">
-                          ${precioTachado.toLocaleString('es-CO')}
-                        </span>
                         <span className="text-gray-800 text-sm font-medium">
                           ${precioVenta.toLocaleString('es-CO')}
                         </span>
                       </div>
                     </div>
                     
-                    <div className="w-full mt-1 [&>button]:w-full [&>button]:py-2.5 [&>button]:border [&>button]:border-gray-300 [&>button]:rounded [&>button]:text-sm [&>button]:text-[#1a1a1a] hover:[&>button]:border-[#1a1a1a] hover:[&>button]:bg-gray-50 [&>button]:transition-all">
+                    {/* AQUI SE ARREGLARON LOS ESTILOS DEL BOTÓN (FONDO NEGRO, LETRA BLANCA) */}
+                    <div className="w-full mt-2 [&>button]:w-full [&>button]:py-2.5 [&>button]:border [&>button]:border-[#1A1A1A] [&>button]:bg-[#1A1A1A] [&>button]:text-white [&>button]:rounded [&>button]:text-sm hover:[&>button]:bg-transparent hover:[&>button]:text-[#1A1A1A] [&>button]:transition-all">
                         <BotonAnadir id={item.Codigo} nombre={item.Producto} precio={item.Precio_Venta} imagen={imagenPrincipal} />
                     </div>
                   </div>
@@ -179,19 +175,18 @@ export default async function Home() {
           <div className="mb-6 md:mb-8">
             <h3 className="text-2xl md:text-3xl font-serif text-[#1A1A1A]">Sweet Body</h3>
           </div>
-          {/* AQUÍ ESTÁ LA MAGIA MÓVIL: grid-cols-2 obliga a que sean 2 cajas lado a lado en el celular */}
           <div className="grid grid-cols-2 gap-3 md:gap-6 lg:gap-10">
             <CategoryBlock 
               title="Fragancias" 
               cursiveOverlay="Perfumes & Splash" 
-              imageUrl="/categorias/fragancias.jpg" 
+              imageUrl="/categorias/fragancias.jpeg" 
               linkUrl="/colecciones/fragancias" 
               aspectRatio="aspect-[4/5] md:aspect-square" 
             />
             <CategoryBlock 
               title="Corporal" 
               cursiveOverlay="Cuidado corporal" 
-              imageUrl="/categorias/corporal.jpg" 
+              imageUrl="/categorias/corporal.jpeg" 
               linkUrl="/colecciones/corporal" 
               aspectRatio="aspect-[4/5] md:aspect-square" 
             />
@@ -218,7 +213,8 @@ export default async function Home() {
               
               return (
                 <div key={item.HandleFinal} className="group flex flex-col gap-3">
-                  <Link href={`/producto/${item.HandleFinal}`} className="relative w-full aspect-square bg-white rounded-lg overflow-hidden border border-gray-100 shadow-sm">
+                  {/* AQUI SE CAMBIÓ aspect-square POR aspect-[4/5] PARA EL FORMATO RETRATO */}
+                  <Link href={`/producto/${item.HandleFinal}`} className="relative w-full aspect-[4/5] bg-white rounded-lg overflow-hidden border border-gray-100 shadow-sm">
                     {imagenPrincipal && (
                       <Image 
                         src={imagenPrincipal} 
@@ -244,7 +240,8 @@ export default async function Home() {
                     </div>
                   </div>
                   
-                  <div className="w-full mt-1 [&>button]:w-full [&>button]:py-2.5 [&>button]:border [&>button]:border-gray-300 [&>button]:rounded [&>button]:text-sm [&>button]:text-[#1a1a1a] hover:[&>button]:border-[#1a1a1a] hover:[&>button]:bg-gray-50 [&>button]:transition-all">
+                  {/* AQUI SE ARREGLARON LOS ESTILOS DEL BOTÓN (FONDO NEGRO, LETRA BLANCA) */}
+                  <div className="w-full mt-2 [&>button]:w-full [&>button]:py-2.5 [&>button]:border [&>button]:border-[#1A1A1A] [&>button]:bg-[#1A1A1A] [&>button]:text-white [&>button]:rounded [&>button]:text-sm hover:[&>button]:bg-transparent hover:[&>button]:text-[#1A1A1A] [&>button]:transition-all">
                       <BotonAnadir id={item.Codigo} nombre={item.Producto} precio={item.Precio_Venta} imagen={imagenPrincipal} />
                   </div>
                 </div>
@@ -258,19 +255,18 @@ export default async function Home() {
           <div className="mb-6 md:mb-8">
             <h3 className="text-2xl md:text-3xl font-serif text-[#1A1A1A]">Complementos</h3>
           </div>
-          {/* Igualmente aplicamos las 2 columnas en celular aquí */}
           <div className="grid grid-cols-2 gap-3 md:gap-6 lg:gap-10">
             <CategoryBlock 
               title="Bolsos" 
               cursiveOverlay="Bolsos & Mochilas" 
-              imageUrl="/categorias/bolsos.jpg" 
+              imageUrl="/categorias/bolsos.jpeg" 
               linkUrl="/colecciones/bolsos" 
               aspectRatio="aspect-[4/5] md:aspect-[16/10]" 
             />
             <CategoryBlock 
               title="Carteras" 
               cursiveOverlay="Carteras & Bandoleras" 
-              imageUrl="/categorias/carteras.jpg" 
+              imageUrl="/categorias/carteras.jpeg" 
               linkUrl="/colecciones/carteras" 
               aspectRatio="aspect-[4/5] md:aspect-[16/10]" 
             />

@@ -15,7 +15,8 @@ interface CartContextType {
   isCartOpen: boolean;
   addToCart: (item: CartItem) => void;
   removeFromCart: (id: string) => void;
-  updateQuantity: (id: string, cantidad: number) => void; // ¡Nueva función!
+  updateQuantity: (id: string, cantidad: number) => void; 
+  clearCart: () => void; // 1. Añadimos la función a la interfaz
   toggleCart: () => void;
   cartTotal: number;
   cartCount: number;
@@ -61,12 +62,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
 
-  // Función para los botones de + y - en el carrito
   const updateQuantity = (id: string, cantidad: number) => {
-    if (cantidad < 1) return; // No permite bajar de 1 (para eso está la papelera)
+    if (cantidad < 1) return; 
     setCartItems((prevItems) =>
       prevItems.map((item) => (item.id === id ? { ...item, cantidad } : item))
     );
+  };
+
+  // 2. Creamos la función que vacía el carrito
+  const clearCart = () => {
+    setCartItems([]);
   };
 
   const toggleCart = () => {
@@ -83,7 +88,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         isCartOpen,
         addToCart,
         removeFromCart,
-        updateQuantity, // La pasamos al contexto
+        updateQuantity, 
+        clearCart, // 3. Pasamos la función al Provider
         toggleCart,
         cartTotal,
         cartCount,
