@@ -6,67 +6,242 @@ import { esAdmin, obtenerIdUsuario } from '../utils/auth';
 export default function AdminDashboard() {
   const router = useRouter();
   const [autorizado, setAutorizado] = useState(false);
-  const [pedidos, setPedidos] = useState([]);
+  const [pedidos, setPedidos] = useState<any[]>([]);
+  
+  // Estados para la ventana emergente (Modal)
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const [pedidoSeleccionado, setPedidoSeleccionado] = useState<any>(null);
+  const [detallesPedido, setDetallesPedido] = useState<any[]>([]);
+  const [cargandoDetalles, setCargandoDetalles] = useState(false);
 
   useEffect(() => {
-    // 1. Barrera de seguridad en el Frontend
     if (!esAdmin()) {
-      router.push('/login'); // Lo pateamos al login si no es admin
+      router.push('/login');
       return;
     }
-    
     setAutorizado(true);
-    const userId = obtenerIdUsuario();
+    cargarPedidos();
+  }, [router]);
 
-    // 2. Pedimos los datos al backend enviando nuestro ID
+  const cargarPedidos = () => {
+    const userId = obtenerIdUsuario();
     fetch(`https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_pedidos&user_id=${userId}`)
       .then(res => res.json())
       .then(data => {
         if (data.status === "success") {
           setPedidos(data.data);
-        } else {
-          alert("Error cargando pedidos: " + data.mensaje);
         }
       })
-      .catch(err => console.error("Error de conexión:", err));
-  }, [router]);
+      .catch(err => console.error("Error:", err));
+  };
 
-  // Pantalla de carga mientras verifica
+  // Función para abrir los detalles del pedido
+  const abrirDetalles = (pedido: any) => {
+    setPedidoSeleccionado(pedido);
+    setModalAbierto(true);
+    setCargandoDetalles(true);
+    setDetallesPedido([]);
+
+    fetch(`https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_detalles_pedido&pedido_id=${pedido.id}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          setDetallesPedido(data.data);
+        }
+      })
+      .finally(() => setCargandoDetalles(false));
+  };
+
+  // Función para cambiar el estado
+  const cambiarEstado = async (nuevoEstado: string) => {
+    if (!pedidoSeleccionado) return;
+
+    try {
+      const res = await fetch("https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=actualizar_estado_pedido", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          pedido_id: pedidoSeleccionado.id,
+          estado: nuevoEstado
+        }),
+      });
+
+      const data = await res.json();
+      if (data.status === "success") {
+        // Actualizamos visualmente el estado sin recargar la página
+        setPedidoSeleccionado({ ...pedidoSeleccionado, estado_pago: nuevoEstado });
+        setPedidos(pedidos.map(p => p.id === pedidoSeleccionado.id ? { ...p, estado_pago: nuevoEstado } : p));
+      } else {
+        alert("Error al cambiar estado: " + data.mensaje);
+      }
+    } catch (error) {
+      alert("Error de conexión al cambiar el estado.");
+    }
+  };
+
+  // Función para dar color a los estados
+  const colorEstado = (estado: string) => {
+    switch(estado?.toLowerCase()) {
+      case 'pagado': return 'bg-green-100 text-green-800 border-green-200';
+      case 'procesado': return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'enviado': return 'bg-purple-100 text-purple-800 border-purple-200';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200'; // Pendiente por defecto
+    }
+  };
+
   if (!autorizado) return <div className="p-8 text-center">Verificando seguridad...</div>;
 
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
       <h1 className="text-3xl font-bold mb-6 text-gray-900 font-serif">Panel de Control Mayorista</h1>
       
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-        <h2 className="text-xl font-medium mb-4">Últimos Pedidos</h2>
-        <table className="w-full border-collapse">
+      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 overflow-x-auto">
+        <h2 className="text-xl font-medium mb-4">Gestión de Pedidos</h2>
+        <table className="w-full border-collapse min-w-[800px]">
           <thead>
             <tr className="bg-gray-50 border-b">
               <th className="text-left p-3 text-sm font-medium text-gray-600">ID</th>
-              <th className="text-left p-3 text-sm font-medium text-gray-600">Cliente</th>
+              <th className="text-left p-3 text-sm font-medium text-gray-600">Cliente (Entrega)</th>
               <th className="text-left p-3 text-sm font-medium text-gray-600">Total</th>
+              <th className="text-left p-3 text-sm font-medium text-gray-600">Estado</th>
               <th className="text-left p-3 text-sm font-medium text-gray-600">Fecha</th>
+              <th className="text-center p-3 text-sm font-medium text-gray-600">Acción</th>
             </tr>
           </thead>
           <tbody>
             {pedidos.length === 0 ? (
               <tr>
-                <td colSpan={4} className="p-4 text-center text-gray-500">No hay pedidos aún.</td>
+                <td colSpan={6} className="p-4 text-center text-gray-500">No hay pedidos aún.</td>
               </tr>
             ) : (
               pedidos.map((p: any) => (
-                <tr key={p.id} className="border-b hover:bg-gray-50">
+                <tr key={p.id} className="border-b hover:bg-gray-50 transition-colors">
                   <td className="p-3 text-sm">#{p.id}</td>
-                  <td className="p-3 text-sm">{p.nombre} {p.apellidos}</td>
-                  <td className="p-3 text-sm font-medium">${p.total_pagar}</td>
-                  <td className="p-3 text-sm text-gray-500">{p.fecha_pedido}</td>
+                  <td className="p-3 text-sm font-medium">{p.nombre_entrega} {p.apellidos_entrega}</td>
+                  <td className="p-3 text-sm font-semibold">${Number(p.total_pagar).toLocaleString('es-CO')}</td>
+                  <td className="p-3 text-sm">
+                    <span className={`px-2 py-1 rounded text-xs font-semibold border ${colorEstado(p.estado_pago)}`}>
+                      {(p.estado_pago || 'Pendiente').toUpperCase()}
+                    </span>
+                  </td>
+                  <td className="p-3 text-sm text-gray-500">{new Date(p.fecha_pedido).toLocaleDateString()}</td>
+                  <td className="p-3 text-center">
+                    <button 
+                      onClick={() => abrirDetalles(p)}
+                      className="text-xs font-medium text-[#955F71] border border-[#955F71] px-3 py-1.5 rounded hover:bg-[#955F71] hover:text-white transition-colors"
+                    >
+                      Ver detalles
+                    </button>
+                  </td>
                 </tr>
               ))
             )}
           </tbody>
         </table>
       </div>
+
+      {/* VENTANA EMERGENTE (MODAL) DE DETALLES */}
+      {modalAbierto && pedidoSeleccionado && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+            
+            {/* Cabecera del Modal */}
+            <div className="flex justify-between items-center p-5 border-b bg-gray-50">
+              <h3 className="text-xl font-serif font-bold text-gray-900">
+                Pedido #{pedidoSeleccionado.id}
+              </h3>
+              <button onClick={() => setModalAbierto(false)} className="text-gray-500 hover:text-black">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Contenido del Modal (Scrollable) */}
+            <div className="p-6 overflow-y-auto flex-1">
+              {/* Información del Cliente */}
+              <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
+                <div>
+                  <p className="text-gray-500 mb-1">Nombre de entrega:</p>
+                  <p className="font-medium text-gray-900">{pedidoSeleccionado.nombre_entrega} {pedidoSeleccionado.apellidos_entrega}</p>
+                </div>
+                <div>
+                  <p className="text-gray-500 mb-1">Contacto:</p>
+                  <p className="font-medium text-gray-900">{pedidoSeleccionado.telefono_contacto} | {pedidoSeleccionado.email_contacto}</p>
+                </div>
+                <div>
+                  <p className="text-gray-500 mb-1">Dirección:</p>
+                  <p className="font-medium text-gray-900">{pedidoSeleccionado.direccion}, {pedidoSeleccionado.ciudad}</p>
+                  <p className="text-gray-500 text-xs">{pedidoSeleccionado.detalles_direccion}</p>
+                </div>
+                <div>
+                  <p className="text-gray-500 mb-1">Método de entrega:</p>
+                  <p className="font-medium text-gray-900 uppercase">{pedidoSeleccionado.metodo_entrega}</p>
+                </div>
+              </div>
+
+              {/* Lista de Productos */}
+              <h4 className="font-medium border-b pb-2 mb-3">Productos solicitados</h4>
+              {cargandoDetalles ? (
+                <p className="text-sm text-gray-500 text-center py-4">Cargando productos...</p>
+              ) : (
+                <ul className="space-y-3 mb-6">
+                  {detallesPedido.map((item, idx) => (
+                    <li key={idx} className="flex justify-between items-center text-sm p-3 bg-gray-50 rounded border">
+                      <div className="flex flex-col">
+                        <span className="font-medium text-gray-900">{item.producto_id}</span>
+                        {item.variante && <span className="text-xs text-gray-500">Var: {item.variante}</span>}
+                      </div>
+                      <div className="text-right">
+                        <span className="text-gray-500 block">{item.cantidad}x ${Number(item.precio_unitario).toLocaleString('es-CO')}</span>
+                        <span className="font-bold text-gray-900">${(item.cantidad * item.precio_unitario).toLocaleString('es-CO')}</span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {/* Total final */}
+              <div className="flex justify-between items-center p-4 bg-[#FAF4F4] rounded border border-[#D7A1A4]/30">
+                <span className="font-medium text-gray-700">Total a pagar:</span>
+                <span className="text-xl font-bold text-[#955F71]">${Number(pedidoSeleccionado.total_pagar).toLocaleString('es-CO')}</span>
+              </div>
+            </div>
+
+            {/* Footer con Botones de Acción */}
+            <div className="p-5 border-t bg-gray-50">
+              <p className="text-sm text-gray-600 mb-3 font-medium">Actualizar estado del pedido:</p>
+              <div className="flex flex-wrap gap-2">
+                <button 
+                  onClick={() => cambiarEstado('Pendiente')}
+                  className={`px-4 py-2 text-sm font-medium rounded border transition-colors ${pedidoSeleccionado.estado_pago === 'Pendiente' || !pedidoSeleccionado.estado_pago ? 'bg-gray-200 border-gray-300 text-gray-800' : 'bg-white hover:bg-gray-100'}`}
+                >
+                  Pendiente
+                </button>
+                <button 
+                  onClick={() => cambiarEstado('Pagado')}
+                  className={`px-4 py-2 text-sm font-medium rounded border transition-colors ${pedidoSeleccionado.estado_pago === 'Pagado' ? 'bg-green-600 text-white border-green-700' : 'bg-white text-green-700 border-green-200 hover:bg-green-50'}`}
+                >
+                  Marcar Pagado
+                </button>
+                <button 
+                  onClick={() => cambiarEstado('Procesado')}
+                  className={`px-4 py-2 text-sm font-medium rounded border transition-colors ${pedidoSeleccionado.estado_pago === 'Procesado' ? 'bg-blue-600 text-white border-blue-700' : 'bg-white text-blue-700 border-blue-200 hover:bg-blue-50'}`}
+                >
+                  Marcar Procesado
+                </button>
+                <button 
+                  onClick={() => cambiarEstado('Enviado')}
+                  className={`px-4 py-2 text-sm font-medium rounded border transition-colors ${pedidoSeleccionado.estado_pago === 'Enviado' ? 'bg-purple-600 text-white border-purple-700' : 'bg-white text-purple-700 border-purple-200 hover:bg-purple-50'}`}
+                >
+                  Marcar Enviado
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 }
