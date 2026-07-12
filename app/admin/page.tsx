@@ -8,7 +8,6 @@ export default function AdminDashboard() {
   const [autorizado, setAutorizado] = useState(false);
   const [pedidos, setPedidos] = useState<any[]>([]);
   
-  // Estados para la ventana emergente (Modal)
   const [modalAbierto, setModalAbierto] = useState(false);
   const [pedidoSeleccionado, setPedidoSeleccionado] = useState<any>(null);
   const [detallesPedido, setDetallesPedido] = useState<any[]>([]);
@@ -35,7 +34,6 @@ export default function AdminDashboard() {
       .catch(err => console.error("Error:", err));
   };
 
-  // Función para abrir los detalles del pedido
   const abrirDetalles = (pedido: any) => {
     setPedidoSeleccionado(pedido);
     setModalAbierto(true);
@@ -52,7 +50,6 @@ export default function AdminDashboard() {
       .finally(() => setCargandoDetalles(false));
   };
 
-  // Función para cambiar el estado
   const cambiarEstado = async (nuevoEstado: string) => {
     if (!pedidoSeleccionado) return;
 
@@ -68,9 +65,17 @@ export default function AdminDashboard() {
 
       const data = await res.json();
       if (data.status === "success") {
-        // Actualizamos visualmente el estado sin recargar la página
-        setPedidoSeleccionado({ ...pedidoSeleccionado, estado_pago: nuevoEstado });
-        setPedidos(pedidos.map(p => p.id === pedidoSeleccionado.id ? { ...p, estado_pago: nuevoEstado } : p));
+        
+        // Si el estado es "Entregado", lo quitamos de la lista y cerramos el modal
+        if (nuevoEstado === 'Entregado') {
+          setPedidos(pedidos.filter((p: any) => p.id !== pedidoSeleccionado.id));
+          setModalAbierto(false);
+        } else {
+          // Para el resto de estados, solo actualizamos visualmente
+          setPedidoSeleccionado({ ...pedidoSeleccionado, estado_pago: nuevoEstado });
+          setPedidos(pedidos.map(p => p.id === pedidoSeleccionado.id ? { ...p, estado_pago: nuevoEstado } : p));
+        }
+
       } else {
         alert("Error al cambiar estado: " + data.mensaje);
       }
@@ -79,13 +84,13 @@ export default function AdminDashboard() {
     }
   };
 
-  // Función para dar color a los estados
   const colorEstado = (estado: string) => {
     switch(estado?.toLowerCase()) {
       case 'pagado': return 'bg-green-100 text-green-800 border-green-200';
       case 'procesado': return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'enviado': return 'bg-purple-100 text-purple-800 border-purple-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200'; // Pendiente por defecto
+      case 'entregado': return 'bg-gray-800 text-white border-gray-900';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
@@ -96,7 +101,7 @@ export default function AdminDashboard() {
       <h1 className="text-3xl font-bold mb-6 text-gray-900 font-serif">Panel de Control Mayorista</h1>
       
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 overflow-x-auto">
-        <h2 className="text-xl font-medium mb-4">Gestión de Pedidos</h2>
+        <h2 className="text-xl font-medium mb-4">Gestión de Pedidos Activos</h2>
         <table className="w-full border-collapse min-w-[800px]">
           <thead>
             <tr className="bg-gray-50 border-b">
@@ -111,7 +116,7 @@ export default function AdminDashboard() {
           <tbody>
             {pedidos.length === 0 ? (
               <tr>
-                <td colSpan={6} className="p-4 text-center text-gray-500">No hay pedidos aún.</td>
+                <td colSpan={6} className="p-4 text-center text-gray-500">No hay pedidos activos.</td>
               </tr>
             ) : (
               pedidos.map((p: any) => (
@@ -140,12 +145,10 @@ export default function AdminDashboard() {
         </table>
       </div>
 
-      {/* VENTANA EMERGENTE (MODAL) DE DETALLES */}
       {modalAbierto && pedidoSeleccionado && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
             
-            {/* Cabecera del Modal */}
             <div className="flex justify-between items-center p-5 border-b bg-gray-50">
               <h3 className="text-xl font-serif font-bold text-gray-900">
                 Pedido #{pedidoSeleccionado.id}
@@ -157,9 +160,7 @@ export default function AdminDashboard() {
               </button>
             </div>
 
-            {/* Contenido del Modal (Scrollable) */}
             <div className="p-6 overflow-y-auto flex-1">
-              {/* Información del Cliente */}
               <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
                 <div>
                   <p className="text-gray-500 mb-1">Nombre de entrega:</p>
@@ -180,7 +181,6 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* Lista de Productos */}
               <h4 className="font-medium border-b pb-2 mb-3">Productos solicitados</h4>
               {cargandoDetalles ? (
                 <p className="text-sm text-gray-500 text-center py-4">Cargando productos...</p>
@@ -201,14 +201,12 @@ export default function AdminDashboard() {
                 </ul>
               )}
 
-              {/* Total final */}
               <div className="flex justify-between items-center p-4 bg-[#FAF4F4] rounded border border-[#D7A1A4]/30">
                 <span className="font-medium text-gray-700">Total a pagar:</span>
                 <span className="text-xl font-bold text-[#955F71]">${Number(pedidoSeleccionado.total_pagar).toLocaleString('es-CO')}</span>
               </div>
             </div>
 
-            {/* Footer con Botones de Acción */}
             <div className="p-5 border-t bg-gray-50">
               <p className="text-sm text-gray-600 mb-3 font-medium">Actualizar estado del pedido:</p>
               <div className="flex flex-wrap gap-2">
@@ -235,6 +233,14 @@ export default function AdminDashboard() {
                   className={`px-4 py-2 text-sm font-medium rounded border transition-colors ${pedidoSeleccionado.estado_pago === 'Enviado' ? 'bg-purple-600 text-white border-purple-700' : 'bg-white text-purple-700 border-purple-200 hover:bg-purple-50'}`}
                 >
                   Marcar Enviado
+                </button>
+                
+                {/* NUEVO BOTÓN: ENTREGADO (Cierra el pedido) */}
+                <button 
+                  onClick={() => cambiarEstado('Entregado')}
+                  className="px-4 py-2 text-sm font-bold rounded border transition-colors bg-gray-800 text-white border-gray-900 hover:bg-black ml-auto"
+                >
+                  Finalizar (Entregado)
                 </button>
               </div>
             </div>
