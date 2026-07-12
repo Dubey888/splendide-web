@@ -27,13 +27,13 @@ export default function Navbar() {
   const [productosFiltrados, setProductosFiltrados] = useState<any[]>([]);
   const [cargando, setCargando] = useState(false);
   
-  // NUEVO: Estado para saber quién inició sesión
+  // Estado para saber quién inició sesión
   const [usuario, setUsuario] = useState<{nombre: string, rol: string} | null>(null);
   
   const router = useRouter();
   const busquedasSugeridas = ["Labial", "Rubor", "Rímel", "Iluminador", "Gloss", "Paleta"];
 
-  // NUEVO: Leer el usuario al cargar la barra de navegación
+  // Leer el usuario al cargar la barra de navegación
   useEffect(() => {
     const userStr = localStorage.getItem('usuario_splendide');
     if (userStr) {
@@ -45,7 +45,7 @@ export default function Navbar() {
     }
   }, []);
 
-  // NUEVO: Función para cerrar sesión
+  // Función para cerrar sesión
   const cerrarSesion = () => {
     localStorage.removeItem('usuario_splendide');
     setUsuario(null);
@@ -118,12 +118,13 @@ export default function Navbar() {
     }
   };
 
+  // Enlaces normales. Ocultamos el registro si ya hay sesión iniciada
   const menuLinks = [
     { name: "Inicio", href: "/" },
     { name: "Productos más vendidos", href: "/colecciones/mas-vendidos" },
     { name: "Colecciones", href: "/colecciones" },
     { name: "Catálogo", href: "/colecciones/all" },
-    { name: "Registro Mayorista", href: "/registro-mayorista" }, // Corregida la ruta
+    ...(!usuario ? [{ name: "Registro Mayorista", href: "/registro-mayorista" }] : []),
     { name: "Contacto", href: "/contacto" },
   ];
 
@@ -168,9 +169,15 @@ export default function Navbar() {
               </svg>
             </button>
 
-            {/* NUEVO: Lógica de Usuario en PC */}
+            {/* Lógica de Usuario en PC */}
             {usuario ? (
               <div className="hidden md:flex items-center gap-3">
+                {/* BOTÓN ADMIN VERSIÓN PC */}
+                {usuario.rol === 'admin' && (
+                  <Link href="/admin" className="text-xs font-bold text-[#955F71] hover:text-[#1A1A1A] transition-colors mr-2">
+                    Panel Admin
+                  </Link>
+                )}
                 <span className="text-sm font-medium text-[#1A1A1A]">Hola, {usuario.nombre}</span>
                 <button onClick={cerrarSesion} className="text-xs text-[#707070] hover:text-[#955F71] transition-colors font-medium">Salir</button>
               </div>
@@ -234,10 +241,23 @@ export default function Navbar() {
                     </Link>
                   </li>
                 ))}
+                
+                {/* BOTÓN SECRETO: SOLO ADMIN EN MENÚ MÓVIL */}
+                {usuario?.rol === 'admin' && (
+                  <li>
+                    <Link 
+                      href="/admin"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center gap-2 px-6 py-4 text-base font-bold text-[#955F71] border-l-2 border-transparent hover:border-[#D7A1A4] hover:bg-white transition-all bg-[#FAF4F4]"
+                    >
+                      ⚙️ Panel de Control
+                    </Link>
+                  </li>
+                )}
               </ul>
             </div>
 
-            {/* NUEVO: Lógica de Usuario en Menú Móvil */}
+            {/* Lógica de Usuario en Menú Móvil */}
             <div className="px-6 py-8 bg-[#FAF4F4] border-t border-[#D7A1A4]/30">
               {usuario ? (
                 <div className="flex flex-col gap-3 mb-6">
@@ -359,7 +379,7 @@ export default function Navbar() {
                               <div className="flex-1 min-w-0">
                                 <h4 className="text-sm font-medium text-[#1A1A1A] truncate group-hover:text-[#D7A1A4] transition-colors">{item.Producto}</h4>
                                 
-                                {/* NUEVO: Muestra precio normal o precio mayorista en la barra de búsqueda */}
+                                {/* Muestra precio normal o precio mayorista en la barra de búsqueda */}
                                 {mostrarPrecioMayorista ? (
                                   <div className="flex items-center gap-2 mt-1">
                                     <p className="text-xs font-medium text-gray-400 line-through">

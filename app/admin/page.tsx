@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { esAdmin, obtenerIdUsuario } from '../../utils/auth';
+import { esAdmin, obtenerIdUsuario } from '../utils/auth';
 
 export default function AdminDashboard() {
   const router = useRouter();
