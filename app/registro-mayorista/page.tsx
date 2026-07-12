@@ -6,9 +6,10 @@ import { useRouter } from 'next/navigation';
 export default function RegistroMayorista() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  // Eliminamos nombre_negocio del estado inicial
   const [formData, setFormData] = useState({
     nombre: '', apellidos: '', telefono: '', 
-    email: '', nombre_negocio: '', password: ''
+    email: '', password: ''
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,7 +32,7 @@ export default function RegistroMayorista() {
 
       if (data.status === "success") {
         alert("¡Registro exitoso! Ahora puedes iniciar sesión.");
-        router.push('/login'); // Redirige al login
+        router.push('/login');
       } else {
         alert("Error: " + data.mensaje);
       }
@@ -55,7 +56,6 @@ export default function RegistroMayorista() {
             <input name="nombre" type="text" required placeholder="Nombre" onChange={handleChange} className="w-full border p-3 rounded text-sm outline-none focus:ring-1 focus:ring-black" />
             <input name="apellidos" type="text" required placeholder="Apellidos" onChange={handleChange} className="w-full border p-3 rounded text-sm outline-none focus:ring-1 focus:ring-black" />
           </div>
-          <input name="nombre_negocio" type="text" required placeholder="Nombre de tu negocio" onChange={handleChange} className="w-full border p-3 rounded text-sm outline-none focus:ring-1 focus:ring-black" />
           <input name="telefono" type="tel" required placeholder="Teléfono" onChange={handleChange} className="w-full border p-3 rounded text-sm outline-none focus:ring-1 focus:ring-black" />
           <input name="email" type="email" required placeholder="Correo electrónico" onChange={handleChange} className="w-full border p-3 rounded text-sm outline-none focus:ring-1 focus:ring-black" />
           <input name="password" type="password" required placeholder="Contraseña" onChange={handleChange} className="w-full border p-3 rounded text-sm outline-none focus:ring-1 focus:ring-black" />
