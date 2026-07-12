@@ -38,10 +38,10 @@ export default async function Home() {
   const colecciones = [
     { nombre: "Bloomshell", imagen: "/marcas/bloomshell.jpeg", url: "/colecciones/bloomshell" },
     { nombre: "Atenea", imagen: "/marcas/atenea.jpeg", url: "/colecciones/atenea" },
-    { nombre: "Purpure", imagen: "/marcas/purpure.jpeg", url: "/colecciones/purpure" },{ nombre: "Montoc", imagen: "/marcas/montoc.jpeg", url: "/colecciones/Montoc" },
+    { nombre: "Purpure", imagen: "/marcas/purpure.jpeg", url: "/colecciones/purpure" },
+    { nombre: "Montoc", imagen: "/marcas/montoc.jpeg", url: "/colecciones/Montoc" },
     { nombre: "Ushas", imagen: "/marcas/ushas.jpeg", url: "/colecciones/ushas" },
     { nombre: "Bioaqua", imagen: "/marcas/bioaqua.jpeg", url: "/colecciones/bioaqua" },
-    
     { nombre: "Kevin&Coco", imagen: "/marcas/kevincoco.jpeg", url: "/colecciones/kevin-coco" },
     { nombre: "Kiss Beauty", imagen: "/marcas/kissbeauty.jpeg", url: "/colecciones/kiss-beauty" }
   ];
@@ -60,6 +60,12 @@ export default async function Home() {
   const productosAtenea = productosAgrupados.filter((item: any) => {
     return item.Proveedor?.toLowerCase().includes('atenea') || item.Producto?.toLowerCase().includes('atenea'); 
   }).slice(0, 4); 
+
+  // Función para procesar y limpiar las URLs de las imágenes separadas por coma
+  const procesarImagenes = (urlStr: string) => {
+    if (!urlStr) return [];
+    return urlStr.split(",").map(url => url.trim()).filter(url => url !== "");
+  };
 
   return (
     <div className="min-h-screen bg-[#FCF6F6] text-[#1A1A1A]">
@@ -94,6 +100,13 @@ export default async function Home() {
         {/* 2. SECCIÓN: Marcas Deslizantes */}
         <section className="bg-[#DFB2C0]/20 w-full py-12 mb-16">
           <div className="w-full px-4 lg:px-8 mx-auto">
+            {/* Indicador visual añadido aquí */}
+            <div className="flex justify-between items-end mb-6 md:px-4">
+              <h3 className="text-xl md:text-2xl font-serif text-[#1A1A1A]">Descubre por Marca</h3>
+              <span className="text-[10px] md:text-xs text-gray-600 uppercase tracking-widest flex items-center gap-1.5 font-medium">
+                 Desliza para ver más <span className="text-base md:text-lg leading-none">→</span>
+              </span>
+            </div>
             <CarruselMarcas marcas={colecciones} />
           </div>
         </section>
@@ -124,23 +137,52 @@ export default async function Home() {
         <section className="w-full px-4 lg:px-8 mx-auto mb-24">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-x-3 gap-y-8 md:gap-x-6 lg:gap-x-10 lg:gap-y-12">
               {productosEsenciales.map((item: any) => {
-                const imagenPrincipal = item.URL_Imagen ? item.URL_Imagen.split(",")[0] : null;
+                const imagenes = procesarImagenes(item.URL_Imagen);
                 const precioVenta = Number(item.Precio_Venta);
 
                 return (
                   <div key={item.HandleFinal} className="group flex flex-col gap-3">
-                    {/* AQUI SE CAMBIÓ aspect-square POR aspect-[4/5] PARA EL FORMATO RETRATO */}
-                    <Link href={`/producto/${item.HandleFinal}`} className="relative w-full aspect-[4/5] bg-white rounded-lg overflow-hidden border border-gray-100 shadow-sm">
-                      {imagenPrincipal && (
-                        <Image 
-                          src={imagenPrincipal} 
-                          alt={item.Producto} 
-                          fill
-                          sizes="(max-width: 768px) 50vw, 25vw"
-                          className="object-cover transition-transform duration-700 group-hover:scale-105" 
-                        />
+                    
+                    <div className="relative w-full aspect-[4/5] bg-white rounded-lg overflow-hidden border border-gray-100 shadow-sm">
+                      {imagenes.length > 1 ? (
+                        // Múltiples imágenes: Carrusel interno con Scroll Snap
+                        <div className="flex w-full h-full overflow-x-auto snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                          {imagenes.map((img: string, idx: number) => (
+                            <Link key={idx} href={`/producto/${item.HandleFinal}`} className="relative w-full h-full flex-shrink-0 snap-center block">
+                              <Image 
+                                src={img} 
+                                alt={`${item.Producto} - Imagen ${idx + 1}`} 
+                                fill
+                                sizes="(max-width: 768px) 50vw, 25vw"
+                                className="object-cover" 
+                              />
+                            </Link>
+                          ))}
+                        </div>
+                      ) : (
+                        // Una sola imagen
+                        <Link href={`/producto/${item.HandleFinal}`} className="relative w-full h-full block">
+                          {imagenes[0] && (
+                            <Image 
+                              src={imagenes[0]} 
+                              alt={item.Producto} 
+                              fill
+                              sizes="(max-width: 768px) 50vw, 25vw"
+                              className="object-cover transition-transform duration-700 group-hover:scale-105" 
+                            />
+                          )}
+                        </Link>
                       )}
-                    </Link>
+
+                      {/* Indicador visual de que hay varias fotos (Puntitos) */}
+                      {imagenes.length > 1 && (
+                        <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5 pointer-events-none">
+                          {imagenes.map((_, idx) => (
+                            <div key={idx} className="w-1.5 h-1.5 rounded-full bg-black/30 border border-white/60 shadow-sm" />
+                          ))}
+                        </div>
+                      )}
+                    </div>
                     
                     <div className="flex flex-col gap-1 px-1">
                       <Link href={`/producto/${item.HandleFinal}`}>
@@ -156,9 +198,8 @@ export default async function Home() {
                       </div>
                     </div>
                     
-                    {/* AQUI SE ARREGLARON LOS ESTILOS DEL BOTÓN (FONDO NEGRO, LETRA BLANCA) */}
                     <div className="w-full mt-2 [&>button]:w-full [&>button]:py-2.5 [&>button]:border [&>button]:border-[#1A1A1A] [&>button]:bg-[#1A1A1A] [&>button]:text-white [&>button]:rounded [&>button]:text-sm hover:[&>button]:bg-transparent hover:[&>button]:text-[#1A1A1A] [&>button]:transition-all">
-                        <BotonAnadir id={item.Codigo} nombre={item.Producto} precio={item.Precio_Venta} imagen={imagenPrincipal} />
+                        <BotonAnadir id={item.Codigo} nombre={item.Producto} precio={item.Precio_Venta} imagen={imagenes[0]} />
                     </div>
                   </div>
                 );
@@ -210,23 +251,49 @@ export default async function Home() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-x-3 gap-y-8 md:gap-x-6 lg:gap-x-10 lg:gap-y-12">
             {productosAtenea.map((item: any) => {
-              const imagenPrincipal = item.URL_Imagen ? item.URL_Imagen.split(",")[0] : null;
+              const imagenes = procesarImagenes(item.URL_Imagen);
               const precioVenta = Number(item.Precio_Venta);
               
               return (
                 <div key={item.HandleFinal} className="group flex flex-col gap-3">
-                  {/* AQUI SE CAMBIÓ aspect-square POR aspect-[4/5] PARA EL FORMATO RETRATO */}
-                  <Link href={`/producto/${item.HandleFinal}`} className="relative w-full aspect-[4/5] bg-white rounded-lg overflow-hidden border border-gray-100 shadow-sm">
-                    {imagenPrincipal && (
-                      <Image 
-                        src={imagenPrincipal} 
-                        alt={item.Producto} 
-                        fill
-                        sizes="(max-width: 768px) 50vw, 25vw"
-                        className="object-cover transition-transform duration-700 group-hover:scale-105" 
-                      />
-                    )}
-                  </Link>
+                  
+                  <div className="relative w-full aspect-[4/5] bg-white rounded-lg overflow-hidden border border-gray-100 shadow-sm">
+                      {imagenes.length > 1 ? (
+                        <div className="flex w-full h-full overflow-x-auto snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                          {imagenes.map((img: string, idx: number) => (
+                            <Link key={idx} href={`/producto/${item.HandleFinal}`} className="relative w-full h-full flex-shrink-0 snap-center block">
+                              <Image 
+                                src={img} 
+                                alt={`${item.Producto} - Imagen ${idx + 1}`} 
+                                fill
+                                sizes="(max-width: 768px) 50vw, 25vw"
+                                className="object-cover" 
+                              />
+                            </Link>
+                          ))}
+                        </div>
+                      ) : (
+                        <Link href={`/producto/${item.HandleFinal}`} className="relative w-full h-full block">
+                          {imagenes[0] && (
+                            <Image 
+                              src={imagenes[0]} 
+                              alt={item.Producto} 
+                              fill
+                              sizes="(max-width: 768px) 50vw, 25vw"
+                              className="object-cover transition-transform duration-700 group-hover:scale-105" 
+                            />
+                          )}
+                        </Link>
+                      )}
+
+                      {imagenes.length > 1 && (
+                        <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5 pointer-events-none">
+                          {imagenes.map((_, idx) => (
+                            <div key={idx} className="w-1.5 h-1.5 rounded-full bg-black/30 border border-white/60 shadow-sm" />
+                          ))}
+                        </div>
+                      )}
+                  </div>
                   
                   <div className="flex flex-col gap-1 px-1">
                     <Link href={`/producto/${item.HandleFinal}`}>
@@ -242,9 +309,8 @@ export default async function Home() {
                     </div>
                   </div>
                   
-                  {/* AQUI SE ARREGLARON LOS ESTILOS DEL BOTÓN (FONDO NEGRO, LETRA BLANCA) */}
                   <div className="w-full mt-2 [&>button]:w-full [&>button]:py-2.5 [&>button]:border [&>button]:border-[#1A1A1A] [&>button]:bg-[#1A1A1A] [&>button]:text-white [&>button]:rounded [&>button]:text-sm hover:[&>button]:bg-transparent hover:[&>button]:text-[#1A1A1A] [&>button]:transition-all">
-                      <BotonAnadir id={item.Codigo} nombre={item.Producto} precio={item.Precio_Venta} imagen={imagenPrincipal} />
+                      <BotonAnadir id={item.Codigo} nombre={item.Producto} precio={item.Precio_Venta} imagen={imagenes[0]} />
                   </div>
                 </div>
               );
