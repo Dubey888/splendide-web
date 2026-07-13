@@ -90,6 +90,7 @@ export default async function MarcaPage({ params }: { params: Promise<{ marca: s
           className="object-cover"
           sizes="100vw"
           priority
+          unoptimized // Soluciona el error 500 en Clever Cloud
         />
         
         {/* Capa oscura semitransparente para que el texto blanco resalte sobre cualquier foto */}
@@ -140,6 +141,7 @@ export default async function MarcaPage({ params }: { params: Promise<{ marca: s
                         fill
                         sizes="(max-width: 768px) 50vw, 20vw"
                         className="object-cover transition-transform duration-500 group-hover:scale-105" 
+                        unoptimized // También agregado aquí para prevenir fallos con las fotos de productos
                       />
                     )}
                   </div>
