@@ -4,23 +4,24 @@ import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+// CORRECCIÓN 1: Rutas de imágenes ajustadas a los nombres y extensiones reales de tu carpeta
 const BANNERS_DATA = [
   {
     id: 1,
     title: "Atenea profesional",
     subtitle: "Diseñados para un acabado impecable y duradero en cada aplicación.",
     buttonText: "Comprar ahora",
-    linkUrl: "/colecciones/atenea",
-    imageUrl: "/banners/banner-atenea.jpg",
+    linkUrl: "/colecciones/Atenea",
+    imageUrl: "/banners/atenea.jpeg", // <-- Nombre exacto de tu archivo local
     textPosition: "right"
   },
   {
     id: 2,
-    title: "Maquillaje", 
+    title: "Montoc Cosmetics", // <-- Cambié 'Maquillaje' por 'Montoc'
     subtitle: "Todo lo que necesitas para crear looks espectaculares y profesionales.",
     buttonText: "Ver colección",
-    linkUrl: "/colecciones/maquillaje", 
-    imageUrl: "/banners/banner-maquillaje.jpg", 
+    linkUrl: "/colecciones/Montoc", 
+    imageUrl: "/banners/montoc.jpeg", // <-- Nombre exacto de tu archivo local
     textPosition: "center"
   }
 ];
@@ -68,6 +69,7 @@ export default function HeroSlider() {
                 fill
                 className="object-cover"
                 priority={index === 0}
+                unoptimized // <-- CORRECCIÓN 2: Previene el error 500 en Clever Cloud
               />
 
               <div className="absolute inset-0 bg-black/5 md:bg-transparent" />
