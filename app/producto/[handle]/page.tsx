@@ -212,7 +212,13 @@ export default function DetalleProducto() {
           </div>
 
           {/* Botón Comprar Ahora */}
-          <button className="w-full bg-[#4a4a4a] text-white py-3.5 text-sm rounded-sm hover:bg-black transition-colors mb-6 cursor-pointer">
+          <button 
+            onClick={() => {
+              manejarAnadir(); // Primero lo agrega al carrito
+              router.push('/checkout'); // Luego te redirige
+            }}
+            className="w-full bg-[#4a4a4a] text-white py-3.5 text-sm rounded-sm hover:bg-black transition-colors mb-6 cursor-pointer"
+          >
             Comprar ahora
           </button>
 
