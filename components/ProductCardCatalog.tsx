@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import Link from "next/link";
 import { useState, useRef } from "react";
 
@@ -63,12 +62,12 @@ export default function ProductCardCatalog({ item }: { item: any }) {
             imagenes.map((img: string, idx: number) => (
               <div key={idx} className="w-full h-full flex-shrink-0 snap-start relative">
                 <Link href={`/producto/${item.HandleFinal}`} className="block w-full h-full">
-                  <Image 
+                  {/* CORRECCIÓN: Se reemplazó <Image> de Next.js por <img> nativo de HTML */}
+                  <img 
                     src={img} 
                     alt={`${item.Producto} - Imagen ${idx + 1}`} 
-                    fill 
-                    className="object-cover" 
-                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw" 
+                    className="w-full h-full object-cover" 
+                    loading="lazy"
                   />
                 </Link>
               </div>
@@ -85,13 +84,13 @@ export default function ProductCardCatalog({ item }: { item: any }) {
           <>
             <button 
               onClick={prevImage} 
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md text-[#1A1A1A] hover:scale-110 z-10"
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md text-[#1A1A1A] hover:scale-110 z-10 cursor-pointer"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
             </button>
             <button 
               onClick={nextImage} 
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md text-[#1A1A1A] hover:scale-110 z-10"
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md text-[#1A1A1A] hover:scale-110 z-10 cursor-pointer"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
             </button>
@@ -141,10 +140,9 @@ export default function ProductCardCatalog({ item }: { item: any }) {
             <button 
               onClick={(e) => {
                 e.preventDefault();
-                // AQUÍ LUEGO PUEDES PONER TU FUNCIÓN DE AGREGAR AL CARRITO
                 alert(`Agregado ${item.Producto} al carrito`);
               }}
-              className="block w-full py-3 px-4 bg-[#1A1A1A] text-white text-center text-xs font-semibold uppercase tracking-wider hover:bg-[#D7A1A4] transition-colors rounded-sm"
+              className="block w-full py-3 px-4 bg-[#1A1A1A] text-white text-center text-xs font-semibold uppercase tracking-wider hover:bg-[#D7A1A4] transition-colors rounded-sm cursor-pointer"
             >
               Añadir al carrito
             </button>

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useCart } from '@/context/CartContext'; 
 
 export default function CheckoutPage() {
-  // 1. Extraemos clearCart del contexto manteniendo el resto igual
+  // Extraemos los artículos y la función para limpiar el carrito manteniendo la reactividad
   const { cartItems, clearCart } = useCart();
   
   // Calculamos el subtotal exacto
@@ -76,7 +76,7 @@ export default function CheckoutPage() {
 
       const datosBD = await respuesta.json();
 
-      // 3. Si se guardó correctamente, armamos y abrimos WhatsApp
+      // 3. Si se guardó correctamente, limpiamos el carrito y abrimos WhatsApp
       if (datosBD.status === "success") {
         
         // Configurar el texto de entrega basado en la selección
@@ -99,7 +99,7 @@ export default function CheckoutPage() {
           `*Total a pagar:* $${subtotal.toLocaleString('es-CO')}%0A%0A` +
           `Aquí adjunto mi comprobante de pago.`;
 
-        // 2. Limpiamos el carrito justo antes de ir a WhatsApp para dejarlo vacío
+        // Limpieza del carrito para dejarlo vacío tras la confirmación de la orden
         clearCart();
 
         window.open(`https://wa.me/${numeroTienda}?text=${mensaje}`, '_blank');
@@ -110,7 +110,7 @@ export default function CheckoutPage() {
       console.error("Error al procesar el pedido:", error);
       alert("Hubo un error de conexión. Por favor, intenta de nuevo.");
     } finally {
-      setIsSubmitting(false); // Rehabilitamos el botón al terminar
+      setIsSubmitting(false); // Rehabilitamos el botón al terminar el flujo
     }
   };
 
@@ -235,7 +235,6 @@ export default function CheckoutPage() {
                     Normalmente está listo en 24 horas
                   </p>
                   
-                  {/* Teléfono requerido incluso para retiro para avisar al cliente */}
                   <input 
                     type="tel" name="telefono" required placeholder="Teléfono de contacto"
                     onChange={handleInputChange}
