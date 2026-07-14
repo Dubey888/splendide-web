@@ -1,10 +1,15 @@
 "use client";
 import Link from "next/link";
 import { useState, useRef } from "react";
+// 1. Importamos tu contexto del carrito
+import { useCart } from "@/context/CartContext"; 
 
 export default function ProductCardCatalog({ item }: { item: any }) {
   const sliderRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  // 2. Extraemos la función addToCart del contexto
+  const { addToCart } = useCart();
 
   // Limpiamos las imágenes y verificamos cuántas hay
   const imagenes = item.URL_Imagen 
@@ -46,6 +51,22 @@ export default function ProductCardCatalog({ item }: { item: any }) {
     else scrollToIndex(imagenes.length - 1); // Va a la última
   };
 
+  // 3. Creamos una función que realmente agregue el producto
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault(); // Evita que la página salte
+    
+    addToCart({
+      id: item.Codigo, // Usamos el código único del producto
+      nombre: item.Producto,
+      precio: Number(item.Precio_Venta),
+      imagen: imagenes.length > 0 ? imagenes[0] : "", // La primera imagen si existe
+      cantidad: 1, // Por defecto agrega 1
+    });
+
+    // Opcional: Puedes dejar la alerta o usar un toast más bonito si prefieres
+    alert(`Agregado ${item.Producto} al carrito`);
+  };
+
   return (
     <div className="flex flex-col group h-full">
       
@@ -62,7 +83,6 @@ export default function ProductCardCatalog({ item }: { item: any }) {
             imagenes.map((img: string, idx: number) => (
               <div key={idx} className="w-full h-full flex-shrink-0 snap-start relative">
                 <Link href={`/producto/${item.HandleFinal}`} className="block w-full h-full">
-                  {/* CORRECCIÓN: Se reemplazó <Image> de Next.js por <img> nativo de HTML */}
                   <img 
                     src={img} 
                     alt={`${item.Producto} - Imagen ${idx + 1}`} 
@@ -138,10 +158,7 @@ export default function ProductCardCatalog({ item }: { item: any }) {
             </Link>
           ) : (
             <button 
-              onClick={(e) => {
-                e.preventDefault();
-                alert(`Agregado ${item.Producto} al carrito`);
-              }}
+              onClick={handleAddToCart} // 4. Conectamos el botón con nuestra nueva función
               className="block w-full py-3 px-4 bg-[#1A1A1A] text-white text-center text-xs font-semibold uppercase tracking-wider hover:bg-[#D7A1A4] transition-colors rounded-sm cursor-pointer"
             >
               Añadir al carrito
