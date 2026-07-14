@@ -105,8 +105,9 @@ export default function CheckoutPage() {
         // Limpieza del carrito para dejarlo vacío tras la confirmación de la orden
         clearCart();
 
-        // Redirigimos a WhatsApp con el mensaje seguro
-        window.open(`https://wa.me/${numeroTienda}?text=${mensajeSeguro}`, '_blank');
+        // Redirigimos a WhatsApp usando location.href para evitar bloqueos en navegadores móviles
+        window.location.href = `https://wa.me/${numeroTienda}?text=${mensajeSeguro}`;
+        
       } else {
         alert("Hubo un problema al registrar tu pedido: " + datosBD.mensaje);
       }
