@@ -14,17 +14,28 @@ const departamentosColombia = [
   "Vaupés", "Vichada"
 ];
 
-// Lista rápida de indicativos
+// Lista de indicativos de América (Norte, Centro y Sur)
 const codigosPais = [
-  { code: '+57', country: 'CO (+57)' },
-  { code: '+1', country: 'US/CA (+1)' },
-  { code: '+52', country: 'MX (+52)' },
-  { code: '+56', country: 'CL (+56)' },
-  { code: '+51', country: 'PE (+51)' },
-  { code: '+54', country: 'AR (+54)' },
-  { code: '+593', country: 'EC (+593)' },
-  { code: '+507', country: 'PA (+507)' },
-  { code: '+34', country: 'ES (+34)' },
+  { code: '+57', country: 'CO (+57)' }, // Colombia por defecto
+  { code: '+54', country: 'AR (+54)' }, // Argentina
+  { code: '+591', country: 'BO (+591)' }, // Bolivia
+  { code: '+55', country: 'BR (+55)' }, // Brasil
+  { code: '+1', country: 'CA/US/PR (+1)' }, // Canadá, EE.UU., Puerto Rico
+  { code: '+56', country: 'CL (+56)' }, // Chile
+  { code: '+506', country: 'CR (+506)' }, // Costa Rica
+  { code: '+53', country: 'CU (+53)' }, // Cuba
+  { code: '+593', country: 'EC (+593)' }, // Ecuador
+  { code: '+503', country: 'SV (+503)' }, // El Salvador
+  { code: '+502', country: 'GT (+502)' }, // Guatemala
+  { code: '+504', country: 'HN (+504)' }, // Honduras
+  { code: '+52', country: 'MX (+52)' }, // México
+  { code: '+505', country: 'NI (+505)' }, // Nicaragua
+  { code: '+507', country: 'PA (+507)' }, // Panamá
+  { code: '+595', country: 'PY (+595)' }, // Paraguay
+  { code: '+51', country: 'PE (+51)' }, // Perú
+  { code: '+1', country: 'DO (+1)' }, // Rep. Dominicana
+  { code: '+598', country: 'UY (+598)' }, // Uruguay
+  { code: '+58', country: 'VE (+58)' }, // Venezuela
 ];
 
 export default function CheckoutPage() {
@@ -36,7 +47,7 @@ export default function CheckoutPage() {
   const [metodoEntrega, setMetodoEntrega] = useState<'envio' | 'retiro'>('envio');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  // NUEVO: Estado para mostrar/ocultar el modal de confirmación
+  // Estado para mostrar/ocultar el modal de confirmación
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -45,9 +56,9 @@ export default function CheckoutPage() {
     apellidos: '',
     direccion: '',
     detalles: '',
-    departamento: '', // Agregado
+    departamento: '',
     ciudad: '',
-    codigoPais: '+57', // Agregado
+    codigoPais: '+57', 
     telefono: ''
   });
 
@@ -55,13 +66,13 @@ export default function CheckoutPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // NUEVA FUNCIÓN: Intercepta el envío del formulario para mostrar el modal primero
+  // Intercepta el envío del formulario para mostrar el modal primero
   const revisarPedido = (e: React.FormEvent) => {
     e.preventDefault();
     setShowConfirmModal(true);
   };
 
-  // FUNCIÓN ORIGINAL ADAPTADA: Se ejecuta al confirmar desde el modal
+  // Se ejecuta al confirmar desde el modal
   const procesarPedido = async () => {
     setIsSubmitting(true);
     
@@ -72,7 +83,6 @@ export default function CheckoutPage() {
 
     const numeroTienda = "573224511590"; 
     
-    // Unificamos datos para la base de datos
     const telefonoCompleto = `${formData.codigoPais} ${formData.telefono}`;
     const ciudadConDepartamento = formData.departamento 
       ? `${formData.ciudad}, ${formData.departamento}` 
@@ -129,12 +139,12 @@ export default function CheckoutPage() {
         window.location.href = `https://wa.me/${numeroTienda}?text=${mensajeSeguro}`;
       } else {
         alert("Hubo un problema al registrar tu pedido: " + datosBD.mensaje);
-        setShowConfirmModal(false); // Ocultar modal si hay error
+        setShowConfirmModal(false); 
       }
     } catch (error) {
       console.error("Error al procesar el pedido:", error);
       alert("Hubo un error de conexión. Por favor, intenta de nuevo.");
-      setShowConfirmModal(false); // Ocultar modal si hay error
+      setShowConfirmModal(false); 
     } finally {
       setIsSubmitting(false);
     }
@@ -215,7 +225,6 @@ export default function CheckoutPage() {
             Splendide
           </Link>
 
-          {/* Cambiamos onSubmit a revisarPedido */}
           <form onSubmit={revisarPedido}>
             
             <h2 className="text-lg font-medium mb-4 text-gray-900">Contacto</h2>
@@ -319,7 +328,7 @@ export default function CheckoutPage() {
                         className="w-full border border-gray-300 rounded-md shadow-sm p-3.5 text-sm focus:ring-2 focus:ring-black focus:border-black outline-none transition appearance-none bg-white text-gray-700"
                       >
                         {codigosPais.map((pais) => (
-                          <option key={pais.code} value={pais.code}>{pais.country}</option>
+                          <option key={pais.country} value={pais.code}>{pais.country}</option>
                         ))}
                       </select>
                       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
@@ -360,7 +369,7 @@ export default function CheckoutPage() {
                         className="w-full border border-gray-300 rounded-md shadow-sm p-3.5 text-sm focus:ring-2 focus:ring-black focus:border-black outline-none transition appearance-none bg-white text-gray-700"
                       >
                         {codigosPais.map((pais) => (
-                          <option key={pais.code} value={pais.code}>{pais.country}</option>
+                          <option key={pais.country} value={pais.code}>{pais.country}</option>
                         ))}
                       </select>
                       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
@@ -407,11 +416,12 @@ export default function CheckoutPage() {
               </div>
             </div>
 
+            {/* BOTÓN ACTUALIZADO */}
             <button 
               type="submit" 
               className={`w-full text-white py-4 rounded-md text-sm font-medium tracking-wide transition-colors mt-6 shadow-md bg-[#1A1A1A] hover:bg-black`}
             >
-              Revisar y continuar
+              Confirmar pedido y enviar comprobante
             </button>
             <p className="text-center text-xs text-gray-500 mt-4">
               Podrás revisar tus datos antes de ser redirigida a WhatsApp.
