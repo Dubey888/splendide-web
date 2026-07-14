@@ -4,21 +4,40 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext'; 
 
+// Lista de departamentos de Colombia para el select
+const departamentosColombia = [
+  "Amazonas", "Antioquia", "Arauca", "Atlántico", "Bogotá D.C.", "Bolívar", "Boyacá",
+  "Caldas", "Caquetá", "Casanare", "Cauca", "Cesar", "Chocó", "Córdoba",
+  "Cundinamarca", "Guainía", "Guaviare", "Huila", "La Guajira", "Magdalena",
+  "Meta", "Nariño", "Norte de Santander", "Putumayo", "Quindío", "Risaralda",
+  "San Andrés y Providencia", "Santander", "Sucre", "Tolima", "Valle del Cauca",
+  "Vaupés", "Vichada"
+];
+
+// Lista rápida de indicativos
+const codigosPais = [
+  { code: '+57', country: 'CO (+57)' },
+  { code: '+1', country: 'US/CA (+1)' },
+  { code: '+52', country: 'MX (+52)' },
+  { code: '+56', country: 'CL (+56)' },
+  { code: '+51', country: 'PE (+51)' },
+  { code: '+54', country: 'AR (+54)' },
+  { code: '+593', country: 'EC (+593)' },
+  { code: '+507', country: 'PA (+507)' },
+  { code: '+34', country: 'ES (+34)' },
+];
+
 export default function CheckoutPage() {
-  // Extraemos los artículos y la función para limpiar el carrito manteniendo la reactividad
   const { cartItems, clearCart } = useCart();
   
-  // Calculamos el subtotal exacto
   const subtotalReal = cartItems.reduce((total: number, item: any) => total + (Number(item.precio) * item.cantidad), 0);
-  
-  // Mantenemos la regla de redondeo a la centena (100 pesos)
   const subtotal = Math.round(subtotalReal / 100) * 100;
   
-  // Estado para el método de entrega
   const [metodoEntrega, setMetodoEntrega] = useState<'envio' | 'retiro'>('envio');
-
-  // Estado para evitar doble envío del formulario
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // NUEVO: Estado para mostrar/ocultar el modal de confirmación
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -26,71 +45,77 @@ export default function CheckoutPage() {
     apellidos: '',
     direccion: '',
     detalles: '',
+    departamento: '', // Agregado
     ciudad: '',
+    codigoPais: '+57', // Agregado
     telefono: ''
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const procesarPedido = async (e: React.FormEvent) => {
+  // NUEVA FUNCIÓN: Intercepta el envío del formulario para mostrar el modal primero
+  const revisarPedido = (e: React.FormEvent) => {
     e.preventDefault();
+    setShowConfirmModal(true);
+  };
+
+  // FUNCIÓN ORIGINAL ADAPTADA: Se ejecuta al confirmar desde el modal
+  const procesarPedido = async () => {
     setIsSubmitting(true);
     
-    // Armar la lista dinámica de productos usando saltos de línea (\n)
     const detalleProductos = cartItems.map((item: any) => {
       const nombreVariante = item.variante ? ` (${item.variante})` : '';
       return `- ${item.cantidad}x ${item.nombre}${nombreVariante} - $${Number(item.precio).toLocaleString('es-CO')}`;
     }).join('\n');
 
-    const numeroTienda = "573224511590"; // Tu número real de WhatsApp
+    const numeroTienda = "573224511590"; 
     
-    // 1. Armar el payload para la base de datos
+    // Unificamos datos para la base de datos
+    const telefonoCompleto = `${formData.codigoPais} ${formData.telefono}`;
+    const ciudadConDepartamento = formData.departamento 
+      ? `${formData.ciudad}, ${formData.departamento}` 
+      : formData.ciudad;
+    
     const payload = {
       crear_cuenta: false,
       password: "", 
       email_contacto: formData.email, 
       nombre_entrega: formData.nombre,
       apellidos_entrega: formData.apellidos,
-      telefono_contacto: formData.telefono,
+      telefono_contacto: telefonoCompleto,
       metodo_entrega: metodoEntrega,
       direccion: formData.direccion,
       detalles_direccion: formData.detalles,
-      ciudad: formData.ciudad,
+      ciudad: ciudadConDepartamento,
       total_pagar: subtotal,
       detalle_productos: cartItems 
     };
 
     try {
-      // 2. Enviar los datos a tu API PHP en Clever Cloud
       const apiURL = "https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=guardar_pedido";
       
       const respuesta = await fetch(apiURL, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
       const datosBD = await respuesta.json();
 
-      // 3. Si se guardó correctamente, limpiamos el carrito y abrimos WhatsApp
       if (datosBD.status === "success") {
-        
-        // Configuramos el texto usando saltos de línea (\n)
         const infoEntrega = metodoEntrega === 'envio' 
           ? `*Datos de envío:*\n` +
             `Nombre: ${formData.nombre} ${formData.apellidos}\n` +
-            `Dirección: ${formData.direccion}, ${formData.ciudad}\n` +
+            `Dirección: ${formData.direccion}\n` +
             `Detalles: ${formData.detalles || 'N/A'}\n` +
-            `Teléfono: ${formData.telefono}\n\n`
+            `Ciudad: ${ciudadConDepartamento}\n` +
+            `Teléfono: ${telefonoCompleto}\n\n`
           : `*Método de entrega:* Retiro en Tienda\n` +
             `Nombre de quien retira: ${formData.nombre} ${formData.apellidos}\n` +
-            `Teléfono: ${formData.telefono}\n\n`;
+            `Teléfono: ${telefonoCompleto}\n\n`;
 
-        // Agregamos el número de pedido al mensaje
         const mensaje = `¡Hola Splendide! Quiero confirmar mi pedido web.\n\n` +
           `*Número de Pedido:* #${datosBD.pedido_id}\n` +
           `*Mi Pedido:*\n${detalleProductos}\n\n` +
@@ -99,27 +124,22 @@ export default function CheckoutPage() {
           `*Total a pagar:* $${subtotal.toLocaleString('es-CO')}\n\n` +
           `Aquí adjunto mi comprobante de pago.`;
 
-        // Codificamos TODO el mensaje para proteger los símbolos # y caracteres especiales
         const mensajeSeguro = encodeURIComponent(mensaje);
-
-        // Limpieza del carrito para dejarlo vacío tras la confirmación de la orden
         clearCart();
-
-        // Redirigimos a WhatsApp usando location.href para evitar bloqueos en navegadores móviles
         window.location.href = `https://wa.me/${numeroTienda}?text=${mensajeSeguro}`;
-        
       } else {
         alert("Hubo un problema al registrar tu pedido: " + datosBD.mensaje);
+        setShowConfirmModal(false); // Ocultar modal si hay error
       }
     } catch (error) {
       console.error("Error al procesar el pedido:", error);
       alert("Hubo un error de conexión. Por favor, intenta de nuevo.");
+      setShowConfirmModal(false); // Ocultar modal si hay error
     } finally {
-      setIsSubmitting(false); // Rehabilitamos el botón al terminar el flujo
+      setIsSubmitting(false);
     }
   };
 
-  // Validación de carrito vacío
   if (!cartItems || cartItems.length === 0) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#F5F5F5] font-sans px-4">
@@ -133,8 +153,60 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white md:bg-white flex flex-col md:flex-row font-sans">
+    <div className="min-h-screen bg-white md:bg-white flex flex-col md:flex-row font-sans relative">
       
+      {/* MODAL DE CONFIRMACIÓN */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 px-4 transition-opacity">
+          <div className="bg-white rounded-lg shadow-2xl p-6 md:p-8 w-full max-w-md transform transition-all">
+            <h3 className="text-xl font-serif text-[#1A1A1A] mb-4 border-b pb-2">Confirma tus datos</h3>
+            <p className="text-sm text-gray-600 mb-4">Por favor revisa que la información sea correcta antes de enviar tu pedido.</p>
+            
+            <div className="space-y-3 text-sm text-gray-800 mb-6 bg-gray-50 p-4 rounded-md border border-gray-100">
+              <p><span className="font-medium text-gray-500 w-24 inline-block">Nombre:</span> {formData.nombre} {formData.apellidos}</p>
+              <p><span className="font-medium text-gray-500 w-24 inline-block">Email:</span> {formData.email}</p>
+              <p><span className="font-medium text-gray-500 w-24 inline-block">Teléfono:</span> {formData.codigoPais} {formData.telefono}</p>
+              <p><span className="font-medium text-gray-500 w-24 inline-block">Método:</span> {metodoEntrega === 'envio' ? 'Envío a domicilio' : 'Retiro en tienda'}</p>
+              
+              {metodoEntrega === 'envio' && (
+                <>
+                  <p><span className="font-medium text-gray-500 w-24 inline-block">Dirección:</span> {formData.direccion} {formData.detalles && `(${formData.detalles})`}</p>
+                  <p><span className="font-medium text-gray-500 w-24 inline-block">Ciudad:</span> {formData.ciudad}, {formData.departamento}</p>
+                </>
+              )}
+            </div>
+
+            <div className="flex gap-3">
+              <button 
+                type="button"
+                onClick={() => setShowConfirmModal(false)}
+                disabled={isSubmitting}
+                className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-50 transition"
+              >
+                Modificar datos
+              </button>
+              <button 
+                type="button"
+                onClick={procesarPedido}
+                disabled={isSubmitting}
+                className={`flex-1 px-4 py-3 text-white rounded-md text-sm font-medium transition flex justify-center items-center ${
+                  isSubmitting ? 'bg-gray-500 cursor-not-allowed' : 'bg-[#1A1A1A] hover:bg-black'
+                }`}
+              >
+                {isSubmitting ? (
+                  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                ) : (
+                  'Sí, todo está correcto'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* COLUMNA IZQUIERDA (Formulario) */}
       <div className="w-full md:w-[55%] bg-white p-6 md:p-12 lg:p-20 order-2 md:order-1 flex justify-end">
         <div className="w-full max-w-xl">
@@ -143,17 +215,16 @@ export default function CheckoutPage() {
             Splendide
           </Link>
 
-          <form onSubmit={procesarPedido}>
+          {/* Cambiamos onSubmit a revisarPedido */}
+          <form onSubmit={revisarPedido}>
             
-            {/* Contacto */}
             <h2 className="text-lg font-medium mb-4 text-gray-900">Contacto</h2>
             <input 
               type="email" name="email" required placeholder="Correo electrónico"
-              onChange={handleInputChange}
+              value={formData.email} onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-md shadow-sm p-3.5 text-sm focus:ring-2 focus:ring-black focus:border-black outline-none transition mb-8" 
             />
 
-            {/* Selector de Entrega */}
             <h2 className="text-lg font-medium mb-4 text-gray-900">Entrega</h2>
             
             <div className="flex p-1 bg-gray-100 border border-gray-300 rounded-md mb-6">
@@ -184,17 +255,16 @@ export default function CheckoutPage() {
               </button>
             </div>
 
-            {/* Campos del Formulario */}
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <input 
                   type="text" name="nombre" required placeholder="Nombre"
-                  onChange={handleInputChange}
+                  value={formData.nombre} onChange={handleInputChange}
                   className="w-full border border-gray-300 rounded-md shadow-sm p-3.5 text-sm focus:ring-2 focus:ring-black focus:border-black outline-none transition" 
                 />
                 <input 
                   type="text" name="apellidos" required placeholder="Apellidos"
-                  onChange={handleInputChange}
+                  value={formData.apellidos} onChange={handleInputChange}
                   className="w-full border border-gray-300 rounded-md shadow-sm p-3.5 text-sm focus:ring-2 focus:ring-black focus:border-black outline-none transition" 
                 />
               </div>
@@ -203,24 +273,64 @@ export default function CheckoutPage() {
                 <>
                   <input 
                     type="text" name="direccion" required placeholder="Dirección"
-                    onChange={handleInputChange}
+                    value={formData.direccion} onChange={handleInputChange}
                     className="w-full border border-gray-300 rounded-md shadow-sm p-3.5 text-sm focus:ring-2 focus:ring-black focus:border-black outline-none transition" 
                   />
                   <input 
                     type="text" name="detalles" placeholder="Casa, apartamento, etc. (opcional)"
-                    onChange={handleInputChange}
+                    value={formData.detalles} onChange={handleInputChange}
                     className="w-full border border-gray-300 rounded-md shadow-sm p-3.5 text-sm focus:ring-2 focus:ring-black focus:border-black outline-none transition" 
                   />
+                  
+                  {/* SELECCIÓN DE DEPARTAMENTO Y CIUDAD */}
                   <div className="grid grid-cols-2 gap-4">
+                    <div className="relative">
+                      <select 
+                        name="departamento" 
+                        required 
+                        value={formData.departamento}
+                        onChange={handleInputChange}
+                        className="w-full border border-gray-300 rounded-md shadow-sm p-3.5 text-sm focus:ring-2 focus:ring-black focus:border-black outline-none transition appearance-none bg-white text-gray-700"
+                      >
+                        <option value="" disabled>Departamento</option>
+                        {departamentosColombia.map((dep) => (
+                          <option key={dep} value={dep}>{dep}</option>
+                        ))}
+                      </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                      </div>
+                    </div>
+
                     <input 
-                      type="text" name="ciudad" required placeholder="Ciudad"
-                      onChange={handleInputChange}
+                      type="text" name="ciudad" required placeholder="Ciudad / Municipio"
+                      value={formData.ciudad} onChange={handleInputChange}
                       className="w-full border border-gray-300 rounded-md shadow-sm p-3.5 text-sm focus:ring-2 focus:ring-black focus:border-black outline-none transition" 
                     />
+                  </div>
+                  
+                  {/* TELÉFONO CON INDICATIVO */}
+                  <div className="flex gap-4">
+                    <div className="w-[35%] relative">
+                      <select 
+                        name="codigoPais" 
+                        value={formData.codigoPais}
+                        onChange={handleInputChange}
+                        className="w-full border border-gray-300 rounded-md shadow-sm p-3.5 text-sm focus:ring-2 focus:ring-black focus:border-black outline-none transition appearance-none bg-white text-gray-700"
+                      >
+                        {codigosPais.map((pais) => (
+                          <option key={pais.code} value={pais.code}>{pais.country}</option>
+                        ))}
+                      </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                      </div>
+                    </div>
+                    
                     <input 
                       type="tel" name="telefono" required placeholder="Teléfono"
-                      onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-md shadow-sm p-3.5 text-sm focus:ring-2 focus:ring-black focus:border-black outline-none transition" 
+                      value={formData.telefono} onChange={handleInputChange}
+                      className="w-[65%] border border-gray-300 rounded-md shadow-sm p-3.5 text-sm focus:ring-2 focus:ring-black focus:border-black outline-none transition" 
                     />
                   </div>
                 </>
@@ -240,16 +350,34 @@ export default function CheckoutPage() {
                     Normalmente está listo en 24 horas
                   </p>
                   
-                  <input 
-                    type="tel" name="telefono" required placeholder="Teléfono de contacto"
-                    onChange={handleInputChange}
-                    className="w-full border border-gray-300 rounded-md shadow-sm p-3.5 text-sm focus:ring-2 focus:ring-black focus:border-black outline-none transition mt-4" 
-                  />
+                  {/* TELÉFONO CON INDICATIVO PARA RETIRO */}
+                  <div className="flex gap-4 mt-4">
+                    <div className="w-[35%] relative">
+                      <select 
+                        name="codigoPais" 
+                        value={formData.codigoPais}
+                        onChange={handleInputChange}
+                        className="w-full border border-gray-300 rounded-md shadow-sm p-3.5 text-sm focus:ring-2 focus:ring-black focus:border-black outline-none transition appearance-none bg-white text-gray-700"
+                      >
+                        {codigosPais.map((pais) => (
+                          <option key={pais.code} value={pais.code}>{pais.country}</option>
+                        ))}
+                      </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                      </div>
+                    </div>
+                    
+                    <input 
+                      type="tel" name="telefono" required placeholder="Teléfono de contacto"
+                      value={formData.telefono} onChange={handleInputChange}
+                      className="w-[65%] border border-gray-300 rounded-md shadow-sm p-3.5 text-sm focus:ring-2 focus:ring-black focus:border-black outline-none transition" 
+                    />
+                  </div>
                 </div>
               )}
             </div>
 
-            {/* SECCIÓN DE PAGO */}
             <div className="mt-10">
               <h2 className="text-lg font-medium mb-1 text-gray-900">Pago</h2>
               <p className="text-sm text-gray-500 mb-4">Todas las transacciones son seguras y están encriptadas.</p>
@@ -281,15 +409,12 @@ export default function CheckoutPage() {
 
             <button 
               type="submit" 
-              disabled={isSubmitting}
-              className={`w-full text-white py-4 rounded-md text-sm font-medium tracking-wide transition-colors mt-6 shadow-md ${
-                isSubmitting ? 'bg-gray-500 cursor-not-allowed' : 'bg-[#1A1A1A] hover:bg-black'
-              }`}
+              className={`w-full text-white py-4 rounded-md text-sm font-medium tracking-wide transition-colors mt-6 shadow-md bg-[#1A1A1A] hover:bg-black`}
             >
-              {isSubmitting ? 'Procesando...' : 'Confirmar pedido y enviar comprobante'}
+              Revisar y continuar
             </button>
             <p className="text-center text-xs text-gray-500 mt-4">
-              Serás redirigida a WhatsApp para enviar el comprobante de pago.
+              Podrás revisar tus datos antes de ser redirigida a WhatsApp.
             </p>
           </form>
         </div>
