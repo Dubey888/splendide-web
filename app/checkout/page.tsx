@@ -38,11 +38,11 @@ export default function CheckoutPage() {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Armar la lista dinámica de productos para el mensaje de WhatsApp
+    // Armar la lista dinámica de productos usando saltos de línea (\n)
     const detalleProductos = cartItems.map((item: any) => {
       const nombreVariante = item.variante ? ` (${item.variante})` : '';
       return `- ${item.cantidad}x ${item.nombre}${nombreVariante} - $${Number(item.precio).toLocaleString('es-CO')}`;
-    }).join('%0A');
+    }).join('\n');
 
     const numeroTienda = "573224511590"; // Tu número real de WhatsApp
     
@@ -79,30 +79,34 @@ export default function CheckoutPage() {
       // 3. Si se guardó correctamente, limpiamos el carrito y abrimos WhatsApp
       if (datosBD.status === "success") {
         
-        // Configurar el texto de entrega basado en la selección
+        // Configuramos el texto usando saltos de línea (\n)
         const infoEntrega = metodoEntrega === 'envio' 
-          ? `*Datos de envío:*%0A` +
-            `Nombre: ${formData.nombre} ${formData.apellidos}%0A` +
-            `Dirección: ${formData.direccion}, ${formData.ciudad}%0A` +
-            `Detalles: ${formData.detalles || 'N/A'}%0A` +
-            `Teléfono: ${formData.telefono}%0A%0A`
-          : `*Método de entrega:* Retiro en Tienda%0A` +
-            `Nombre de quien retira: ${formData.nombre} ${formData.apellidos}%0A` +
-            `Teléfono: ${formData.telefono}%0A%0A`;
+          ? `*Datos de envío:*\n` +
+            `Nombre: ${formData.nombre} ${formData.apellidos}\n` +
+            `Dirección: ${formData.direccion}, ${formData.ciudad}\n` +
+            `Detalles: ${formData.detalles || 'N/A'}\n` +
+            `Teléfono: ${formData.telefono}\n\n`
+          : `*Método de entrega:* Retiro en Tienda\n` +
+            `Nombre de quien retira: ${formData.nombre} ${formData.apellidos}\n` +
+            `Teléfono: ${formData.telefono}\n\n`;
 
         // Agregamos el número de pedido al mensaje
-        const mensaje = `¡Hola Splendide! Quiero confirmar mi pedido web.%0A%0A` +
-          `*Número de Pedido:* #${datosBD.pedido_id}%0A` +
-          `*Mi Pedido:*%0A${detalleProductos}%0A%0A` +
+        const mensaje = `¡Hola Splendide! Quiero confirmar mi pedido web.\n\n` +
+          `*Número de Pedido:* #${datosBD.pedido_id}\n` +
+          `*Mi Pedido:*\n${detalleProductos}\n\n` +
           infoEntrega +
-          `*Método de pago:* Transferencia Bancolombia / Llave BRED%0A` +
-          `*Total a pagar:* $${subtotal.toLocaleString('es-CO')}%0A%0A` +
+          `*Método de pago:* Transferencia Bancolombia / Llave BRED\n` +
+          `*Total a pagar:* $${subtotal.toLocaleString('es-CO')}\n\n` +
           `Aquí adjunto mi comprobante de pago.`;
+
+        // Codificamos TODO el mensaje para proteger los símbolos # y caracteres especiales
+        const mensajeSeguro = encodeURIComponent(mensaje);
 
         // Limpieza del carrito para dejarlo vacío tras la confirmación de la orden
         clearCart();
 
-        window.open(`https://wa.me/${numeroTienda}?text=${mensaje}`, '_blank');
+        // Redirigimos a WhatsApp con el mensaje seguro
+        window.open(`https://wa.me/${numeroTienda}?text=${mensajeSeguro}`, '_blank');
       } else {
         alert("Hubo un problema al registrar tu pedido: " + datosBD.mensaje);
       }
