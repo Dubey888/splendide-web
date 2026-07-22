@@ -40,6 +40,7 @@ export default function AdminDashboard() {
     setCargandoDetalles(true);
     setDetallesPedido([]);
 
+    // La petición limpia que recibe los datos procesados por tu backend en PHP
     fetch(`https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_detalles_pedido&pedido_id=${pedido.id}`)
       .then(res => res.json())
       .then(data => {
@@ -47,6 +48,7 @@ export default function AdminDashboard() {
           setDetallesPedido(data.data);
         }
       })
+      .catch(err => console.error("Error al obtener detalles:", err))
       .finally(() => setCargandoDetalles(false));
   };
 
@@ -65,17 +67,13 @@ export default function AdminDashboard() {
 
       const data = await res.json();
       if (data.status === "success") {
-        
-        // Si el estado es "Entregado", lo quitamos de la lista y cerramos el modal
         if (nuevoEstado === 'Entregado') {
           setPedidos(pedidos.filter((p: any) => p.id !== pedidoSeleccionado.id));
           setModalAbierto(false);
         } else {
-          // Para el resto de estados, solo actualizamos visualmente
           setPedidoSeleccionado({ ...pedidoSeleccionado, estado_pago: nuevoEstado });
           setPedidos(pedidos.map(p => p.id === pedidoSeleccionado.id ? { ...p, estado_pago: nuevoEstado } : p));
         }
-
       } else {
         alert("Error al cambiar estado: " + data.mensaje);
       }
@@ -188,19 +186,19 @@ export default function AdminDashboard() {
                 <ul className="space-y-3 mb-6">
                   {detallesPedido.map((item, idx) => (
                     <li key={idx} className="flex flex-col text-sm p-3 bg-gray-50 rounded border">
-                      {/* Primera fila: ID y Detalles del unitario (Igual a la app) */}
+                      {/* Primera fila: ID y Detalles del unitario */}
                       <div className="flex justify-between items-center mb-1">
-                        <span className="text-xs text-gray-500">{item.producto_id}</span>
+                        <span className="text-xs text-gray-500">ID: {item.producto_id}</span>
                         <span className="text-xs text-gray-500">
                           {item.cantidad}x ${(Number(item.precio_unitario)).toLocaleString('es-CO')}
                         </span>
                       </div>
                       
-                      {/* Segunda fila: Nombre del producto, Variante (si aplica) y Precio Total (Igual a la app) */}
+                      {/* Segunda fila: Renderizado del Producto y Variante mapeados desde PHP */}
                       <div className="flex justify-between items-start mt-1">
                         <span className="font-medium text-gray-900 pr-4">
-                          {item.nombre || 'Producto'} 
-                          {item.variante && item.variante.trim() !== '' ? ` - ${item.variante}` : ''}
+                          {item.producto || item.nombre || 'Producto'} 
+                          {item.variante && item.variante.trim() !== '' && item.variante !== 'undefined' ? ` - ${item.variante}` : ''}
                         </span>
                         <span className="font-bold text-gray-900 whitespace-nowrap">
                           ${(item.cantidad * item.precio_unitario).toLocaleString('es-CO')}
