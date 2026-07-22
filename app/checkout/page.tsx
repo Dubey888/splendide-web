@@ -100,7 +100,7 @@ export default function CheckoutPage() {
       detalles_direccion: formData.detalles,
       ciudad: ciudadConDepartamento,
       total_pagar: subtotal,
-      detalle_productos: cartItems 
+      detalle_productos: cartItems // Envía el array estructurado con id, nombre, precio, cantidad y variante
     };
 
     try {
@@ -416,7 +416,6 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {/* BOTÓN ACTUALIZADO */}
             <button 
               type="submit" 
               className={`w-full text-white py-4 rounded-md text-sm font-medium tracking-wide transition-colors mt-6 shadow-md bg-[#1A1A1A] hover:bg-black`}
