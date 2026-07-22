@@ -168,7 +168,7 @@ export default function AdminDashboard() {
                 </div>
                 <div>
                   <p className="text-gray-500 mb-1">Contacto:</p>
-                  <p className="font-medium text-gray-900">{pedidoSeleccionado.telefono_contacto} | {pedidoSeleccionado.email_contacto}</p>
+                  <p className="font-medium text-gray-900">{pedidoSeleccionado.telefono_contacto}</p>
                 </div>
                 <div>
                   <p className="text-gray-500 mb-1">Dirección:</p>
@@ -176,73 +176,81 @@ export default function AdminDashboard() {
                   <p className="text-gray-500 text-xs">{pedidoSeleccionado.detalles_direccion}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500 mb-1">Método de entrega:</p>
+                  <p className="text-gray-500 mb-1">Método:</p>
                   <p className="font-medium text-gray-900 uppercase">{pedidoSeleccionado.metodo_entrega}</p>
                 </div>
               </div>
 
-              <h4 className="font-medium border-b pb-2 mb-3">Productos solicitados</h4>
+              <h4 className="font-medium font-serif border-b pb-2 mb-3">Productos solicitados</h4>
               {cargandoDetalles ? (
                 <p className="text-sm text-gray-500 text-center py-4">Cargando productos...</p>
               ) : (
                 <ul className="space-y-3 mb-6">
                   {detallesPedido.map((item, idx) => (
-                    <li key={idx} className="flex justify-between items-center text-sm p-3 bg-gray-50 rounded border">
-                      <div className="flex flex-col">
-                        <span className="font-medium text-gray-900">{item.producto_id}</span>
-                        {item.variante && <span className="text-xs text-gray-500">Var: {item.variante}</span>}
+                    <li key={idx} className="flex flex-col text-sm p-3 bg-gray-50 rounded border">
+                      {/* Primera fila: ID y Detalles del unitario (Igual a la app) */}
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-xs text-gray-500">{item.producto_id}</span>
+                        <span className="text-xs text-gray-500">
+                          {item.cantidad}x ${(Number(item.precio_unitario)).toLocaleString('es-CO')}
+                        </span>
                       </div>
-                      <div className="text-right">
-                        <span className="text-gray-500 block">{item.cantidad}x ${Number(item.precio_unitario).toLocaleString('es-CO')}</span>
-                        <span className="font-bold text-gray-900">${(item.cantidad * item.precio_unitario).toLocaleString('es-CO')}</span>
+                      
+                      {/* Segunda fila: Nombre del producto, Variante (si aplica) y Precio Total (Igual a la app) */}
+                      <div className="flex justify-between items-start mt-1">
+                        <span className="font-medium text-gray-900 pr-4">
+                          {item.nombre || 'Producto'} 
+                          {item.variante && item.variante.trim() !== '' ? ` - ${item.variante}` : ''}
+                        </span>
+                        <span className="font-bold text-gray-900 whitespace-nowrap">
+                          ${(item.cantidad * item.precio_unitario).toLocaleString('es-CO')}
+                        </span>
                       </div>
                     </li>
                   ))}
                 </ul>
               )}
 
-              <div className="flex justify-between items-center p-4 bg-[#FAF4F4] rounded border border-[#D7A1A4]/30">
-                <span className="font-medium text-gray-700">Total a pagar:</span>
+              <div className="flex justify-between items-center p-4 bg-[#FAF4F4] rounded border border-[#D7A1A4]/30 mt-2">
+                <span className="font-medium text-gray-700">Total a pagar</span>
                 <span className="text-xl font-bold text-[#955F71]">${Number(pedidoSeleccionado.total_pagar).toLocaleString('es-CO')}</span>
               </div>
             </div>
 
-            <div className="p-5 border-t bg-gray-50">
-              <p className="text-sm text-gray-600 mb-3 font-medium">Actualizar estado del pedido:</p>
-              <div className="flex flex-wrap gap-2">
+            <div className="p-5 border-t bg-white">
+              <p className="text-sm font-bold text-gray-900 mb-3">Actualizar Estado</p>
+              <div className="grid grid-cols-2 gap-3 mb-3">
                 <button 
                   onClick={() => cambiarEstado('Pendiente')}
-                  className={`px-4 py-2 text-sm font-medium rounded border transition-colors ${pedidoSeleccionado.estado_pago === 'Pendiente' || !pedidoSeleccionado.estado_pago ? 'bg-gray-200 border-gray-300 text-gray-800' : 'bg-white hover:bg-gray-100'}`}
+                  className={`py-2.5 text-sm font-medium rounded transition-colors ${pedidoSeleccionado.estado_pago === 'Pendiente' || !pedidoSeleccionado.estado_pago ? 'bg-gray-100 text-gray-800' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`}
                 >
                   Pendiente
                 </button>
                 <button 
                   onClick={() => cambiarEstado('Pagado')}
-                  className={`px-4 py-2 text-sm font-medium rounded border transition-colors ${pedidoSeleccionado.estado_pago === 'Pagado' ? 'bg-green-600 text-white border-green-700' : 'bg-white text-green-700 border-green-200 hover:bg-green-50'}`}
+                  className={`py-2.5 text-sm font-medium rounded transition-colors ${pedidoSeleccionado.estado_pago === 'Pagado' ? 'bg-green-200 text-green-800' : 'bg-green-100 text-green-700 hover:bg-green-200'}`}
                 >
-                  Marcar Pagado
+                  Pagado
                 </button>
                 <button 
                   onClick={() => cambiarEstado('Procesado')}
-                  className={`px-4 py-2 text-sm font-medium rounded border transition-colors ${pedidoSeleccionado.estado_pago === 'Procesado' ? 'bg-blue-600 text-white border-blue-700' : 'bg-white text-blue-700 border-blue-200 hover:bg-blue-50'}`}
+                  className={`py-2.5 text-sm font-medium rounded transition-colors ${pedidoSeleccionado.estado_pago === 'Procesado' ? 'bg-blue-200 text-blue-800' : 'bg-blue-100 text-blue-700 hover:bg-blue-200'}`}
                 >
-                  Marcar Procesado
+                  Procesado
                 </button>
                 <button 
                   onClick={() => cambiarEstado('Enviado')}
-                  className={`px-4 py-2 text-sm font-medium rounded border transition-colors ${pedidoSeleccionado.estado_pago === 'Enviado' ? 'bg-purple-600 text-white border-purple-700' : 'bg-white text-purple-700 border-purple-200 hover:bg-purple-50'}`}
+                  className={`py-2.5 text-sm font-medium rounded transition-colors ${pedidoSeleccionado.estado_pago === 'Enviado' ? 'bg-purple-200 text-purple-800' : 'bg-purple-100 text-purple-700 hover:bg-purple-200'}`}
                 >
-                  Marcar Enviado
-                </button>
-                
-                {/* NUEVO BOTÓN: ENTREGADO (Cierra el pedido) */}
-                <button 
-                  onClick={() => cambiarEstado('Entregado')}
-                  className="px-4 py-2 text-sm font-bold rounded border transition-colors bg-gray-800 text-white border-gray-900 hover:bg-black ml-auto"
-                >
-                  Finalizar (Entregado)
+                  Enviado
                 </button>
               </div>
+              <button 
+                onClick={() => cambiarEstado('Entregado')}
+                className="w-full py-3 mt-2 text-sm font-bold rounded transition-colors bg-[#1A1C29] text-white hover:bg-black"
+              >
+                Finalizar (Entregado)
+              </button>
             </div>
 
           </div>
