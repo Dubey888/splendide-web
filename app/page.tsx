@@ -31,21 +31,24 @@ async function getProductos(): Promise<Producto[]> {
   }
 }
 
-// Carga las colecciones activas directamente desde la Base de Datos
+// Carga las colecciones activas directamente desde la Base de Datos (Corregido para El Santuario y filtrado por imagen)
 async function getColecciones() {
-  const urlApi = "https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_colecciones&tienda=ambas";
+  const urlApi = "https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_colecciones&tienda=santuario";
   try {
     const res = await fetch(urlApi, { cache: 'no-store' });
     const json = await res.json();
     if (json.status === "success" && Array.isArray(json.data)) {
-      return json.data.map((c: any) => {
-        const urlSegura = c.imagen_url ? c.imagen_url.trim().replace(/ /g, '%20') : null;
-        return {
-          nombre: c.nombre,
-          imagen: urlSegura || "https://via.placeholder.com/400x500?text=Marca",
-          url: `/colecciones/${encodeURIComponent(c.nombre)}`
-        };
-      });
+      return json.data
+        // Filtramos para que solo cargue aquellas que tengan foto de portada
+        .filter((c: any) => c.imagen_url && c.imagen_url.trim() !== "")
+        .map((c: any) => {
+          const urlSegura = c.imagen_url.trim().replace(/ /g, '%20');
+          return {
+            nombre: c.nombre,
+            imagen: urlSegura,
+            url: `/colecciones/${encodeURIComponent(c.nombre)}`
+          };
+        });
     }
   } catch (error) {
     console.error("Error al obtener colecciones para la home:", error);
@@ -237,7 +240,7 @@ export default async function Home() {
             </div>
         </section>
 
-        {/* 5. SECCIÓN: Sweet Body (Fragancias y Corporal cargados desde BD) */}
+        {/* 5. SECCIÓN: Sweet Body (Fragancias y Corporal cargados desde BD - Corregido texto superpuesto) */}
         <section className="w-full px-4 lg:px-8 mx-auto mb-24">
           <div className="mb-6 md:mb-8">
             <h3 className="text-2xl md:text-3xl font-serif text-[#1A1A1A]">Sweet Body</h3>
@@ -245,14 +248,12 @@ export default async function Home() {
           <div className="grid grid-cols-2 gap-3 md:gap-6 lg:gap-10">
             <CategoryBlock 
               title="Fragancias" 
-              cursiveOverlay="Perfumes & Splash" 
               imageUrl={getCategoriaImagen("Fragancias", "Fragancias")} 
               linkUrl={`/colecciones/${encodeURIComponent("Fragancias")}`} 
               aspectRatio="aspect-[4/5] md:aspect-square" 
             />
             <CategoryBlock 
               title="Corporal" 
-              cursiveOverlay="Cuidado corporal" 
               imageUrl={getCategoriaImagen("Corporal", "Corporal")} 
               linkUrl={`/colecciones/${encodeURIComponent("Corporal")}`} 
               aspectRatio="aspect-[4/5] md:aspect-square" 
