@@ -15,6 +15,7 @@ const generarHandle = (nombre: string) => {
   return nombre.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 };
 
+// Petición de productos de la marca
 async function getProductosPorMarca(marca: string): Promise<Producto[]> {
   if (!marca || marca === "undefined") return [];
 
@@ -30,6 +31,24 @@ async function getProductosPorMarca(marca: string): Promise<Producto[]> {
   }
 }
 
+// NUEVA FUNCIÓN: Obtiene la imagen de la portada guardada en la BD (Cloudinary)
+async function getImagenPortadaColeccion(marca: string): Promise<string | null> {
+  const urlApi = `https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_colecciones&tienda=ambas`;
+  try {
+    const res = await fetch(urlApi, { cache: 'no-store' });
+    const json = await res.json();
+    if (json.status === "success" && Array.isArray(json.data)) {
+      const coleccion = json.data.find(
+        (c: any) => c.nombre.toLowerCase().trim() === marca.toLowerCase().trim()
+      );
+      return coleccion?.imagen_url || null;
+    }
+  } catch (error) {
+    console.error("Error cargando portada de la colección:", error);
+  }
+  return null;
+}
+
 export default async function MarcaPage({ params }: { params: Promise<{ marca: string }> }) {
   const resolvedParams = await params;
   const marcaRaw = resolvedParams.marca;
@@ -39,16 +58,17 @@ export default async function MarcaPage({ params }: { params: Promise<{ marca: s
       <div className="min-h-screen bg-[#FAF4F4] flex flex-col items-center justify-center text-center">
         <h1 className="text-2xl text-red-500 mb-4 font-serif">Error de Enrutamiento</h1>
         <p className="text-[#707070]">Next.js no está recibiendo el nombre de la marca.</p>
-        <p className="text-[#707070] mt-2">
-          Verifica que tu estructura de carpetas sea exactamente: <br/>
-          <b>app/colecciones/[marca]/page.tsx</b>
-        </p>
       </div>
     );
   }
 
   const marcaBuscada = decodeURIComponent(marcaRaw);
-  const productos = await getProductosPorMarca(marcaBuscada);
+
+  // Ejecutamos ambas peticiones en paralelo
+  const [productos, imagenPortadaBD] = await Promise.all([
+    getProductosPorMarca(marcaBuscada),
+    getImagenPortadaColeccion(marcaBuscada)
+  ]);
 
   const productosConImagen = productos.filter(
     (item) => item.URL_Imagen && item.URL_Imagen.trim() !== ""
@@ -65,38 +85,32 @@ export default async function MarcaPage({ params }: { params: Promise<{ marca: s
     }, {})
   );
 
-  // 1. Limpieza de URLs de las fotos de los productos (Evita cuadros en blanco)
   const procesarImagenes = (urlStr: string) => {
     if (!urlStr) return [];
     return urlStr.split(",").map(url => url.trim()).filter(url => url !== "");
   };
 
-  // 2. Lógica para buscar el banner en la carpeta public/marcas
-  // Convierte "Kiss Beauty" en "kissbeauty" para que coincida con tus archivos .jpeg
-  const marcaNormalizada = marcaBuscada.toLowerCase().replace(/[^a-z0-9]/g, '');
-  const rutaBanner = `/marcas/${marcaNormalizada}.jpeg`;
+  // Si existe en la BD usa la URL de Cloudinary, de lo contrario muestra una imagen por defecto
+  const rutaBanner = imagenPortadaBD || "https://via.placeholder.com/1200x400?text=Coleccion";
 
   return (
     <div className="min-h-screen bg-[#FAF4F4] text-[#1A1A1A] font-sans pb-20">
       
-      {/* HEADER DINÁMICO CON LA IMAGEN DE LA MARCA */}
-      <header className="relative w-full h-[250px] md:h-[300px] flex items-center justify-center overflow-hidden mb-10">
-        
-        {/* Imagen de fondo extraída de tu carpeta public/marcas */}
+      {/* HEADER DINÁMICO DESDE LA BASE DE DATOS */}
+      <header className="relative w-full h-[250px] md:h-[300px] flex items-center justify-center overflow-hidden mb-10 bg-gray-900">
         <Image 
           src={rutaBanner}
           alt={`Portada de la colección ${marcaBuscada}`}
           fill
-          className="object-cover"
+          className="object-cover opacity-80"
           sizes="100vw"
           priority
-          unoptimized // Soluciona el error 500 en Clever Cloud
+          unoptimized
         />
         
-        {/* Capa oscura semitransparente para que el texto blanco resalte sobre cualquier foto */}
         <div className="absolute inset-0 bg-black/40" />
 
-        <div className="relative text-center px-4 text-white">
+        <div className="relative text-center px-4 text-white z-10">
           <h1 className="text-4xl md:text-5xl font-serif capitalize drop-shadow-md">
             {marcaBuscada}
           </h1>
@@ -120,13 +134,10 @@ export default async function MarcaPage({ params }: { params: Promise<{ marca: s
         {productosAgrupados.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-[#707070] text-lg">No hay productos disponibles de {marcaBuscada} en este momento.</p>
-            <p className="text-[#707070] text-sm mt-2">Verifica que el nombre del proveedor en la base de datos coincida exactamente con la URL.</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 lg:gap-x-10 gap-y-14">
             {productosAgrupados.map((item: any) => {
-              
-              // Usamos la función procesarImagenes aquí también
               const imagenes = procesarImagenes(item.URL_Imagen);
               const imagenPrincipal = imagenes[0] || null;
               const cantidadVariantes = item.Variantes.length;
@@ -141,7 +152,7 @@ export default async function MarcaPage({ params }: { params: Promise<{ marca: s
                         fill
                         sizes="(max-width: 768px) 50vw, 20vw"
                         className="object-cover transition-transform duration-500 group-hover:scale-105" 
-                        unoptimized // También agregado aquí para prevenir fallos con las fotos de productos
+                        unoptimized
                       />
                     )}
                   </div>
