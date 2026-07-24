@@ -12,7 +12,7 @@ const BANNERS_DATA = [
     subtitle: "Diseñados para un acabado impecable y duradero en cada aplicación.",
     buttonText: "Comprar ahora",
     linkUrl: "/colecciones/Atenea",
-    imageUrl: "/banners/atenea.jpeg", // <-- Nombre exacto de tu archivo local
+    imageUrl: "/banners/Atenea.jpeg", // <-- Nombre exacto de tu archivo local
     textPosition: "right"
   },
   {
