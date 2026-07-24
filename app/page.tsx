@@ -42,7 +42,7 @@ async function getColecciones() {
         const urlSegura = c.imagen_url ? c.imagen_url.trim().replace(/ /g, '%20') : null;
         return {
           nombre: c.nombre,
-          imagen: urlSegura || "https://via.placeholder.com/300?text=Marca",
+          imagen: urlSegura || "https://via.placeholder.com/400x500?text=Marca",
           url: `/colecciones/${encodeURIComponent(c.nombre)}`
         };
       });
@@ -84,6 +84,15 @@ export default async function Home() {
       .split(",")
       .map(url => url.trim().replace(/ /g, '%20'))
       .filter(url => url !== "");
+  };
+
+  // Función auxiliar para buscar dinámicamente la imagen de una categoría
+  // Utiliza un placeholder online en caso de no encontrar la imagen en la base de datos
+  const getCategoriaImagen = (nombreCategoria: string, fallbackText: string) => {
+    const categoriaEncontrada = colecciones.find(
+      (c: any) => c.nombre.toLowerCase() === nombreCategoria.toLowerCase()
+    );
+    return categoriaEncontrada?.imagen || `https://via.placeholder.com/600x800?text=${fallbackText}`;
   };
 
   return (
@@ -129,22 +138,22 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* 3. SECCIÓN: Bloque Asimétrico (Skincare y Esenciales) */}
+        {/* 3. SECCIÓN: Bloque Asimétrico (Skincare y Esenciales cargados desde BD) */}
         <section className="w-full px-4 lg:px-8 mx-auto mb-20">
           <div className="grid grid-cols-2 md:grid-cols-12 gap-3 md:gap-6 lg:gap-8">
             <div className="col-span-1 md:col-span-7">
               <CategoryBlock 
-                title="Skincare" 
-                imageUrl="/categorias/skincare.jpeg" 
-                linkUrl="/colecciones/skincare" 
+                title="Skin Care" 
+                imageUrl={getCategoriaImagen("Skin Care", "Skin+Care")} 
+                linkUrl={`/colecciones/${encodeURIComponent("Skin Care")}`} 
                 aspectRatio="aspect-[4/5] md:aspect-[4/3]" 
               />
             </div>
             <div className="col-span-1 md:col-span-5">
               <CategoryBlock 
                 title="Esenciales" 
-                imageUrl="/categorias/esenciales.jpeg" 
-                linkUrl="/colecciones/esenciales" 
+                imageUrl={getCategoriaImagen("Esenciales", "Esenciales")} 
+                linkUrl={`/colecciones/${encodeURIComponent("Esenciales")}`} 
                 aspectRatio="aspect-[4/5] md:aspect-[3/4]" 
               />
             </div>
@@ -228,7 +237,7 @@ export default async function Home() {
             </div>
         </section>
 
-        {/* 5. SECCIÓN: Sweet Body */}
+        {/* 5. SECCIÓN: Sweet Body (Fragancias y Corporal cargados desde BD) */}
         <section className="w-full px-4 lg:px-8 mx-auto mb-24">
           <div className="mb-6 md:mb-8">
             <h3 className="text-2xl md:text-3xl font-serif text-[#1A1A1A]">Sweet Body</h3>
@@ -237,15 +246,15 @@ export default async function Home() {
             <CategoryBlock 
               title="Fragancias" 
               cursiveOverlay="Perfumes & Splash" 
-              imageUrl="/categorias/fragancias.jpeg" 
-              linkUrl="/colecciones/fragancias" 
+              imageUrl={getCategoriaImagen("Fragancias", "Fragancias")} 
+              linkUrl={`/colecciones/${encodeURIComponent("Fragancias")}`} 
               aspectRatio="aspect-[4/5] md:aspect-square" 
             />
             <CategoryBlock 
               title="Corporal" 
               cursiveOverlay="Cuidado corporal" 
-              imageUrl="/categorias/corporal.jpeg" 
-              linkUrl="/colecciones/corporal" 
+              imageUrl={getCategoriaImagen("Corporal", "Corporal")} 
+              linkUrl={`/colecciones/${encodeURIComponent("Corporal")}`} 
               aspectRatio="aspect-[4/5] md:aspect-square" 
             />
           </div>
@@ -333,7 +342,7 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* 8. SECCIÓN: Complementos */}
+        {/* 8. SECCIÓN: Complementos (Bolsos y Carteras cargados desde BD) */}
         <section className="w-full px-4 lg:px-8 mx-auto mb-24">
           <div className="mb-6 md:mb-8">
             <h3 className="text-2xl md:text-3xl font-serif text-[#1A1A1A]">Complementos</h3>
@@ -342,15 +351,15 @@ export default async function Home() {
             <CategoryBlock 
               title="Bolsos" 
               cursiveOverlay="Bolsos & Mochilas" 
-              imageUrl="/categorias/bolsos.jpeg" 
-              linkUrl="/colecciones/bolsos" 
+              imageUrl={getCategoriaImagen("Bolsos", "Bolsos")} 
+              linkUrl={`/colecciones/${encodeURIComponent("Bolsos")}`} 
               aspectRatio="aspect-[4/5] md:aspect-[16/10]" 
             />
             <CategoryBlock 
               title="Carteras" 
               cursiveOverlay="Carteras & Bandoleras" 
-              imageUrl="/categorias/carteras.jpeg" 
-              linkUrl="/colecciones/carteras" 
+              imageUrl={getCategoriaImagen("Carteras", "Carteras")} 
+              linkUrl={`/colecciones/${encodeURIComponent("Carteras")}`} 
               aspectRatio="aspect-[4/5] md:aspect-[16/10]" 
             />
           </div>
