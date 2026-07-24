@@ -31,20 +31,36 @@ async function getProductos(): Promise<Producto[]> {
   }
 }
 
-export default async function Home() {
-  const productos = await getProductos();
-  const productosConImagen = productos.filter((item) => item.URL_Imagen && item.URL_Imagen.trim() !== "");
+// Carga las colecciones activas directamente desde la Base de Datos
+async function getColecciones() {
+  const urlApi = "https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_colecciones&tienda=ambas";
+  try {
+    const res = await fetch(urlApi, { cache: 'no-store' });
+    const json = await res.json();
+    if (json.status === "success" && Array.isArray(json.data)) {
+      return json.data.map((c: any) => {
+        const urlSegura = c.imagen_url ? c.imagen_url.trim().replace(/ /g, '%20') : null;
+        return {
+          nombre: c.nombre,
+          imagen: urlSegura || "https://via.placeholder.com/300?text=Marca",
+          url: `/colecciones/${encodeURIComponent(c.nombre)}`
+        };
+      });
+    }
+  } catch (error) {
+    console.error("Error al obtener colecciones para la home:", error);
+  }
+  return [];
+}
 
-  const colecciones = [
-    { nombre: "Bloomshell", imagen: "/marcas/bloomshell.jpeg", url: "/colecciones/bloomshell" },
-    { nombre: "Atenea", imagen: "/marcas/atenea.jpeg", url: "/colecciones/atenea" },
-    { nombre: "Purpure", imagen: "/marcas/purpure.jpeg", url: "/colecciones/purpure" },
-    { nombre: "Montoc", imagen: "/marcas/montoc.jpeg", url: "/colecciones/Montoc" },
-    { nombre: "Ushas", imagen: "/marcas/ushas.jpeg", url: "/colecciones/ushas" },
-    { nombre: "Bioaqua", imagen: "/marcas/bioaqua.jpeg", url: "/colecciones/bioaqua" },
-    { nombre: "Kevin&Coco", imagen: "/marcas/kevincoco.jpeg", url: "/colecciones/kevin-coco" },
-    { nombre: "Kiss Beauty", imagen: "/marcas/kissbeauty.jpeg", url: "/colecciones/kiss-beauty" }
-  ];
+export default async function Home() {
+  // Carga en paralelo de productos y colecciones de la BD
+  const [productos, colecciones] = await Promise.all([
+    getProductos(),
+    getColecciones()
+  ]);
+
+  const productosConImagen = productos.filter((item) => item.URL_Imagen && item.URL_Imagen.trim() !== "");
 
   const productosAgrupados = Object.values(
     productosConImagen.reduce((acc: any, item) => {
@@ -61,10 +77,13 @@ export default async function Home() {
     return item.Proveedor?.toLowerCase().includes('atenea') || item.Producto?.toLowerCase().includes('atenea'); 
   }).slice(0, 4); 
 
-  // Función para procesar y limpiar las URLs de las imágenes separadas por coma
+  // Procesa y limpia las URLs separadas por coma, codificando espacios para evitar errores de carga
   const procesarImagenes = (urlStr: string) => {
     if (!urlStr) return [];
-    return urlStr.split(",").map(url => url.trim()).filter(url => url !== "");
+    return urlStr
+      .split(",")
+      .map(url => url.trim().replace(/ /g, '%20'))
+      .filter(url => url !== "");
   };
 
   return (
@@ -97,10 +116,9 @@ export default async function Home() {
           </div>
         </div>
 
-        {/* 2. SECCIÓN: Marcas Deslizantes */}
+        {/* 2. SECCIÓN: Marcas Deslizantes (Colecciones dinámicas desde BD) */}
         <section className="bg-[#DFB2C0]/20 w-full py-12 mb-16">
           <div className="w-full px-4 lg:px-8 mx-auto">
-            {/* Indicador visual añadido aquí */}
             <div className="flex justify-between items-end mb-6 md:px-4">
               <h3 className="text-xl md:text-2xl font-serif text-[#1A1A1A]">Descubre por Marca</h3>
               <span className="text-[10px] md:text-xs text-gray-600 uppercase tracking-widest flex items-center gap-1.5 font-medium">
@@ -145,7 +163,6 @@ export default async function Home() {
                     
                     <div className="relative w-full aspect-[4/5] bg-white rounded-lg overflow-hidden border border-gray-100 shadow-sm">
                       {imagenes.length > 1 ? (
-                        // Múltiples imágenes: Carrusel interno con Scroll Snap
                         <div className="flex w-full h-full overflow-x-auto snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                           {imagenes.map((img: string, idx: number) => (
                             <Link key={idx} href={`/producto/${item.HandleFinal}`} className="relative w-full h-full flex-shrink-0 snap-center block">
@@ -160,7 +177,6 @@ export default async function Home() {
                           ))}
                         </div>
                       ) : (
-                        // Una sola imagen
                         <Link href={`/producto/${item.HandleFinal}`} className="relative w-full h-full block">
                           {imagenes[0] && (
                             <Image 
@@ -174,7 +190,6 @@ export default async function Home() {
                         </Link>
                       )}
 
-                      {/* Indicador visual de que hay varias fotos (Puntitos) */}
                       {imagenes.length > 1 && (
                         <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5 pointer-events-none">
                           {imagenes.map((_, idx) => (
