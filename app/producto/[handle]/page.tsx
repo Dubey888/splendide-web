@@ -235,7 +235,6 @@ export default function DetalleProducto() {
           {/* Acordeones de Información */}
           <div className="border-t border-gray-200">
             <Acordeon 
-              <Acordeon 
                 titulo="Details" 
                 abiertoPorDefecto={false} /* Cambié esto a 'false' para que arranque cerrado con el '+' como en tu foto */
                 contenido={
@@ -243,7 +242,7 @@ export default function DetalleProducto() {
                    <div 
                      className="[&>p]:mb-4 [&>p:last-child]:mb-0 [&_strong]:font-semibold" 
                      dangerouslySetInnerHTML={{ __html: varianteActiva.Descripcion }} 
-                   />
+              />
                  ) : (
                    <p className="text-gray-500 italic">No hay descripción disponible para este producto en este momento.</p>
                )
