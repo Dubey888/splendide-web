@@ -18,7 +18,7 @@ const Acordeon = ({ titulo, contenido, abiertoPorDefecto = false }: { titulo: st
     <div className="border-b border-gray-200 py-4">
       <button 
         onClick={() => setAbierto(!abierto)} 
-        className="w-full flex justify-between items-center text-xs uppercase tracking-widest text-gray-800 hover:text-black transition-colors"
+        className="w-full flex justify-between items-center text-xs uppercase tracking-widest text-gray-800 hover:text-black transition-colors cursor-pointer"
       >
         {titulo}
         <span className="text-lg font-light">{abierto ? "−" : "+"}</span>
@@ -44,7 +44,6 @@ export default function DetalleProducto() {
   const [productosRelacionados, setProductosRelacionados] = useState<any[]>([]);
   const [cargando, setCargando] = useState(true);
   
-  // Nuevo estado para la cantidad
   const [cantidad, setCantidad] = useState(1);
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -56,7 +55,6 @@ export default function DetalleProducto() {
       .then(json => {
         const data = json.data;
         
-        // 1. Encontrar el producto actual
         const variantes = data.filter((p: any) => generarHandle(p) === handleUrl);
 
         if (variantes.length > 0) {
@@ -64,18 +62,15 @@ export default function DetalleProducto() {
           setVarianteActiva(variantes[0]); 
         }
 
-        // 2. Obtener productos relacionados (aleatorios que no sean el actual Y QUE TENGAN IMAGEN)
         const otrosProductos = data.filter((p: any) => 
           generarHandle(p) !== handleUrl && 
           p.URL_Imagen && 
           p.URL_Imagen.trim() !== ""
         );
         
-        // Filtramos para tener productos únicos por nombre y no repetir variantes en sugerencias
         const unicos = otrosProductos.filter((valor: any, indice: number, arreglo: any[]) => 
           arreglo.findIndex(v => v.Producto === valor.Producto) === indice
         );
-        // Tomamos 4 al azar
         const aleatorios = unicos.sort(() => 0.5 - Math.random()).slice(0, 4);
         setProductosRelacionados(aleatorios);
 
@@ -90,18 +85,6 @@ export default function DetalleProducto() {
     }
   };
 
-  const scrollSiguiente = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: scrollRef.current.offsetWidth, behavior: 'smooth' });
-    }
-  };
-
-  const scrollAnterior = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -scrollRef.current.offsetWidth, behavior: 'smooth' });
-    }
-  };
-
   const manejarAnadir = () => {
     if (!varianteActiva) return;
     const nombreConVariante = varianteActiva.Variante_Color 
@@ -113,7 +96,7 @@ export default function DetalleProducto() {
       nombre: nombreConVariante,
       precio: Number(varianteActiva.Precio_Venta),
       imagen: listaImagenes[0] || "",
-      cantidad: cantidad, // Usamos la cantidad seleccionada
+      cantidad: cantidad, 
     });
   };
 
@@ -123,18 +106,8 @@ export default function DetalleProducto() {
   const listaImagenes = varianteActiva.URL_Imagen ? varianteActiva.URL_Imagen.split(",") : [];
 
   return (
-    <div className="min-h-screen text-gray-800 font-sans p-6 md:p-12 max-w-6xl mx-auto bg-white">
-      {/* Cabecera */}
-      <div className="flex justify-between items-center mb-8 border-b border-gray-100 pb-4">
-        <button onClick={() => router.back()} className="text-xl text-gray-400 hover:text-black transition-colors cursor-pointer">
-          ≡
-        </button>
-        <h1 className="text-3xl font-serif italic text-pink-300 tracking-wide">Splendide</h1>
-        <div className="flex gap-4 text-gray-600">
-          <span className="cursor-pointer hover:text-black">👤</span>
-          <span className="cursor-pointer hover:text-black">🛍️</span>
-        </div>
-      </div>
+    <div className="min-h-screen text-gray-800 font-sans p-6 md:p-12 max-w-6xl mx-auto bg-white pt-8">
+      {/* ELIMINADA LA CABECERA DUPLICADA AQUÍ */}
 
       <div className="grid md:grid-cols-2 gap-12 items-start">
         {/* CARRUSEL DE IMÁGENES */}
@@ -169,7 +142,7 @@ export default function DetalleProducto() {
           <h2 className="text-2xl font-serif text-gray-900 mb-2">{productoPadre.Producto}</h2>
           <p className="text-lg text-gray-600 mb-6 font-light">${Number(varianteActiva.Precio_Venta).toLocaleString('es-CO')}</p>
 
-          {/* Selector de Variante tipo Dropdown */}
+          {/* Selector de Variante */}
           <div className="mb-6 border-t border-gray-100 pt-6">
             <label className="text-xs text-gray-500 mb-2 block">Color</label>
             <div className="relative">
@@ -178,7 +151,7 @@ export default function DetalleProducto() {
                 onChange={(e) => {
                   const seleccion = productoPadre.Variantes.find((v: any) => v.Codigo === e.target.value);
                   if (seleccion) setVarianteActiva(seleccion);
-                  setCantidad(1); // Reiniciar cantidad al cambiar variante
+                  setCantidad(1);
                 }}
                 className="w-full appearance-none border border-gray-200 rounded-sm py-3 px-4 text-sm text-gray-700 bg-white focus:outline-none focus:border-gray-400 cursor-pointer"
               >
@@ -197,9 +170,9 @@ export default function DetalleProducto() {
           {/* Fila de Cantidad y Agregar al carrito */}
           <div className="flex gap-4 mb-3">
             <div className="flex items-center border border-gray-200 rounded-sm w-32 bg-white">
-              <button onClick={() => setCantidad(c => c > 1 ? c - 1 : 1)} className="px-4 py-3 text-gray-500 hover:text-black transition-colors">−</button>
+              <button onClick={() => setCantidad(c => c > 1 ? c - 1 : 1)} className="px-4 py-3 text-gray-500 hover:text-black transition-colors cursor-pointer">−</button>
               <span className="flex-1 text-center text-sm">{cantidad}</span>
-              <button onClick={() => setCantidad(c => c + 1)} className="px-4 py-3 text-gray-500 hover:text-black transition-colors">+</button>
+              <button onClick={() => setCantidad(c => c + 1)} className="px-4 py-3 text-gray-500 hover:text-black transition-colors cursor-pointer">+</button>
             </div>
             
             <button 
@@ -214,8 +187,8 @@ export default function DetalleProducto() {
           {/* Botón Comprar Ahora */}
           <button 
             onClick={() => {
-              manejarAnadir(); // Primero lo agrega al carrito
-              router.push('/checkout'); // Luego te redirige
+              manejarAnadir(); 
+              router.push('/checkout');
             }}
             className="w-full bg-[#4a4a4a] text-white py-3.5 text-sm rounded-sm hover:bg-black transition-colors mb-6 cursor-pointer"
           >
@@ -236,13 +209,14 @@ export default function DetalleProducto() {
           <div className="border-t border-gray-200">
             <Acordeon 
                 titulo="Details" 
-                abiertoPorDefecto={false} /* Cambié esto a 'false' para que arranque cerrado con el '+' como en tu foto */
+                abiertoPorDefecto={true} /* CAMBIADO A TRUE PARA ABRIR POR DEFECTO */
                 contenido={
                   varianteActiva.Descripcion ? (
                    <div 
-                     className="[&>p]:mb-4 [&>p:last-child]:mb-0 [&_strong]:font-semibold" 
+                     /* AÑADIDAS CLASES PARA QUITAR EL AMARILLO DE <mark> */
+                     className="[&>p]:mb-4 [&>p:last-child]:mb-0 [&_strong]:font-semibold [&_mark]:bg-transparent [&_mark]:text-inherit" 
                      dangerouslySetInnerHTML={{ __html: varianteActiva.Descripcion }} 
-              />
+                   />
                  ) : (
                    <p className="text-gray-500 italic">No hay descripción disponible para este producto en este momento.</p>
                )
