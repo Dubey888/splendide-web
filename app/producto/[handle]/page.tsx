@@ -235,16 +235,18 @@ export default function DetalleProducto() {
           {/* Acordeones de Información */}
           <div className="border-t border-gray-200">
             <Acordeon 
-              titulo="Details" 
-              abiertoPorDefecto={true}
-              contenido={
-                varianteActiva.Descripcion ? (
-                  // Si tu base de datos devuelve HTML en la descripción, puedes usar dangerouslySetInnerHTML
-                  // <div dangerouslySetInnerHTML={{ __html: varianteActiva.Descripcion }} />
-                  <p>{varianteActiva.Descripcion}</p>
-                ) : (
-                  <p className="text-gray-500 italic">No hay descripción disponible para este producto en este momento.</p>
-                )
+              <Acordeon 
+                titulo="Details" 
+                abiertoPorDefecto={false} /* Cambié esto a 'false' para que arranque cerrado con el '+' como en tu foto */
+                contenido={
+                  varianteActiva.Descripcion ? (
+                   <div 
+                     className="[&>p]:mb-4 [&>p:last-child]:mb-0 [&_strong]:font-semibold" 
+                     dangerouslySetInnerHTML={{ __html: varianteActiva.Descripcion }} 
+                   />
+                 ) : (
+                   <p className="text-gray-500 italic">No hay descripción disponible para este producto en este momento.</p>
+               )
               } 
             />
             <Acordeon 

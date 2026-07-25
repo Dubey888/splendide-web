@@ -9,6 +9,7 @@ interface Producto {
   Stock: number;
   URL_Imagen: string;
   Handle: string;
+  Estado: string; // <-- 1. Añadimos Estado a la interfaz
 }
 
 const generarHandle = (nombre: string) => {
@@ -29,12 +30,16 @@ async function getProductos(): Promise<Producto[]> {
 export default async function CatalogoCompleto() {
   const productos = await getProductos();
 
-  const productosConImagen = productos.filter(
-    (item) => item.URL_Imagen && item.URL_Imagen.trim() !== ""
+  // 2. Modificamos el filtro para incluir la validación del Estado
+  const productosFiltrados = productos.filter(
+    (item) => 
+      item.URL_Imagen && 
+      item.URL_Imagen.trim() !== "" &&
+      item.Estado === "activo" // <-- Solo pasa si el estado es 'activo'
   );
 
   const productosAgrupados = Object.values(
-    productosConImagen.reduce((acc: any, item) => {
+    productosFiltrados.reduce((acc: any, item) => {
       const handleFinal = (item.Handle && item.Handle.trim() !== "") ? item.Handle : generarHandle(item.Producto);
       if (!acc[handleFinal]) {
         acc[handleFinal] = { ...item, HandleFinal: handleFinal, Variantes: [] };
