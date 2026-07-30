@@ -4,6 +4,8 @@ import BotonAnadir from "@/components/BotonAnadir";
 import CarruselMarcas from "@/components/CarruselMarcas";
 import HeroSlider from "@/components/HeroSlider";
 import CategoryBlock from "@/components/CategoryBlock";
+// 1. Importamos la utilidad de cookies de Next.js
+import { cookies } from 'next/headers'; 
 
 interface Producto {
   Codigo: string;
@@ -21,7 +23,13 @@ const generarHandle = (nombre: string) => {
 };
 
 async function getProductos(): Promise<Producto[]> {
-  const urlApi = "https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_catalogo_web";
+  // 1. Agregamos "await" antes de cookies()
+  const cookieStore = await cookies(); 
+  const tipoCliente = cookieStore.get('tipo_cliente_splendide')?.value || 'detal';
+
+  // 2. Añadimos el parámetro a tu URL de Clever Cloud
+  const urlApi = `https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_catalogo_web&tipo_cliente=${tipoCliente}`;
+  
   try {
     const res = await fetch(urlApi, { cache: 'no-store' });
     const json = await res.json();
@@ -31,7 +39,7 @@ async function getProductos(): Promise<Producto[]> {
   }
 }
 
-// Carga las colecciones activas directamente desde la Base de Datos (Corregido para El Santuario y filtrado por imagen)
+// Carga las colecciones activas directamente desde la Base de Datos
 async function getColecciones() {
   const urlApi = "https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_colecciones&tienda=santuario";
   try {
@@ -39,7 +47,6 @@ async function getColecciones() {
     const json = await res.json();
     if (json.status === "success" && Array.isArray(json.data)) {
       return json.data
-        // Filtramos para que solo cargue aquellas que tengan foto de portada
         .filter((c: any) => c.imagen_url && c.imagen_url.trim() !== "")
         .map((c: any) => {
           const urlSegura = c.imagen_url.trim().replace(/ /g, '%20');
@@ -80,7 +87,6 @@ export default async function Home() {
     return item.Proveedor?.toLowerCase().includes('atenea') || item.Producto?.toLowerCase().includes('atenea'); 
   }).slice(0, 4); 
 
-  // Procesa y limpia las URLs separadas por coma, codificando espacios para evitar errores de carga
   const procesarImagenes = (urlStr: string) => {
     if (!urlStr) return [];
     return urlStr
@@ -89,8 +95,6 @@ export default async function Home() {
       .filter(url => url !== "");
   };
 
-  // Función auxiliar para buscar dinámicamente la imagen de una categoría
-  // Utiliza un placeholder online en caso de no encontrar la imagen en la base de datos
   const getCategoriaImagen = (nombreCategoria: string, fallbackText: string) => {
     const categoriaEncontrada = colecciones.find(
       (c: any) => c.nombre.toLowerCase() === nombreCategoria.toLowerCase()
@@ -128,7 +132,7 @@ export default async function Home() {
           </div>
         </div>
 
-        {/* 2. SECCIÓN: Marcas Deslizantes (Colecciones dinámicas desde BD) */}
+        {/* 2. SECCIÓN: Marcas Deslizantes */}
         <section className="bg-[#DFB2C0]/20 w-full py-12 mb-16">
           <div className="w-full px-4 lg:px-8 mx-auto">
             <div className="flex justify-between items-end mb-6 md:px-4">
@@ -141,7 +145,7 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* 3. SECCIÓN: Bloque Asimétrico (Skincare y Esenciales cargados desde BD) */}
+        {/* 3. SECCIÓN: Bloque Asimétrico */}
         <section className="w-full px-4 lg:px-8 mx-auto mb-20">
           <div className="grid grid-cols-2 md:grid-cols-12 gap-3 md:gap-6 lg:gap-8">
             <div className="col-span-1 md:col-span-7">
@@ -240,7 +244,7 @@ export default async function Home() {
             </div>
         </section>
 
-        {/* 5. SECCIÓN: Sweet Body (Fragancias y Corporal cargados desde BD - Corregido texto superpuesto) */}
+        {/* 5. SECCIÓN: Sweet Body */}
         <section className="w-full px-4 lg:px-8 mx-auto mb-24">
           <div className="mb-6 md:mb-8">
             <h3 className="text-2xl md:text-3xl font-serif text-[#1A1A1A]">Sweet Body</h3>
@@ -343,7 +347,7 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* 8. SECCIÓN: Complementos (Bolsos y Carteras cargados desde BD) */}
+        {/* 8. SECCIÓN: Complementos */}
         <section className="w-full px-4 lg:px-8 mx-auto mb-24">
           <div className="mb-6 md:mb-8">
             <h3 className="text-2xl md:text-3xl font-serif text-[#1A1A1A]">Complementos</h3>

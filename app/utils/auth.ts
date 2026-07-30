@@ -25,3 +25,19 @@ export const obtenerIdUsuario = () => {
     return null;
   }
 };
+
+// --- NUEVA LÓGICA CON COOKIES PARA MAYORISTAS ---
+
+export const obtenerTipoCliente = () => {
+  // Verificamos que estemos en el navegador
+  if (typeof document === 'undefined') return 'detal'; 
+  
+  // Leemos todas las cookies guardadas en el navegador
+  const cookies = document.cookie.split('; ');
+  
+  // Buscamos específicamente la que creamos para el tipo de cliente
+  const cookieMayorista = cookies.find(row => row.startsWith('tipo_cliente_splendide='));
+  
+  // Si la encuentra, devuelve su valor ('mayorista'). Si no, por defecto es 'detal'.
+  return cookieMayorista ? cookieMayorista.split('=')[1] : 'detal';
+};
