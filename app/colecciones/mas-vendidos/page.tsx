@@ -18,7 +18,7 @@ const generarHandle = (nombre: string) => {
 
 // Llamamos a la nueva acción de PHP
 async function getMasVendidos(): Promise<Producto[]> {
-  const urlApi = "https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_productos_mas_vendidos";
+  const urlApi = "https://api.splendide.com.co/index.php?accion=obtener_productos_mas_vendidos";
   try {
     const res = await fetch(urlApi, { cache: 'no-store' });
     const json = await res.json();

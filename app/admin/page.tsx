@@ -24,7 +24,7 @@ export default function AdminDashboard() {
 
   const cargarPedidos = () => {
     const userId = obtenerIdUsuario();
-    fetch(`https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_pedidos&user_id=${userId}`)
+    fetch(`https://api.splendide.com.co/index.php?accion=obtener_pedidos&user_id=${userId}`)
       .then(res => res.json())
       .then(data => {
         if (data.status === "success") {
@@ -41,7 +41,7 @@ export default function AdminDashboard() {
     setDetallesPedido([]);
 
     // La petición limpia que recibe los datos procesados por tu backend en PHP
-    fetch(`https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_detalles_pedido&pedido_id=${pedido.id}`)
+    fetch(`https://api.splendide.com.co/index.php?accion=obtener_detalles_pedido&pedido_id=${pedido.id}`)
       .then(res => res.json())
       .then(data => {
         if (data.status === "success") {
@@ -56,7 +56,7 @@ export default function AdminDashboard() {
     if (!pedidoSeleccionado) return;
 
     try {
-      const res = await fetch("https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=actualizar_estado_pedido", {
+      const res = await fetch("https://api.splendide.com.co/index.php?accion=actualizar_estado_pedido", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

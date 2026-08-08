@@ -67,7 +67,7 @@ export default function Navbar() {
     if (todosLosProductos.length > 0) return;
     setCargando(true);
     try {
-      const res = await fetch("https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_catalogo_web");
+      const res = await fetch("https://api.splendide.com.co/index.php?accion=obtener_catalogo_web");
       const json = await res.json();
       if (json.data) {
         const validos = json.data.filter((item: Producto) => item.URL_Imagen && item.URL_Imagen.trim() !== "");

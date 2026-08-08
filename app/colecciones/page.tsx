@@ -19,7 +19,7 @@ function obtenerRutaImagen(proveedor: string): string {
 }
 
 async function obtenerMarcasDesdeBD(): Promise<string[]> {
-  const urlApi = 'https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_marcas_activas';
+  const urlApi = 'https://api.splendide.com.co/index.php?accion=obtener_marcas_activas';
   
   try {
     const res = await fetch(urlApi, { cache: 'no-store' });

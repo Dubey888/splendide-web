@@ -28,7 +28,7 @@ async function getProductos(): Promise<Producto[]> {
   const tipoCliente = cookieStore.get('tipo_cliente_splendide')?.value || 'detal';
 
   // 2. Añadimos el parámetro a tu URL de Clever Cloud
-  const urlApi = `https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_catalogo_web&tipo_cliente=${tipoCliente}`;
+  const urlApi = `https://api.splendide.com.co/index.php?accion=obtener_catalogo_web&tipo_cliente=${tipoCliente}`;
   
   try {
     const res = await fetch(urlApi, { cache: 'no-store' });
@@ -41,7 +41,7 @@ async function getProductos(): Promise<Producto[]> {
 
 // Carga las colecciones activas directamente desde la Base de Datos
 async function getColecciones() {
-  const urlApi = "https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_colecciones&tienda=santuario";
+  const urlApi = "https://api.splendide.com.co/index.php?accion=obtener_colecciones&tienda=santuario";
   try {
     const res = await fetch(urlApi, { cache: 'no-store' });
     const json = await res.json();

@@ -19,7 +19,7 @@ const generarHandle = (nombre: string) => {
 async function getProductosPorMarca(marca: string): Promise<Producto[]> {
   if (!marca || marca === "undefined") return [];
 
-  const urlApi = `https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_por_marca&marca=${encodeURIComponent(marca)}`;
+  const urlApi = `https://api.splendide.com.co/index.php?accion=obtener_por_marca&marca=${encodeURIComponent(marca)}`;
   
   try {
     const res = await fetch(urlApi, { cache: 'no-store' });
@@ -33,7 +33,7 @@ async function getProductosPorMarca(marca: string): Promise<Producto[]> {
 
 // NUEVA FUNCIÓN: Obtiene la imagen de la portada guardada en la BD (Cloudinary)
 async function getImagenPortadaColeccion(marca: string): Promise<string | null> {
-  const urlApi = `https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_colecciones&tienda=ambas`;
+  const urlApi = `https://api.splendide.com.co/index.php?accion=obtener_colecciones&tienda=ambas`;
   try {
     const res = await fetch(urlApi, { cache: 'no-store' });
     const json = await res.json();

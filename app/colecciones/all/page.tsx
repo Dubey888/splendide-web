@@ -17,7 +17,7 @@ const generarHandle = (nombre: string) => {
 };
 
 async function getProductos(): Promise<Producto[]> {
-  const urlApi = "https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_catalogo_web";
+  const urlApi = "https://api.splendide.com.co/index.php?accion=obtener_catalogo_web";
   try {
     const res = await fetch(urlApi, { cache: 'no-store' });
     const json = await res.json();

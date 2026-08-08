@@ -104,7 +104,7 @@ export default function CheckoutPage() {
     };
 
     try {
-      const apiURL = "https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=guardar_pedido";
+      const apiURL = "https://api.splendide.com.co/index.php?accion=guardar_pedido";
       
       const respuesta = await fetch(apiURL, {
         method: "POST",

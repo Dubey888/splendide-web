@@ -17,7 +17,7 @@ export default function Login() {
     setMensaje({ texto: '', tipo: '' });
 
     try {
-      const url = "https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=login";
+      const url = "https://api.splendide.com.co/index.php?accion=login";
       const respuesta = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -50,7 +50,7 @@ export default function DetalleProducto() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch("https://app-23c8f020-a783-451d-b1cf-b48a15a79604.cleverapps.io/index.php?accion=obtener_catalogo_web")
+    fetch("https://api.splendide.com.co/index.php?accion=obtener_catalogo_web")
       .then(res => res.json())
       .then(json => {
         const data = json.data;
